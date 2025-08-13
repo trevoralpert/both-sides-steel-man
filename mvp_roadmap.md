@@ -36,11 +36,11 @@ This roadmap breaks down the Both Sides AI-powered debate app into logical devel
 ## Phase 2: Core Data Models & API Foundation
 *Goal: Build the essential data structures and API endpoints*
 
-### 📊 **CURRENT STATUS: ~70% COMPLETE**
+### 📊 **CURRENT STATUS: ~82% COMPLETE**
 - ✅ **Database Schema**: 7/7 tasks complete (Users, Organizations, Classes, Enrollments, Profiles, Migrations, TimeBack fields, RLS) *(95% complete - minor policy refinements remaining but non-critical)*
-- 🚀 **User Profile APIs**: 4/7 tasks complete (Tasks 2.2.1, 2.2.2, 2.2.3, 2.2.4 - comprehensive validation, security & audit logging implemented)
-- ⏳ **Class Management APIs**: 0/5 tasks complete (database ready, APIs needed)
-- 🔄 **Next Priority**: Task 2.2.5 (Profile Management UI) or Class Management APIs (Task 2.3.1) - parallel development ready
+- 🚀 **User Profile APIs**: 6/7 tasks complete (Tasks 2.2.1, 2.2.2, 2.2.3, 2.2.4, 2.2.6, 2.2.7 - comprehensive validation, security, audit logging, user management & enterprise-grade RBAC implemented)
+- ⏳ **Class Management APIs**: 0/5 tasks complete (database ready, APIs needed, RBAC system ready)
+- 🔄 **Next Priority**: Task 2.2.5 (Profile Management UI) or Task 2.3.1 (Class Management APIs) - parallel development ready
 
 ### Step 2.1: Database Schema Implementation
 - [x] **Task 2.1.1**: Create `users` table with Clerk integration
@@ -57,8 +57,8 @@ This roadmap breaks down the Both Sides AI-powered debate app into logical devel
 - [x] **Task 2.2.3**: Implement profile validation and data sanitization
 - [x] **Task 2.2.4**: Add audit logging for profile changes *(Complete with GDPR/CCPA compliance)*
 - [ ] **Task 2.2.5**: Create profile management UI components
-- [ ] **Task 2.2.6**: Create user management endpoints
-- [ ] **Task 2.2.7**: Implement role-based access control (Student/Teacher)
+- [x] **Task 2.2.6**: Create user management endpoints *(Complete with 14 endpoints for enterprise-grade user management)*
+- [x] **Task 2.2.7**: Implement role-based access control *(Complete with enterprise-grade RBAC, 31 permissions, 9 endpoints, comprehensive testing)*
 
 ### Step 2.3: Class & Enrollment Management
 - [ ] **Task 2.3.1**: Build class creation and management APIs
