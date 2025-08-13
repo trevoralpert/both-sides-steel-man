@@ -11,241 +11,229 @@ datasource db {
   directUrl = env("DIRECT_DATABASE_URL")
 }
 
-// User model for authentication and profiles
+// Phase 2 Task 2.1.1: User model with Clerk Integration
+enum UserRole {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+// Phase 2 Task 2.1.6: TimeBack Integration enums
+enum TimeBackSyncStatus {
+  PENDING
+  SYNCED
+  ERROR
+}
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  username  String?  @unique
-  firstName String?
-  lastName  String?
-  avatar    String?
+  id                String    @id @default(cuid())
+  clerk_id          String    @unique
+  email             String    @unique
+  first_name        String?
+  last_name         String?
+  username          String?   @unique
+  avatar_url        String?
+  role              UserRole  @default(STUDENT)
+  is_active         Boolean   @default(true)
+  last_login_at     DateTime?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
   
-  // Authentication fields
-  clerkId   String   @unique
+  // Relations (to be added as we create related tables)
+  profile           Profile?
+  enrollments       Enrollment[]
+  created_classes   Class[]
   
-  // Profile and preferences
-  grade     String?
-  school    String?
-  bio       String?
-  
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  // Relations
-  profile   UserProfile?
-  classEnrollments ClassEnrollment[]
-  debateParticipations DebateParticipation[]
-  reflections Reflection[]
-  
-  // TimeBack integration fields (for future use)
-  timebackUserId     String?
-  timebackSyncedAt   DateTime?
+  // Future Phase integration fields (Phase 9: TimeBack Integration)
+  timeback_user_id     String?
+  timeback_synced_at   DateTime?
+  timeback_sync_status TimeBackSyncStatus? @default(PENDING)
+  timeback_sync_version Int?     @default(1)
   
   @@map("users")
+  @@index([timeback_user_id])
 }
 
-// Extended user profile for belief mapping and preferences
-model UserProfile {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+// Phase 2 Task 2.1.4: Profiles table for belief mapping (to be implemented later in Phase 2)
+model Profile {
+  id                    String    @id @default(cuid())
+  is_completed          Boolean   @default(false)
+  completion_date       DateTime?
   
-  // Belief mapping data
-  politicalBeliefs    Json?
-  moralFoundations    Json?
-  personalityTraits   Json?
-  learningPreferences Json?
+  // Survey responses (JSON storage for flexibility)
+  survey_responses      Json?
   
-  // Privacy settings
-  profileVisibility String @default("private") // public, friends, private
-  allowMatching     Boolean @default(true)
+  // AI-generated analysis
+  belief_summary        String?
+  ideology_scores       Json?     // Conservative, Liberal, Libertarian, etc.
+  opinion_plasticity    Float?    @default(0.5) // 0.0 = rigid, 1.0 = flexible
   
-  // Engagement metrics
-  debatesParticipated Int @default(0)
-  opinionsChanged     Int @default(0)
-  empathyScore        Float?
+  // Vector embeddings for matching (TO BE ADDED IN PHASE 3: Belief Mapping System)
+  // belief_embedding      Unsupported("vector(1536)")?  // OpenAI ada-002 dimensions
   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Profile metadata
+  profile_version       Int       @default(1)
+  last_updated          DateTime  @default(now())
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
   
-  @@map("user_profiles")
-}
-
-// Class/Course model for teacher-created debate spaces
-model Class {
-  id          String @id @default(cuid())
-  name        String
-  description String?
-  code        String @unique // Join code for students
-  
-  // Teacher information
-  teacherId   String
-  teacherName String
-  
-  // Class settings
-  isActive    Boolean @default(true)
-  maxStudents Int?
-  
-  // TimeBack integration
-  timebackClassId String?
-  timebackRosterId String?
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Foreign key
+  user_id               String    @unique
   
   // Relations
-  enrollments ClassEnrollment[]
-  debates     Debate[]
+  user                  User      @relation(fields: [user_id], references: [id])
+  
+  @@map("profiles")
+  @@index([is_completed])
+}
+
+// Phase 2 Task 2.1.2: Organizations and Classes tables
+enum OrganizationType {
+  DISTRICT
+  SCHOOL
+  DEPARTMENT
+}
+
+model Organization {
+  id                String    @id @default(cuid())
+  name              String
+  slug              String    @unique
+  type              OrganizationType  @default(SCHOOL)
+  parent_id         String?
+  billing_email     String?
+  is_active         Boolean   @default(true)
+  subscription_plan String?   @default("free")
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  
+  // Self-referential relationship for hierarchy
+  parent            Organization? @relation("OrganizationHierarchy", fields: [parent_id], references: [id])
+  children          Organization[] @relation("OrganizationHierarchy")
+  
+  // Relations
+  classes           Class[]
+  
+  // Future Phase integration fields (Phase 9: TimeBack Integration)
+  timeback_org_id      String?
+  timeback_synced_at   DateTime?
+  timeback_sync_status TimeBackSyncStatus? @default(PENDING)
+  timeback_sync_version Int?     @default(1)
+  
+  @@map("organizations")
+  @@index([timeback_org_id])
+}
+
+model Class {
+  id                String    @id @default(cuid())
+  name              String
+  description       String?
+  subject           String?
+  grade_level       String?
+  academic_year     String
+  term              String?   // "Fall 2024", "Spring 2025", etc.
+  max_students      Int       @default(30)
+  is_active         Boolean   @default(true)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  
+  // Foreign keys
+  organization_id   String
+  teacher_id        String
+  
+  // Relations
+  organization      Organization @relation(fields: [organization_id], references: [id])
+  teacher           User         @relation(fields: [teacher_id], references: [id])
+  enrollments       Enrollment[]
+  
+  // Future Phase integration fields (Phase 9: TimeBack Integration)
+  timeback_class_id    String?
+  timeback_synced_at   DateTime?
+  timeback_sync_status TimeBackSyncStatus? @default(PENDING)
+  timeback_sync_version Int?     @default(1)
   
   @@map("classes")
+  @@index([organization_id])
+  @@index([teacher_id])
+  @@index([timeback_class_id])
 }
 
-// Student enrollment in classes
-model ClassEnrollment {
-  id      String @id @default(cuid())
-  userId  String
-  classId String
-  
-  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
-  
-  role        String   @default("student") // student, teacher, assistant
-  enrolledAt  DateTime @default(now())
-  isActive    Boolean  @default(true)
-  
-  @@unique([userId, classId])
-  @@map("class_enrollments")
+// Phase 2 Task 2.1.3: Enrollments table for student-class relationships
+enum EnrollmentStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  DROPPED
+  WITHDRAWN
 }
 
-// Debate topics and sessions
-model Debate {
-  id          String @id @default(cuid())
-  title       String
-  description String?
-  topic       String
+model Enrollment {
+  id                String            @id @default(cuid())
+  enrollment_status EnrollmentStatus  @default(PENDING)
+  enrolled_at       DateTime          @default(now())
+  completed_at      DateTime?
+  dropped_at        DateTime?
+  final_grade       String?
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @updatedAt
   
-  // Debate configuration
-  classId     String?
-  class       Class? @relation(fields: [classId], references: [id])
-  
-  // Debate settings
-  isAnonymous Boolean @default(true)
-  maxParticipants Int?
-  timeLimit   Int? // in minutes
-  
-  // AI moderation settings
-  aiModerationEnabled Boolean @default(true)
-  moderationPrompt    String?
-  
-  // Status
-  status      String @default("draft") // draft, active, completed, archived
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  startedAt   DateTime?
-  endedAt     DateTime?
+  // Foreign keys
+  user_id           String
+  class_id          String
   
   // Relations
-  participants DebateParticipation[]
-  messages     DebateMessage[]
+  user              User              @relation(fields: [user_id], references: [id])
+  class             Class             @relation(fields: [class_id], references: [id])
   
-  @@map("debates")
+  @@unique([user_id, class_id])
+  @@map("enrollments")
+  @@index([class_id, enrollment_status])
 }
 
-// User participation in debates
+// Phase 2 Task 2.2.4: Audit logging for profile changes
+model AuditLog {
+  id          String    @id @default(cuid())
+  entity_type String    // 'profile', 'user', 'class', etc.
+  entity_id   String    
+  action      String    // 'create', 'update', 'delete'
+  changes     Json?     // Old and new values
+  metadata    Json?     // Additional context
+  created_at  DateTime  @default(now())
+  
+  // Who made the change
+  actor_id    String?
+  actor_type  String?   // 'user', 'system', 'webhook'
+  
+  @@map("audit_logs")
+  @@index([entity_type, entity_id])
+  @@index([created_at])
+}
+
+// =============================================================================
+// FUTURE PHASES - COMMENTED OUT FOR NOW (Will be uncommented in later phases)
+// =============================================================================
+
+/*
+// Phase 5+ Models - To be implemented in later phases
+// These models are commented out to maintain Phase 2 scope
+
+model Debate {
+  // Will be implemented in Phase 5: Real-time Debate System
+}
+
 model DebateParticipation {
-  id       String @id @default(cuid())
-  userId   String
-  debateId String
-  
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  debate   Debate @relation(fields: [debateId], references: [id], onDelete: Cascade)
-  
-  // Participation details
-  side        String? // "pro", "con", "neutral", "observer"
-  joinedAt    DateTime @default(now())
-  leftAt      DateTime?
-  isActive    Boolean @default(true)
-  
-  // Engagement metrics
-  messagesCount    Int @default(0)
-  empathyScore     Float?
-  persuasivenessScore Float?
-  
-  @@unique([userId, debateId])
-  @@map("debate_participations")
+  // Will be implemented in Phase 5: Real-time Debate System
 }
 
-// Messages within debates
 model DebateMessage {
-  id       String @id @default(cuid())
-  debateId String
-  userId   String
-  
-  debate   Debate @relation(fields: [debateId], references: [id], onDelete: Cascade)
-  
-  // Message content
-  content     String
-  messageType String @default("text") // text, image, link, poll
-  
-  // AI analysis
-  sentimentScore    Float?
-  empathyScore      Float?
-  toxicityScore     Float?
-  aiModerated       Boolean @default(false)
-  aiModerationNote  String?
-  
-  // Threading
-  parentMessageId String?
-  threadDepth     Int @default(0)
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@map("debate_messages")
+  // Will be implemented in Phase 5: Real-time Debate System
 }
 
-// Post-debate reflections
 model Reflection {
-  id       String @id @default(cuid())
-  userId   String
-  debateId String
-  
-  user     User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Reflection content
-  initialPosition    String?
-  finalPosition      String?
-  positionChanged    Boolean @default(false)
-  keyInsights        String?
-  empathyGained      String?
-  
-  // Ratings
-  experienceRating   Int? // 1-5
-  learningRating     Int? // 1-5
-  empathyRating      Int? // 1-5
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@unique([userId, debateId])
-  @@map("reflections")
+  // Will be implemented in Phase 7: Reflection & Learning System
 }
 
-// AI-generated embeddings for semantic search and matching
 model Embedding {
-  id          String @id @default(cuid())
-  entityType  String // "user_profile", "debate_topic", "message"
-  entityId    String
-  
-  // Vector embedding (will use pgvector extension)
-  embedding   Unsupported("vector(1536)") // OpenAI ada-002 dimensions
-  
-  // Metadata
-  model       String @default("text-embedding-ada-002")
-  createdAt   DateTime @default(now())
-  
-  @@unique([entityType, entityId])
-  @@map("embeddings")
+  // Will be implemented in Phase 3: Onboarding & Belief Mapping System
+  // (for pgvector embeddings)
 }
+*/

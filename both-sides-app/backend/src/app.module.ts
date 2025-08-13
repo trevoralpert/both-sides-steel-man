@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { CacheService } from './common/services/cache.service';
 import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 import clerkConfig from './config/clerk.config';
 
 @Module({
@@ -18,6 +19,7 @@ import clerkConfig from './config/clerk.config';
     PrismaModule,
     RedisModule,
     AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService, CacheService],
