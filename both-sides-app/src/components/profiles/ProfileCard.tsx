@@ -31,6 +31,7 @@ interface ProfileCardProps {
   onEdit?: (profile: Profile) => void;
   onView?: (profile: Profile) => void;
   onDelete?: (profile: Profile) => void;
+  onClick?: (profile: Profile) => void;
   className?: string;
   showActions?: boolean;
   isCurrentUser?: boolean;
@@ -93,6 +94,7 @@ export function ProfileCard({
   onEdit,
   onView,
   onDelete,
+  onClick,
   className = '',
   showActions = true,
   isCurrentUser = false
@@ -104,7 +106,10 @@ export function ProfileCard({
 
   if (variant === 'compact') {
     return (
-      <Card className={`hover:shadow-md transition-shadow ${className}`}>
+      <Card 
+        className={`hover:shadow-md transition-shadow ${className} ${onClick ? 'cursor-pointer' : ''}`}
+        onClick={() => onClick?.(profile)}
+      >
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -172,7 +177,10 @@ export function ProfileCard({
 
   if (variant === 'detailed') {
     return (
-      <Card className={`${className}`}>
+      <Card 
+        className={`${className} ${onClick ? 'cursor-pointer' : ''}`}
+        onClick={() => onClick?.(profile)}
+      >
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-4">
@@ -310,7 +318,10 @@ export function ProfileCard({
 
   // Editable variant (similar to detailed but with inline editing capabilities)
   return (
-    <Card className={`${className}`}>
+    <Card 
+      className={`${className} ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={() => onClick?.(profile)}
+    >
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
