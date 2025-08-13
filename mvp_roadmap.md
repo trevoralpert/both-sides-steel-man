@@ -18,8 +18,8 @@ This roadmap breaks down the Both Sides AI-powered debate app into logical devel
 
 ### Step 1.2: Database & Backend Foundation
 - [x] **Task 1.2.1**: Set up NestJS backend project structure
-- [ ] **Task 1.2.2**: Configure PostgreSQL database (Neon for MVP)
-- [ ] **Task 1.2.3**: Set up Prisma ORM and migration tooling
+- [x] **Task 1.2.2**: Configure PostgreSQL database (Neon for MVP)
+- [x] **Task 1.2.3**: Set up Prisma ORM and migration tooling
 - [ ] **Task 1.2.4**: Configure pgvector extension for embeddings
 - [ ] **Task 1.2.5**: Set up Redis (Upstash) for caching and sessions
 
