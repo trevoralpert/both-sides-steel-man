@@ -1,0 +1,251 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// User model for authentication and profiles
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String?  @unique
+  firstName String?
+  lastName  String?
+  avatar    String?
+  
+  // Authentication fields
+  clerkId   String   @unique
+  
+  // Profile and preferences
+  grade     String?
+  school    String?
+  bio       String?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  profile   UserProfile?
+  classEnrollments ClassEnrollment[]
+  debateParticipations DebateParticipation[]
+  reflections Reflection[]
+  
+  // TimeBack integration fields (for future use)
+  timebackUserId     String?
+  timebackSyncedAt   DateTime?
+  
+  @@map("users")
+}
+
+// Extended user profile for belief mapping and preferences
+model UserProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Belief mapping data
+  politicalBeliefs    Json?
+  moralFoundations    Json?
+  personalityTraits   Json?
+  learningPreferences Json?
+  
+  // Privacy settings
+  profileVisibility String @default("private") // public, friends, private
+  allowMatching     Boolean @default(true)
+  
+  // Engagement metrics
+  debatesParticipated Int @default(0)
+  opinionsChanged     Int @default(0)
+  empathyScore        Float?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("user_profiles")
+}
+
+// Class/Course model for teacher-created debate spaces
+model Class {
+  id          String @id @default(cuid())
+  name        String
+  description String?
+  code        String @unique // Join code for students
+  
+  // Teacher information
+  teacherId   String
+  teacherName String
+  
+  // Class settings
+  isActive    Boolean @default(true)
+  maxStudents Int?
+  
+  // TimeBack integration
+  timebackClassId String?
+  timebackRosterId String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  enrollments ClassEnrollment[]
+  debates     Debate[]
+  
+  @@map("classes")
+}
+
+// Student enrollment in classes
+model ClassEnrollment {
+  id      String @id @default(cuid())
+  userId  String
+  classId String
+  
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+  
+  role        String   @default("student") // student, teacher, assistant
+  enrolledAt  DateTime @default(now())
+  isActive    Boolean  @default(true)
+  
+  @@unique([userId, classId])
+  @@map("class_enrollments")
+}
+
+// Debate topics and sessions
+model Debate {
+  id          String @id @default(cuid())
+  title       String
+  description String?
+  topic       String
+  
+  // Debate configuration
+  classId     String?
+  class       Class? @relation(fields: [classId], references: [id])
+  
+  // Debate settings
+  isAnonymous Boolean @default(true)
+  maxParticipants Int?
+  timeLimit   Int? // in minutes
+  
+  // AI moderation settings
+  aiModerationEnabled Boolean @default(true)
+  moderationPrompt    String?
+  
+  // Status
+  status      String @default("draft") // draft, active, completed, archived
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  startedAt   DateTime?
+  endedAt     DateTime?
+  
+  // Relations
+  participants DebateParticipation[]
+  messages     DebateMessage[]
+  
+  @@map("debates")
+}
+
+// User participation in debates
+model DebateParticipation {
+  id       String @id @default(cuid())
+  userId   String
+  debateId String
+  
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  debate   Debate @relation(fields: [debateId], references: [id], onDelete: Cascade)
+  
+  // Participation details
+  side        String? // "pro", "con", "neutral", "observer"
+  joinedAt    DateTime @default(now())
+  leftAt      DateTime?
+  isActive    Boolean @default(true)
+  
+  // Engagement metrics
+  messagesCount    Int @default(0)
+  empathyScore     Float?
+  persuasivenessScore Float?
+  
+  @@unique([userId, debateId])
+  @@map("debate_participations")
+}
+
+// Messages within debates
+model DebateMessage {
+  id       String @id @default(cuid())
+  debateId String
+  userId   String
+  
+  debate   Debate @relation(fields: [debateId], references: [id], onDelete: Cascade)
+  
+  // Message content
+  content     String
+  messageType String @default("text") // text, image, link, poll
+  
+  // AI analysis
+  sentimentScore    Float?
+  empathyScore      Float?
+  toxicityScore     Float?
+  aiModerated       Boolean @default(false)
+  aiModerationNote  String?
+  
+  // Threading
+  parentMessageId String?
+  threadDepth     Int @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("debate_messages")
+}
+
+// Post-debate reflections
+model Reflection {
+  id       String @id @default(cuid())
+  userId   String
+  debateId String
+  
+  user     User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Reflection content
+  initialPosition    String?
+  finalPosition      String?
+  positionChanged    Boolean @default(false)
+  keyInsights        String?
+  empathyGained      String?
+  
+  // Ratings
+  experienceRating   Int? // 1-5
+  learningRating     Int? // 1-5
+  empathyRating      Int? // 1-5
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([userId, debateId])
+  @@map("reflections")
+}
+
+// AI-generated embeddings for semantic search and matching
+model Embedding {
+  id          String @id @default(cuid())
+  entityType  String // "user_profile", "debate_topic", "message"
+  entityId    String
+  
+  // Vector embedding (will use pgvector extension)
+  embedding   Unsupported("vector(1536)") // OpenAI ada-002 dimensions
+  
+  // Metadata
+  model       String @default("text-embedding-ada-002")
+  createdAt   DateTime @default(now())
+  
+  @@unique([entityType, entityId])
+  @@map("embeddings")
+}

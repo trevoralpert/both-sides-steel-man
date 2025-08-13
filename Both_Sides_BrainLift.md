@@ -1,0 +1,59 @@
+
+- Both Sides – AI-Powered Critical Thinking & Debate App  
+  - Purpose  
+    - Reason: To foster critical thinking, empathy, and ideological flexibility in students by having them engage with and argue for perspectives they may not agree with.  
+    - How it can be used: As an educational tool within civics or ethics classes, as a standalone app for student self-development, or as a debate training system moderated by AI.  
+    - In Scope:  
+      - AI-moderated debate experiences  
+      - Belief mapping through onboarding surveys  
+      - Reflection-based learning  
+      - Anonymous matching based on ideological profiles  
+    - Out of Scope:  
+      - Persuasive political campaigning  
+      - Public or social media-facing identity politics  
+      - Shaming students or emphasizing correctness over openness  
+
+  - Experts  
+    - [Placeholder for experts on debate, education, cognitive science, and polarization]  
+
+  - DOK4 SPOV  
+    - Truths  
+      - Spiky POV Truth 1: Students may be more open-minded than adults because their political views are often more aspirational than self-interested.  
+      - Spiky POV Truth 2: The most important educational question isn’t “what do you know?” but “what are you willing to believe?”  
+      - Spiky POV Truth 3: Echo chambers exist across all ideological spectrums, including in traditionally liberal creative environments.  
+    - Myths  
+      - Spiky POV Myth 1: Teaching both sides always reinforces harmful ideas.  
+      - Spiky POV Myth 2: Political debate in schools is inherently polarizing or unsafe.  
+      - Spiky POV Myth 3: AI cannot be used fairly in emotionally sensitive contexts like politics.  
+
+  - DOK3 Insights  
+    - Insight 1: Asking students to explain the other side’s beliefs can be a more powerful learning tool than having them defend their own.  
+    - Insight 2: Measuring “opinion plasticity” could be more valuable in education than just tracking content knowledge.  
+    - Insight 3: A student’s resistance to information may stem more from social loyalty than reasoning gaps.  
+    - Insight 4: Anonymous AI-moderated discussion can reduce performative or defensive responses.  
+
+  - DOK2 Knowledge Tree  
+    - Educational Philosophy  
+      - Summary: Explores how intellectual humility, openness to alternative views, and dialectical reasoning foster stronger learning outcomes.  
+      - Student Cognitive Development  
+        - Sources:  
+          - [To be added]  
+      - Role of Debate in Learning  
+        - Sources:  
+          - [To be added]  
+    - Political Polarization in Youth  
+      - Summary: Looks at how young people form political identities and how exposure to differing views influences that process.  
+      - Ideology Formation in Adolescents  
+        - Sources:  
+          - [To be added]  
+      - Media Bias Awareness Tools  
+        - Sources:  
+          - [To be added]  
+    - AI in Education  
+      - Summary: Investigates how generative AI tools can moderate, reflect, and facilitate productive dialogue in real-time educational environments.  
+      - GPT Use in Classroom Settings  
+        - Sources:  
+          - [To be added]  
+      - Ethical AI Moderation  
+        - Sources:  
+          - [To be added]  

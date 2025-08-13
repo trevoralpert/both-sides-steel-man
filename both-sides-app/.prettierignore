@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.yarn/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Generated files
+*.d.ts
+.pnp.*
+
+# Logs
+*.log
+
+# Database
+*.db
+*.sqlite
+
+# Environment files
+.env*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Package managers
+yarn.lock
+package-lock.json
+
+# Misc
+coverage/
+.nyc_output/

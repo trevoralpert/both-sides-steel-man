@@ -1,0 +1,54 @@
+{
+    "title": "Marshland Manor Mystery",
+    "setting": "Whimsical English manor surrounded by foggy marshes",
+    "characters": [
+      {
+        "name": "Butler Barnaby",
+        "speech_style": "Formal",
+        "helpfulness": "Moderate",
+        "hidden_info": "Partial clue to culprit's identity",
+        "slang_level": 0.1
+      },
+      {
+        "name": "Gardener Greta",
+        "speech_style": "Heavy rural slang",
+        "helpfulness": "Low",
+        "hidden_info": "Red herring about ghost sightings",
+        "slang_level": 0.9
+      },
+      {
+        "name": "Lady Lavinia",
+        "speech_style": "Posh",
+        "helpfulness": "High",
+        "hidden_info": "Key clue withheld until all characters spoken to",
+        "slang_level": 0
+      },
+      {
+        "name": "Parrot Pierre",
+        "speech_style": "Mimicry/Riddles",
+        "helpfulness": "Moderate",
+        "hidden_info": "Clues hidden in rhymes",
+        "slang_level": 0.5
+      },
+      {
+        "name": "Fisherman Finn",
+        "speech_style": "Direct, terse",
+        "helpfulness": "High after grammar challenge",
+        "hidden_info": "Critical evidence",
+        "slang_level": 0.4
+      }
+    ],
+    "rules": {
+      "hidden_info_unlock_condition": "Speak to all characters first",
+      "slang_variable": true,
+      "multiple_characters_per_location": true,
+      "red_herrings": true
+    },
+    "possible_endings": [
+      "Culprit Caught, Manor Saved",
+      "Culprit Escapes",
+      "False Accusation",
+      "Join the Culprit"
+    ]
+  }
+  
