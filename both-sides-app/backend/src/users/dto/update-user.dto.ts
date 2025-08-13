@@ -1,6 +1,31 @@
-import { PartialType, OmitType } from '@nestjs/mapped-types';
-import { CreateUserDto } from './create-user.dto';
+import { IsEmail, IsOptional, IsString, IsEnum, IsUrl, Length } from 'class-validator';
+import { UserRole } from '@prisma/client';
 
-export class UpdateUserDto extends PartialType(
-  OmitType(CreateUserDto, ['clerk_id'] as const)
-) {}
+export class UpdateUserDto {
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(1, 100)
+  first_name?: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(1, 100)
+  last_name?: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(3, 50)
+  username?: string;
+
+  @IsOptional()
+  @IsUrl()
+  avatar_url?: string;
+
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
+}

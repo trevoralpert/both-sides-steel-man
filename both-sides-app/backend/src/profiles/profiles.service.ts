@@ -206,11 +206,11 @@ export class ProfilesService {
     try {
       const profile = await this.prisma.profile.update({
         where: { id: profileId },
-        data: {
+                data: { 
           is_completed: false,
-          survey_responses: null,
+          survey_responses: Prisma.DbNull,
           belief_summary: null,
-          ideology_scores: null,
+          ideology_scores: Prisma.DbNull,
           opinion_plasticity: 0.5, // Reset to default
           last_updated: new Date(),
         },
@@ -498,7 +498,13 @@ export class ProfilesService {
       throw new NotFoundException(`Profile with ID ${profileId} not found`);
     }
 
-    const insights = {
+    const insights: {
+      completion_percentage: number;
+      missing_fields: string[];
+      ideology_summary: string | null;
+      plasticity_interpretation: string | null;
+      recommendations: string[];
+    } = {
       completion_percentage: 0,
       missing_fields: [],
       ideology_summary: null,
@@ -537,8 +543,8 @@ export class ProfilesService {
       .sort((a, b) => (b[1] as number) - (a[1] as number));
 
     const topScore = scoreEntries[0];
-    if (topScore && topScore[1] > 0.6) {
-      return `Primarily ${topScore[0]} (${Math.round(topScore[1] * 100)}%)`;
+    if (topScore && (topScore[1] as number) > 0.6) {
+      return `Primarily ${topScore[0]} (${Math.round((topScore[1] as number) * 100)}%)`;
     } else {
       return 'Mixed ideological profile with no strong dominant tendency';
     }
@@ -557,7 +563,7 @@ export class ProfilesService {
   }
 
   private generateRecommendations(profile: Profile): string[] {
-    const recommendations = [];
+    const recommendations: string[] = [];
 
     if (!profile.survey_responses) {
       recommendations.push('Complete the initial belief survey to enable matching');

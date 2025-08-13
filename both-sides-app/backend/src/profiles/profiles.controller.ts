@@ -133,8 +133,8 @@ export class ProfilesController {
   @Post('me/create')
   @HttpCode(HttpStatus.CREATED)
   async createCurrentUserProfile(
-    @Body(new ValidationPipe({ transform: true })) createProfileDto: Omit<CreateProfileDto, 'user_id'>,
     @User() user: any,
+    @Body(new ValidationPipe({ transform: true })) createProfileDto: Omit<CreateProfileDto, 'user_id'>,
   ) {
     this.logger.log(`Creating profile for current user ${user.sub}`);
     
@@ -172,8 +172,8 @@ export class ProfilesController {
   @Put('me/update')
   @HttpCode(HttpStatus.OK)
   async updateCurrentUserProfile(
-    @Body(new ValidationPipe({ transform: true })) updateProfileDto: UpdateProfileDto,
     @User() user: any,
+    @Body(new ValidationPipe({ transform: true })) updateProfileDto: UpdateProfileDto,
   ) {
     this.logger.log(`Updating current user profile for ${user.sub}`);
     
@@ -230,8 +230,8 @@ export class ProfilesController {
    */
   @Get('user/:userId')
   async getProfileByUserId(
-    @Param('userId', ParseUUIDPipe) userId: string,
     @User() user: any,
+    @Param('userId', ParseUUIDPipe) userId: string,
   ) {
     this.logger.log(`Getting profile for user: ${userId} by ${user.sub}`);
     
@@ -249,11 +249,11 @@ export class ProfilesController {
    */
   @Get()
   async getAllProfiles(
+    @User() user: any,
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '50',
     @Query('completed') completed?: string,
     @Query('search') search?: string,
-    @User() user: any,
   ) {
     this.logger.log(`Getting profiles list by ${user.sub}`);
     
