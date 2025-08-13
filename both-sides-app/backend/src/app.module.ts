@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { ClassesModule } from './classes/classes.module';
+import { EnrollmentsModule } from './enrollments/enrollments.module';
 import clerkConfig from './config/clerk.config';
 
 @Module({
@@ -24,6 +25,7 @@ import clerkConfig from './config/clerk.config';
     UsersModule,
     ProfilesModule,
     ClassesModule,
+    EnrollmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService, CacheService],
