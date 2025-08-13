@@ -7,6 +7,7 @@ import { RedisModule } from './redis/redis.module';
 import { CacheService } from './common/services/cache.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ProfilesModule } from './profiles/profiles.module';
 import clerkConfig from './config/clerk.config';
 
 @Module({
@@ -20,6 +21,7 @@ import clerkConfig from './config/clerk.config';
     RedisModule,
     AuthModule,
     UsersModule,
+    ProfilesModule,
   ],
   controllers: [AppController],
   providers: [AppService, CacheService],
