@@ -31,8 +31,8 @@ Create a `.env.local` file in your project root with:
 
 ```bash
 # Clerk Authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxx
-CLERK_SECRET_KEY=sk_test_yyyyyyyyyyyyyyyyyyyyyyyy
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_publishable_key_here
+CLERK_SECRET_KEY=sk_test_your_secret_key_here
 
 # App Configuration (optional)
 NEXT_PUBLIC_APP_URL=http://localhost:3000
