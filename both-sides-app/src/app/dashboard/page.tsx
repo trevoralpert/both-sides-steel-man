@@ -1,13 +1,46 @@
-import { UserButton } from '@clerk/nextjs';
-import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
+'use client';
 
-export default async function DashboardPage() {
-  const user = await currentUser();
+import { useState } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { UserButton } from '@clerk/nextjs';
+import { redirect, useRouter } from 'next/navigation';
+import { ProfileDashboard } from '@/components/profiles';
+import { Profile } from '@/types/profile';
+
+export default function DashboardPage() {
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
+
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     redirect('/sign-in');
   }
+
+  const handleCreateProfile = () => {
+    router.push('/profile');
+  };
+
+  const handleEditProfile = (profile: Profile) => {
+    router.push(`/profiles/${profile.id}/edit`);
+  };
+
+  const handleViewProfile = (profile: Profile) => {
+    router.push(`/profiles/${profile.id}`);
+  };
+
+  // Determine user role from Clerk metadata or default to STUDENT
+  const userRole = (user.publicMetadata?.role as 'STUDENT' | 'TEACHER' | 'ADMIN') || 'STUDENT';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -38,79 +71,13 @@ export default async function DashboardPage() {
       {/* Main Content */}
       <main className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {/* Profile Card */}
-            <div className="lg:col-span-1">
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">
-                    Your Profile
-                  </h3>
-                  <div className="mt-4 space-y-3">
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Email</dt>
-                      <dd className="text-sm text-gray-900">
-                        {user.emailAddresses[0]?.emailAddress}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">Member since</dt>
-                      <dd className="text-sm text-gray-900">
-                        {new Date(user.createdAt).toLocaleDateString()}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-gray-500">User ID</dt>
-                      <dd className="text-sm text-gray-900 font-mono">
-                        {user.id}
-                      </dd>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="lg:col-span-2">
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">
-                    Quick Actions
-                  </h3>
-                  <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <button className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                      Start New Debate
-                    </button>
-                    <button className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                      Join Debate Queue
-                    </button>
-                    <button className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                      View Profile
-                    </button>
-                    <button className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                      Settings
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Recent Activity */}
-          <div className="mt-6">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  Recent Activity
-                </h3>
-                <div className="mt-4">
-                  <p className="text-sm text-gray-500">
-                    Welcome to Both Sides! Complete your onboarding to start participating in debates.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ProfileDashboard
+            userRole={userRole}
+            currentUserId={user.id}
+            onCreateProfile={handleCreateProfile}
+            onEditProfile={handleEditProfile}
+            onViewProfile={handleViewProfile}
+          />
         </div>
       </main>
     </div>

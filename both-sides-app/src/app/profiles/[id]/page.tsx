@@ -2,32 +2,32 @@
 
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { redirect, useRouter } from 'next/navigation';
-import { ProfileView, ProfileEditForm, ProfilePageHeader, useProfileNavigation } from '@/components/profiles';
+import { redirect, useRouter, useParams } from 'next/navigation';
+import { ProfileView, ProfilePageHeader, useProfileNavigation } from '@/components/profiles';
 import { ProfileAPI, ProfileAPIError } from '@/lib/api/profile';
 import { Profile } from '@/types/profile';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, AlertCircle, Plus, Edit } from 'lucide-react';
+import { Loader2, AlertCircle, Edit, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
 
-type ViewMode = 'view' | 'edit' | 'create';
-
-export default function ProfilePage() {
+export default function ProfileViewPage() {
   const { user, isLoaded } = useUser();
   const { getToken } = useAuth();
   const router = useRouter();
+  const params = useParams();
   const { getBreadcrumbItems } = useProfileNavigation();
   
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('view');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load user's profile
+  const profileId = params?.id as string;
+
+  // Load profile by ID
   const loadProfile = async () => {
-    if (!isLoaded || !user) return;
+    if (!isLoaded || !user || !profileId) return;
     
     setIsLoading(true);
     setError(null);
@@ -38,14 +38,8 @@ export default function ProfilePage() {
         throw new Error('Authentication required');
       }
 
-      const response = await ProfileAPI.getCurrentUserProfile(token);
-      if (response.data) {
-        setProfile(response.data);
-        setViewMode('view');
-      } else {
-        // No profile exists, go to create mode
-        setViewMode('create');
-      }
+      const response = await ProfileAPI.getProfile(profileId, token);
+      setProfile(response.data);
     } catch (err) {
       if (err instanceof ProfileAPIError) {
         setError(err.message);
@@ -59,28 +53,14 @@ export default function ProfilePage() {
 
   useEffect(() => {
     loadProfile();
-  }, [isLoaded, user]);
-
-  const handleProfileSave = (savedProfile: Profile) => {
-    setProfile(savedProfile);
-    setViewMode('view');
-    setError(null);
-  };
-
-  const handleCancel = () => {
-    if (profile) {
-      setViewMode('view');
-    } else {
-      router.push('/dashboard');
-    }
-  };
+  }, [isLoaded, user, profileId]);
 
   const handleEdit = () => {
-    setViewMode('edit');
+    router.push(`/profiles/${profileId}/edit`);
   };
 
-  const handleCreate = () => {
-    setViewMode('create');
+  const handleBack = () => {
+    router.back();
   };
 
   if (!isLoaded) {
@@ -88,7 +68,7 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto" />
-          <p className="mt-4 text-gray-600">Loading your profile...</p>
+          <p className="mt-4 text-gray-600">Loading profile...</p>
         </div>
       </div>
     );
@@ -99,26 +79,47 @@ export default function ProfilePage() {
   }
 
   const userRole = (user.publicMetadata?.role as 'STUDENT' | 'TEACHER' | 'ADMIN') || 'STUDENT';
+  const isCurrentUser = profile?.user?.id === user.id;
   const breadcrumbItems = getBreadcrumbItems(profile || undefined);
+
+  // Check if user has permission to view this profile
+  const canViewProfile = isCurrentUser || userRole === 'ADMIN' || userRole === 'TEACHER';
+
+  if (!canViewProfile && !isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <main className="mx-auto max-w-4xl py-6 sm:px-6 lg:px-8">
+          <div className="px-4 py-6 sm:px-0">
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                You don't have permission to view this profile.
+              </AlertDescription>
+            </Alert>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <ProfilePageHeader
         title={
-          viewMode === 'create' ? 'Create Your Profile' :
-          viewMode === 'edit' ? 'Edit Profile' :
-          'Your Profile'
+          profile?.user?.first_name || profile?.user?.last_name 
+            ? `${profile.user.first_name || ''} ${profile.user.last_name || ''}`.trim()
+            : profile?.user?.username || 'Profile'
         }
         description={
-          viewMode === 'create' ? 'Build your belief profile to start participating in debates' :
-          viewMode === 'edit' ? 'Update your beliefs and personal information' :
-          'View and manage your debate profile'
+          isCurrentUser 
+            ? 'Your debate profile and belief information'
+            : 'View user profile and belief information'
         }
         breadcrumbItems={breadcrumbItems}
         profile={profile || undefined}
         userRole={userRole}
-        onBack={() => router.push('/dashboard')}
-        onEdit={viewMode === 'view' ? handleEdit : undefined}
+        onBack={handleBack}
+        onEdit={isCurrentUser || userRole === 'ADMIN' ? handleEdit : undefined}
         showBackButton={true}
       />
 
@@ -142,38 +143,27 @@ export default function ProfilePage() {
             </Card>
           )}
 
-          {/* No Profile - Create Mode */}
-          {!isLoading && !profile && viewMode === 'view' && (
+          {/* Profile Not Found */}
+          {!isLoading && !profile && (
             <Card>
               <CardContent className="text-center py-12">
-                <Plus className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No Profile Created
+                  Profile Not Found
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Create your belief profile to start participating in debates and get matched with other users.
+                  The requested profile could not be found or may have been deleted.
                 </p>
-                <Button onClick={handleCreate}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Profile
+                <Button onClick={handleBack}>
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Go Back
                 </Button>
               </CardContent>
             </Card>
           )}
 
-          {/* Create/Edit Form */}
-          {(viewMode === 'create' || viewMode === 'edit') && (
-            <ProfileEditForm
-              profile={viewMode === 'edit' ? profile || undefined : undefined}
-              onSave={handleProfileSave}
-              onCancel={handleCancel}
-              autoSave={true}
-              autoSaveInterval={30000}
-            />
-          )}
-
           {/* View Profile */}
-          {!isLoading && profile && viewMode === 'view' && (
+          {!isLoading && profile && (
             <div className="space-y-6">
               <ProfileView
                 profile={profile}
@@ -181,22 +171,28 @@ export default function ProfilePage() {
                 showActivitySummary={true}
               />
               
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="text-lg font-medium">Profile Management</h3>
-                      <p className="text-sm text-gray-600">
-                        Keep your profile up to date to improve your debate matching experience.
-                      </p>
+              {/* Profile Actions */}
+              {(isCurrentUser || userRole === 'ADMIN') && (
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="text-lg font-medium">Profile Management</h3>
+                        <p className="text-sm text-gray-600">
+                          {isCurrentUser 
+                            ? 'Keep your profile up to date to improve your debate matching experience.'
+                            : 'Administrative profile management options.'
+                          }
+                        </p>
+                      </div>
+                      <Button onClick={handleEdit}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Profile
+                      </Button>
                     </div>
-                    <Button onClick={handleEdit}>
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit Profile
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           )}
         </div>

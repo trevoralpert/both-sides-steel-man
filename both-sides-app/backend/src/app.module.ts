@@ -8,6 +8,7 @@ import { CacheService } from './common/services/cache.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { ClassesModule } from './classes/classes.module';
 import clerkConfig from './config/clerk.config';
 
 @Module({
@@ -22,6 +23,7 @@ import clerkConfig from './config/clerk.config';
     AuthModule,
     UsersModule,
     ProfilesModule,
+    ClassesModule,
   ],
   controllers: [AppController],
   providers: [AppService, CacheService],
