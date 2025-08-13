@@ -38,7 +38,7 @@ REDIS_URL="rediss://default:YOUR_PASSWORD@YOUR_ENDPOINT.upstash.io:6380"
 
 **Example:**
 ```bash
-REDIS_URL="rediss://default:AX_8xexamplex5QQ@us1-apt-shark-12345.upstash.io:6380"
+REDIS_URL="rediss://default:YOUR_PASSWORD_HERE@your-database-name.upstash.io:6380"
 ```
 
 ## Step 3: Test Your Connection
