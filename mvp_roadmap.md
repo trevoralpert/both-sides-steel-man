@@ -9,15 +9,15 @@ This roadmap breaks down the Both Sides AI-powered debate app into logical devel
 *Goal: Set up the basic project structure, authentication, and database foundations*
 
 ### Step 1.1: Project Setup & Configuration
-- [ ] **Task 1.1.1**: Initialize Next.js project with TypeScript
-- [ ] **Task 1.1.2**: Configure Tailwind CSS and shadcn/ui components
-- [ ] **Task 1.1.3**: Set up ESLint, Prettier, and development tooling
-- [ ] **Task 1.1.4**: Configure environment variables and secrets management
-- [ ] **Task 1.1.5**: Set up Git repository and initial commit structure
-- [ ] **Task 1.1.6**: Set up unit testing with Jest
+- [x] **Task 1.1.1**: Initialize Next.js project with TypeScript
+- [x] **Task 1.1.2**: Configure Tailwind CSS and shadcn/ui components
+- [x] **Task 1.1.3**: Set up ESLint, Prettier, and development tooling
+- [x] **Task 1.1.4**: Configure environment variables and secrets management
+- [x] **Task 1.1.5**: Set up Git repository and initial commit structure
+- [x] **Task 1.1.6**: Set up unit testing with Jest
 
 ### Step 1.2: Database & Backend Foundation
-- [ ] **Task 1.2.1**: Set up NestJS backend project structure
+- [x] **Task 1.2.1**: Set up NestJS backend project structure
 - [ ] **Task 1.2.2**: Configure PostgreSQL database (Neon for MVP)
 - [ ] **Task 1.2.3**: Set up Prisma ORM and migration tooling
 - [ ] **Task 1.2.4**: Configure pgvector extension for embeddings

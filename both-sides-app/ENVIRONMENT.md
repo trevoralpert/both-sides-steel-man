@@ -5,6 +5,7 @@ This guide will help you set up the environment variables needed for the Both Si
 ## Quick Start
 
 1. **Copy the environment template:**
+
    ```bash
    cp .env.example .env.local
    ```
@@ -30,6 +31,7 @@ These are needed for basic app functionality:
 These will be needed as we progress through Phase 1:
 
 #### Database (Neon PostgreSQL)
+
 1. Go to [neon.tech](https://neon.tech)
 2. Create a new project: "both-sides-mvp"
 3. Copy the connection string
@@ -39,6 +41,7 @@ These will be needed as we progress through Phase 1:
    ```
 
 #### Authentication (Clerk)
+
 1. Go to [clerk.com](https://clerk.com)
 2. Create a new application: "Both Sides MVP"
 3. Copy the keys from the dashboard
@@ -53,6 +56,7 @@ These will be needed as we progress through Phase 1:
 These will be needed for advanced features:
 
 #### AI Services (OpenAI)
+
 1. Go to [platform.openai.com](https://platform.openai.com/api-keys)
 2. Create a new API key
 3. Add to `.env.local`:
@@ -61,6 +65,7 @@ These will be needed for advanced features:
    ```
 
 #### Real-time Messaging (Ably)
+
 1. Go to [ably.com](https://ably.com)
 2. Create a new app: "both-sides-realtime"
 3. Copy the keys from the dashboard
@@ -71,6 +76,7 @@ These will be needed for advanced features:
    ```
 
 #### Caching & Sessions (Upstash Redis)
+
 1. Go to [upstash.com](https://upstash.com)
 2. Create a new Redis database: "both-sides-cache"
 3. Copy the connection details
@@ -87,6 +93,7 @@ The app automatically validates environment variables on startup. If required va
 ### Checking Your Setup
 
 Run this command to validate your environment:
+
 ```bash
 yarn type-check
 ```
@@ -94,6 +101,7 @@ yarn type-check
 ### Debug Mode
 
 Enable debug mode to see configuration warnings:
+
 ```env
 DEBUG=true
 ```
@@ -103,12 +111,14 @@ This will show which services are not yet configured.
 ## Security Best Practices
 
 ### ✅ DO
+
 - Keep `.env.local` in `.gitignore` (already configured)
 - Use different credentials for development/production
 - Regularly rotate API keys
 - Use environment-specific URLs
 
 ### ❌ DON'T
+
 - Commit `.env.local` to version control
 - Share credentials in chat/email
 - Use production credentials in development
@@ -136,6 +146,7 @@ This will show which services are not yet configured.
 ### Getting Help
 
 If you encounter issues:
+
 1. Check the console for specific error messages
 2. Verify your `.env.local` against `.env.example`
 3. Ensure all services are properly configured

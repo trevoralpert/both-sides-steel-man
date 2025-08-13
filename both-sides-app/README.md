@@ -5,17 +5,21 @@ An educational platform that fosters critical thinking, empathy, and ideological
 ## Quick Start
 
 1. **Set up environment variables:**
+
    ```bash
    cp .env.example .env.local
    ```
+
    See [ENVIRONMENT.md](./ENVIRONMENT.md) for detailed setup instructions.
 
 2. **Install dependencies:**
+
    ```bash
    yarn install
    ```
 
 3. **Start the development server:**
+
    ```bash
    yarn dev
    ```

@@ -3,7 +3,9 @@ import { z } from 'zod';
 // Environment variable schema with validation
 const envSchema = z.object({
   // App Configuration
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  NODE_ENV: z
+    .enum(['development', 'production', 'test'])
+    .default('development'),
   NEXT_PUBLIC_APP_URL: z.string().url().default('http://localhost:3000'),
 
   // Database (Optional during development)

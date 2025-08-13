@@ -6,15 +6,17 @@ import { Button } from '../button';
 describe('Button Component', () => {
   it('renders button with text', () => {
     render(<Button>Click me</Button>);
-    expect(screen.getByRole('button', { name: /click me/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /click me/i })
+    ).toBeInTheDocument();
   });
 
   it('handles click events', async () => {
     const handleClick = jest.fn();
     const user = userEvent.setup();
-    
+
     render(<Button onClick={handleClick}>Click me</Button>);
-    
+
     await user.click(screen.getByRole('button'));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -22,7 +24,7 @@ describe('Button Component', () => {
   it('applies default variant classes', () => {
     render(<Button>Default Button</Button>);
     const button = screen.getByRole('button');
-    
+
     expect(button).toHaveClass('bg-primary');
     expect(button).toHaveClass('text-primary-foreground');
   });
@@ -30,7 +32,7 @@ describe('Button Component', () => {
   it('applies secondary variant classes', () => {
     render(<Button variant="secondary">Secondary Button</Button>);
     const button = screen.getByRole('button');
-    
+
     expect(button).toHaveClass('bg-secondary');
     expect(button).toHaveClass('text-secondary-foreground');
   });
@@ -38,7 +40,7 @@ describe('Button Component', () => {
   it('applies outline variant classes', () => {
     render(<Button variant="outline">Outline Button</Button>);
     const button = screen.getByRole('button');
-    
+
     expect(button).toHaveClass('border');
     expect(button).toHaveClass('bg-background');
   });
@@ -46,7 +48,7 @@ describe('Button Component', () => {
   it('applies size variants correctly', () => {
     const { rerender } = render(<Button size="sm">Small</Button>);
     expect(screen.getByRole('button')).toHaveClass('h-8');
-    
+
     rerender(<Button size="lg">Large</Button>);
     expect(screen.getByRole('button')).toHaveClass('h-10');
   });
@@ -54,7 +56,7 @@ describe('Button Component', () => {
   it('can be disabled', () => {
     render(<Button disabled>Disabled Button</Button>);
     const button = screen.getByRole('button');
-    
+
     expect(button).toBeDisabled();
     expect(button).toHaveClass('disabled:pointer-events-none');
   });
@@ -76,7 +78,7 @@ describe('Button Component', () => {
         <a href="/test">Link Button</a>
       </Button>
     );
-    
+
     const link = screen.getByRole('link');
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', '/test');

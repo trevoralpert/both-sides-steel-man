@@ -52,6 +52,16 @@ const eslintConfig = [
       ],
     },
   },
+  // Relax specific rules in test files where CommonJS patterns are acceptable
+  {
+    files: [
+      '**/__tests__/**/*.{ts,tsx,js,jsx}',
+      '**/*.{test,spec}.{ts,tsx,js,jsx}',
+    ],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
 ];
 
 export default eslintConfig;

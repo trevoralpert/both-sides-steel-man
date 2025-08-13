@@ -5,17 +5,20 @@ Thank you for your interest in contributing to the Both Sides project! This docu
 ## Development Setup
 
 1. **Clone the repository:**
+
    ```bash
    git clone <repository-url>
    cd both-sides-app
    ```
 
 2. **Install dependencies:**
+
    ```bash
    yarn install
    ```
 
 3. **Set up environment:**
+
    ```bash
    cp .env.example .env.local
    # Fill in your environment variables (see ENVIRONMENT.md)
@@ -29,6 +32,7 @@ Thank you for your interest in contributing to the Both Sides project! This docu
 ## Code Quality Standards
 
 ### Before Committing
+
 Run these commands to ensure code quality:
 
 ```bash
@@ -42,6 +46,7 @@ yarn format:check  # Prettier formatting
 ```
 
 ### Auto-fixing Issues
+
 ```bash
 yarn lint:fix      # Fix ESLint issues
 yarn format        # Format with Prettier
@@ -52,6 +57,7 @@ yarn format        # Format with Prettier
 We use [Conventional Commits](https://www.conventionalcommits.org/) for clear and consistent commit messages.
 
 ### Format
+
 ```
 <type>(<scope>): <subject>
 
@@ -61,6 +67,7 @@ We use [Conventional Commits](https://www.conventionalcommits.org/) for clear an
 ```
 
 ### Types
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -71,6 +78,7 @@ We use [Conventional Commits](https://www.conventionalcommits.org/) for clear an
 - `chore`: Build process or auxiliary tool changes
 
 ### Scopes
+
 - `ui`: User interface components
 - `api`: Backend API changes
 - `auth`: Authentication related
@@ -79,6 +87,7 @@ We use [Conventional Commits](https://www.conventionalcommits.org/) for clear an
 - `deps`: Dependency updates
 
 ### Examples
+
 ```bash
 feat(ui): add debate room interface
 fix(auth): resolve login redirect issue
@@ -95,6 +104,7 @@ chore(deps): update Next.js to v15.4.6
 - `chore/description` - Maintenance tasks
 
 Examples:
+
 - `feature/debate-matching-algorithm`
 - `fix/authentication-redirect`
 - `docs/environment-setup`
@@ -102,17 +112,20 @@ Examples:
 ## Pull Request Process
 
 1. **Create a feature branch:**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 2. **Make your changes and commit:**
+
    ```bash
    git add .
    git commit -m "feat(scope): your commit message"
    ```
 
 3. **Push to your branch:**
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -124,6 +137,7 @@ Examples:
    - Test results
 
 ### PR Requirements
+
 - [ ] All tests pass
 - [ ] Code follows style guidelines
 - [ ] Documentation updated if needed
@@ -133,23 +147,26 @@ Examples:
 ## Code Style Guidelines
 
 ### TypeScript
+
 - Use TypeScript for all new code
 - Define proper types and interfaces
 - Avoid `any` type when possible
 - Use meaningful variable and function names
 
 ### React Components
+
 - Use functional components with hooks
 - Follow the component structure:
+
   ```tsx
   // Imports
   import React from 'react';
-  
+
   // Types
   interface ComponentProps {
     // ...
   }
-  
+
   // Component
   export function Component({ prop }: ComponentProps) {
     // Hooks
@@ -162,6 +179,7 @@ Examples:
   ```
 
 ### File Organization
+
 ```
 src/
 ├── app/              # Next.js app router pages
@@ -176,12 +194,14 @@ src/
 ## Testing Guidelines
 
 ### Writing Tests
+
 - Write tests for all new features
 - Test both happy path and error cases
 - Use descriptive test names
 - Group related tests with `describe` blocks
 
 ### Running Tests
+
 ```bash
 yarn test           # Run all tests
 yarn test:watch     # Run tests in watch mode
