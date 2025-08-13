@@ -366,8 +366,25 @@ export class ProfilesService {
       processedData.profile_version = inputData.profile_version || 1;
     }
 
-    // Auto-detect completion status
-    const shouldAutoComplete = this.shouldAutoCompleteProfile(inputData, existingProfile);
+    // Run cross-field validation for data consistency
+    const mergedData = { ...existingProfile, ...processedData };
+    if (inputData.user_id || existingProfile?.user_id) {
+      const userId = inputData.user_id || existingProfile.user_id;
+      const crossFieldValidation = await this.validateCrossFieldConsistency(mergedData, userId);
+      
+      if (!crossFieldValidation.isValid) {
+        this.logger.warn(`Cross-field validation warnings for profile: ${crossFieldValidation.errors.join(', ')}`);
+        // Log warnings but don't block the operation
+      }
+      
+      if (crossFieldValidation.warnings.length > 0) {
+        this.logger.warn(`Profile consistency warnings: ${crossFieldValidation.warnings.join(', ')}`);
+      }
+    }
+
+    // Auto-detect completion status with role-based validation
+    const userRole = existingProfile?.user?.role;
+    const shouldAutoComplete = await this.shouldAutoCompleteProfile(processedData, existingProfile, userRole);
     if (shouldAutoComplete && inputData.is_completed !== false) {
       processedData.is_completed = true;
       processedData.completion_date = inputData.completion_date ? new Date(inputData.completion_date) : new Date();
@@ -489,16 +506,292 @@ export class ProfilesService {
   }
 
   /**
+   * Enhanced profile completeness validation with role-based requirements
+   */
+  async validateProfileCompleteness(profileId: string, userRole?: string): Promise<{
+    isComplete: boolean;
+    completionPercentage: number;
+    missingFields: string[];
+    errors: string[];
+    roleRequirements: string[];
+  }> {
+    const profile = await this.findProfile(profileId);
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
+    // Get user role if not provided
+    if (!userRole && profile.user) {
+      userRole = profile.user.role;
+    }
+
+    const completenessResult = ProfileValidationUtil.validateProfileCompleteness(profile, userRole);
+    
+    // Get role requirements for informational purposes
+    const roleRequirements = this.getRoleRequirements(userRole);
+
+    return {
+      ...completenessResult,
+      roleRequirements
+    };
+  }
+
+  /**
+   * Get completion percentage for multiple profiles
+   */
+  async getProfileCompletionStats(profileIds: string[]): Promise<{
+    profiles: Array<{
+      profileId: string;
+      completionPercentage: number;
+      isComplete: boolean;
+    }>;
+    averageCompletion: number;
+    completeCount: number;
+    totalCount: number;
+  }> {
+    const results = [];
+    
+    for (const profileId of profileIds) {
+      try {
+        const completeness = await this.validateProfileCompleteness(profileId);
+        results.push({
+          profileId,
+          completionPercentage: completeness.completionPercentage,
+          isComplete: completeness.isComplete
+        });
+      } catch (error) {
+        // Skip profiles that can't be found
+        continue;
+      }
+    }
+
+    const averageCompletion = results.reduce((sum, r) => sum + r.completionPercentage, 0) / results.length;
+    const completeCount = results.filter(r => r.isComplete).length;
+
+    return {
+      profiles: results,
+      averageCompletion: averageCompletion || 0,
+      completeCount,
+      totalCount: results.length
+    };
+  }
+
+  /**
    * Determine if profile should be automatically marked as complete
    */
-  private shouldAutoCompleteProfile(inputData: any, existingProfile?: Profile | null): boolean {
+  private async shouldAutoCompleteProfile(inputData: any, existingProfile?: Profile | null, userRole?: string): Promise<boolean> {
     // Merge existing data with new data for completeness check
     const combinedData = {
       ...existingProfile,
       ...inputData,
     };
 
-    return ProfileValidationUtil.isProfileComplete(combinedData);
+    const completenessResult = ProfileValidationUtil.validateProfileCompleteness(combinedData, userRole);
+    return completenessResult.isComplete;
+  }
+
+  /**
+   * Get role-based requirements for profile completion
+   */
+  private getRoleRequirements(userRole?: string): string[] {
+    const roleRequirements = {
+      'STUDENT': ['survey_responses', 'ideology_scores'],
+      'TEACHER': ['survey_responses', 'belief_summary', 'ideology_scores'],
+      'ADMIN': ['survey_responses', 'ideology_scores']
+    };
+
+    return roleRequirements[userRole || 'STUDENT'] || roleRequirements['STUDENT'];
+  }
+
+  /**
+   * Check username availability across the system
+   */
+  async checkUsernameAvailability(username: string, currentUserId?: string): Promise<{
+    isAvailable: boolean;
+    suggestions?: string[];
+    errors?: string[];
+  }> {
+    // First, validate the username format
+    const validation = ProfileValidationUtil.validateUsername(username);
+    if (!validation.isValid) {
+      return {
+        isAvailable: false,
+        errors: validation.errors
+      };
+    }
+
+    // Check if username is already taken in the database
+    const existingUser = await this.prisma.user.findFirst({
+      where: {
+        username: {
+          equals: username,
+          mode: 'insensitive' // Case insensitive check
+        },
+        NOT: currentUserId ? { id: currentUserId } : undefined
+      }
+    });
+
+    if (existingUser) {
+      // Generate suggestions for available usernames
+      const suggestions = await this.generateUsernameSuggestions(username);
+      return {
+        isAvailable: false,
+        suggestions,
+        errors: ['Username is already taken']
+      };
+    }
+
+    return {
+      isAvailable: true
+    };
+  }
+
+  /**
+   * Generate username suggestions when the preferred username is taken
+   */
+  private async generateUsernameSuggestions(baseUsername: string): Promise<string[]> {
+    const suggestions: string[] = [];
+    const baseClean = baseUsername.toLowerCase().replace(/[^a-z0-9]/g, '');
+    
+    // Try different variations
+    const variations = [
+      `${baseClean}${Math.floor(Math.random() * 100)}`,
+      `${baseClean}${Math.floor(Math.random() * 1000)}`,
+      `${baseClean}_user`,
+      `${baseClean}_${new Date().getFullYear()}`,
+      `the_${baseClean}`,
+      `${baseClean}_official`
+    ];
+
+    // Check each variation for availability
+    for (const variation of variations) {
+      if (suggestions.length >= 3) break; // Limit to 3 suggestions
+      
+      const existing = await this.prisma.user.findFirst({
+        where: {
+          username: {
+            equals: variation,
+            mode: 'insensitive'
+          }
+        }
+      });
+
+      if (!existing && variation.length >= 3 && variation.length <= 50) {
+        suggestions.push(variation);
+      }
+    }
+
+    return suggestions;
+  }
+
+  /**
+   * Validate cross-field consistency for profile and user data
+   */
+  async validateCrossFieldConsistency(profileData: any, userId: string): Promise<{
+    isValid: boolean;
+    errors: string[];
+    warnings: string[];
+  }> {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    // Get user data with organization information
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        enrollments: {
+          include: {
+            class: {
+              include: {
+                organization: true
+              }
+            }
+          },
+          take: 1 // Just need one to get organization info
+        }
+      }
+    });
+
+    if (!user) {
+      errors.push('User not found');
+      return { isValid: false, errors, warnings };
+    }
+
+    // Get organization domain if user belongs to an organization
+    let organizationDomain: string | undefined;
+    if (user.enrollments && user.enrollments.length > 0) {
+      const org = user.enrollments[0].class.organization;
+      // Extract domain from organization email or slug
+      if (org.billing_email) {
+        organizationDomain = org.billing_email.split('@')[1];
+      }
+    }
+
+    // Validate email domain consistency
+    if (user.email && organizationDomain) {
+      const userDomain = user.email.split('@')[1];
+      if (userDomain !== organizationDomain) {
+        warnings.push(`User email domain (${userDomain}) does not match organization domain (${organizationDomain})`);
+      }
+    }
+
+    // Use the existing cross-field validation utility
+    const crossFieldResult = ProfileValidationUtil.validateCrossFieldConsistency(
+      profileData,
+      { ...user, organization: organizationDomain ? { domain: organizationDomain } : undefined }
+    );
+
+    errors.push(...crossFieldResult.errors);
+
+    // Additional consistency checks specific to the database context
+    if (profileData.ideology_scores && profileData.survey_responses) {
+      const ideologyConsistency = await this.validateIdeologyConsistency(
+        profileData.ideology_scores,
+        profileData.survey_responses
+      );
+      if (!ideologyConsistency.isConsistent) {
+        warnings.push(...ideologyConsistency.warnings);
+      }
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings
+    };
+  }
+
+  /**
+   * Validate consistency between ideology scores and survey responses
+   */
+  private async validateIdeologyConsistency(ideologyScores: any, surveyResponses: any): Promise<{
+    isConsistent: boolean;
+    warnings: string[];
+  }> {
+    const warnings: string[] = [];
+    
+    // This is a placeholder for more sophisticated analysis
+    // In a real implementation, this would analyze survey responses and compare
+    // them with ideology scores using NLP or predefined question mappings
+    
+    if (!ideologyScores || !surveyResponses) {
+      return { isConsistent: true, warnings: [] };
+    }
+
+    // Basic consistency check: if all ideology scores are identical (0 or 1),
+    // it might indicate incomplete or inconsistent data
+    const scores = Object.values(ideologyScores).filter(v => typeof v === 'number') as number[];
+    if (scores.length > 0) {
+      const allSame = scores.every(score => score === scores[0]);
+      if (allSame && (scores[0] === 0 || scores[0] === 1)) {
+        warnings.push('Ideology scores show no variation, which may indicate incomplete assessment');
+      }
+    }
+
+    return {
+      isConsistent: warnings.length === 0,
+      warnings
+    };
   }
 
   /**

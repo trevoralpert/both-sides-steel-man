@@ -1,6 +1,11 @@
 import { IsOptional, IsString, IsNumber, IsBoolean, IsUUID, Min, Max, IsDateString } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
-import { IsValidIdeologyScores, IsValidSurveyResponses, IsValidBeliefSummary } from '../validators/profile-validation.util';
+import { 
+  IsValidIdeologyScores, 
+  IsValidSurveyResponses, 
+  IsValidBeliefSummary,
+  SanitizeText
+} from '../validators/profile-validation.util';
 
 export class CreateProfileDto {
   @IsUUID()
@@ -21,7 +26,12 @@ export class CreateProfileDto {
   @IsOptional()
   @IsString()
   @IsValidBeliefSummary()
-  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
+  @SanitizeText({ 
+    stripHtml: true, 
+    normalizeWhitespace: true, 
+    removeJavascript: true, 
+    maxLength: 5000 
+  })
   belief_summary?: string;
 
   @IsOptional()

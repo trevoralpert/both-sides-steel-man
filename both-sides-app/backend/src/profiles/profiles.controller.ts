@@ -617,4 +617,304 @@ export class ProfilesController {
       };
     }
   }
+
+  /**
+   * Validate profile completeness with role-based requirements
+   * GET /api/profiles/:id/completeness
+   */
+  @Get(':id/completeness')
+  @HttpCode(HttpStatus.OK)
+  async validateProfileCompleteness(
+    @Param('id', ParseUUIDPipe) profileId: string,
+    @Query('role') userRole?: string,
+    @User() user: any
+  ) {
+    this.logger.log(`Validating profile completeness for profile ${profileId} by user ${user.sub}`);
+    
+    try {
+      const completeness = await this.profilesService.validateProfileCompleteness(profileId, userRole);
+      
+      return {
+        success: true,
+        data: completeness,
+        message: completeness.isComplete ? 'Profile is complete' : 'Profile is incomplete',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to validate profile completeness: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to validate profile completeness',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Get completion statistics for multiple profiles
+   * POST /api/profiles/bulk/completion-stats
+   */
+  @Post('bulk/completion-stats')
+  @HttpCode(HttpStatus.OK)
+  async getProfileCompletionStats(
+    @Body() bulkDto: { profileIds: string[] },
+    @User() user: any
+  ) {
+    this.logger.log(`Getting completion stats for ${bulkDto.profileIds.length} profiles by user ${user.sub}`);
+    
+    try {
+      if (!bulkDto.profileIds || !Array.isArray(bulkDto.profileIds)) {
+        return {
+          success: false,
+          message: 'profileIds must be an array',
+          data: null,
+        };
+      }
+
+      if (bulkDto.profileIds.length > 100) {
+        return {
+          success: false,
+          message: 'Maximum 100 profiles can be analyzed at once',
+          data: null,
+        };
+      }
+
+      const stats = await this.profilesService.getProfileCompletionStats(bulkDto.profileIds);
+      
+      return {
+        success: true,
+        data: stats,
+        message: `Analyzed completion for ${stats.totalCount} profiles`,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get profile completion stats: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to get completion statistics',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Get profile completion requirements by role
+   * GET /api/profiles/requirements/:role
+   */
+  @Get('requirements/:role')
+  @HttpCode(HttpStatus.OK)
+  async getProfileRequirements(
+    @Param('role') userRole: string,
+    @User() user: any
+  ) {
+    this.logger.log(`Getting profile requirements for role ${userRole} by user ${user.sub}`);
+    
+    try {
+      // Define role-based requirements (same as in service)
+      const roleRequirements = {
+        'STUDENT': {
+          required: ['survey_responses', 'ideology_scores'],
+          optional: ['belief_summary'],
+          description: 'Students need survey responses and ideology scores to create their debate profile'
+        },
+        'TEACHER': {
+          required: ['survey_responses', 'belief_summary', 'ideology_scores'],
+          optional: [],
+          description: 'Teachers need complete profiles including belief summaries to moderate debates effectively'
+        },
+        'ADMIN': {
+          required: ['survey_responses', 'ideology_scores'],
+          optional: ['belief_summary'],
+          description: 'Administrators need survey responses and ideology scores for system oversight'
+        }
+      };
+
+      const requirements = roleRequirements[userRole.toUpperCase()] || roleRequirements['STUDENT'];
+      
+      return {
+        success: true,
+        data: {
+          role: userRole.toUpperCase(),
+          ...requirements
+        },
+        message: `Retrieved profile requirements for ${userRole} role`,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get profile requirements: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to get profile requirements',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Check username availability
+   * GET /api/profiles/username/check?username=example&userId=optional
+   */
+  @Get('username/check')
+  @HttpCode(HttpStatus.OK)
+  async checkUsernameAvailability(
+    @Query('username') username: string,
+    @Query('userId') currentUserId?: string,
+    @User() user: any
+  ) {
+    this.logger.log(`Checking username availability for '${username}' by user ${user.sub}`);
+    
+    try {
+      if (!username || username.trim().length === 0) {
+        return {
+          success: false,
+          message: 'Username is required',
+          data: null,
+        };
+      }
+
+      const availability = await this.profilesService.checkUsernameAvailability(username, currentUserId);
+      
+      return {
+        success: true,
+        data: availability,
+        message: availability.isAvailable ? 'Username is available' : 'Username is not available',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to check username availability: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to check username availability',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Validate cross-field consistency for a profile
+   * POST /api/profiles/:id/validate-consistency
+   */
+  @Post(':id/validate-consistency')
+  @HttpCode(HttpStatus.OK)
+  async validateCrossFieldConsistency(
+    @Param('id', ParseUUIDPipe) profileId: string,
+    @Body() profileData: any,
+    @User() user: any
+  ) {
+    this.logger.log(`Validating cross-field consistency for profile ${profileId} by user ${user.sub}`);
+    
+    try {
+      // Get the profile to extract user ID
+      const profile = await this.profilesService.findProfile(profileId);
+      if (!profile) {
+        return {
+          success: false,
+          message: 'Profile not found',
+          data: null,
+        };
+      }
+
+      const validation = await this.profilesService.validateCrossFieldConsistency(
+        profileData, 
+        profile.user_id
+      );
+      
+      return {
+        success: true,
+        data: validation,
+        message: validation.isValid ? 
+          'Profile data is consistent' : 
+          'Profile data has consistency issues',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to validate cross-field consistency: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to validate consistency',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Get comprehensive profile validation report
+   * GET /api/profiles/:id/validation-report
+   */
+  @Get(':id/validation-report')
+  @HttpCode(HttpStatus.OK)
+  async getProfileValidationReport(
+    @Param('id', ParseUUIDPipe) profileId: string,
+    @User() user: any
+  ) {
+    this.logger.log(`Getting validation report for profile ${profileId} by user ${user.sub}`);
+    
+    try {
+      const profile = await this.profilesService.findProfile(profileId);
+      if (!profile) {
+        return {
+          success: false,
+          message: 'Profile not found',
+          data: null,
+        };
+      }
+
+      // Get completeness validation
+      const completeness = await this.profilesService.validateProfileCompleteness(profileId);
+      
+      // Get cross-field validation
+      const crossField = await this.profilesService.validateCrossFieldConsistency(
+        profile, 
+        profile.user_id
+      );
+
+      // Check username availability if profile has user data
+      let usernameCheck = null;
+      if (profile.user?.username) {
+        usernameCheck = await this.profilesService.checkUsernameAvailability(
+          profile.user.username,
+          profile.user_id
+        );
+      }
+
+      const report = {
+        profileId,
+        completeness: {
+          isComplete: completeness.isComplete,
+          completionPercentage: completeness.completionPercentage,
+          missingFields: completeness.missingFields,
+          errors: completeness.errors,
+          roleRequirements: completeness.roleRequirements
+        },
+        crossFieldValidation: {
+          isValid: crossField.isValid,
+          errors: crossField.errors,
+          warnings: crossField.warnings
+        },
+        usernameValidation: usernameCheck ? {
+          isAvailable: usernameCheck.isAvailable,
+          suggestions: usernameCheck.suggestions,
+          errors: usernameCheck.errors
+        } : null,
+        overallStatus: {
+          isValid: completeness.isComplete && crossField.isValid && 
+                  (usernameCheck ? usernameCheck.isAvailable : true),
+          issues: [
+            ...completeness.errors,
+            ...crossField.errors,
+            ...(usernameCheck?.errors || [])
+          ],
+          warnings: crossField.warnings
+        }
+      };
+      
+      return {
+        success: true,
+        data: report,
+        message: 'Profile validation report generated successfully',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to generate validation report: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to generate validation report',
+        data: null,
+      };
+    }
+  }
 }
