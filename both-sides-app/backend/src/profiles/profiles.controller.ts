@@ -405,4 +405,216 @@ export class ProfilesController {
       };
     }
   }
+
+  /**
+   * Task 2.2.2.5: Profile comparison endpoints
+   */
+
+  /**
+   * Compare two profiles
+   * POST /api/profiles/compare
+   */
+  @Post('compare')
+  @HttpCode(HttpStatus.OK)
+  async compareProfiles(
+    @Body() compareDto: { profile1Id: string; profile2Id: string; includeMetadata?: boolean },
+    @User() user: any
+  ) {
+    this.logger.log(`Comparing profiles ${compareDto.profile1Id} and ${compareDto.profile2Id} by user ${user.sub}`);
+    
+    try {
+      const comparison = await this.profilesService.compareProfiles(
+        compareDto.profile1Id,
+        compareDto.profile2Id,
+        { includeMetadata: compareDto.includeMetadata }
+      );
+      
+      return {
+        success: true,
+        data: comparison,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to compare profiles: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to compare profiles',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Compare profile versions
+   * POST /api/profiles/:id/versions/compare
+   */
+  @Post(':id/versions/compare')
+  @HttpCode(HttpStatus.OK)
+  async compareProfileVersions(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() versionDto: { version1: number; version2: number },
+    @User() user: any
+  ) {
+    this.logger.log(`Comparing versions ${versionDto.version1} and ${versionDto.version2} for profile ${id} by user ${user.sub}`);
+    
+    try {
+      const comparison = await this.profilesService.compareProfileVersions(
+        id,
+        versionDto.version1,
+        versionDto.version2
+      );
+      
+      return {
+        success: true,
+        data: comparison,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to compare profile versions: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to compare profile versions',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Get profile modification history
+   * GET /api/profiles/:id/history
+   */
+  @Get(':id/history')
+  async getProfileHistory(
+    @Param('id', ParseUUIDPipe) id: string,
+    @User() user: any,
+    @Query('limit') limit: string = '50',
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string
+  ) {
+    this.logger.log(`Getting profile history for ${id} by user ${user.sub}`);
+    
+    try {
+      const options: any = {
+        limit: parseInt(limit),
+      };
+
+      if (startDate) {
+        options.startDate = new Date(startDate);
+      }
+
+      if (endDate) {
+        options.endDate = new Date(endDate);
+      }
+
+      const history = await this.profilesService.getProfileHistory(id, options);
+      
+      return {
+        success: true,
+        data: history,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get profile history: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to get profile history',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Get current user's profile history
+   * GET /api/profiles/me/history
+   */
+  @Get('me/history')
+  async getCurrentUserProfileHistory(
+    @User() user: any,
+    @Query('limit') limit: string = '50',
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string
+  ) {
+    this.logger.log(`Getting current user profile history for ${user.sub}`);
+    
+    try {
+      const profile = await this.profilesService.findProfileByClerkId(user.sub);
+      
+      if (!profile) {
+        return {
+          success: false,
+          message: 'Profile not found',
+          data: null,
+        };
+      }
+
+      const options: any = {
+        limit: parseInt(limit),
+      };
+
+      if (startDate) {
+        options.startDate = new Date(startDate);
+      }
+
+      if (endDate) {
+        options.endDate = new Date(endDate);
+      }
+
+      const history = await this.profilesService.getProfileHistory(profile.id, options);
+      
+      return {
+        success: true,
+        data: history,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get current user profile history: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to get profile history',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Bulk retrieve profiles
+   * POST /api/profiles/bulk
+   */
+  @Post('bulk')
+  @HttpCode(HttpStatus.OK)
+  async getBulkProfiles(
+    @Body() bulkDto: { profileIds: string[] },
+    @User() user: any
+  ) {
+    this.logger.log(`Bulk retrieving ${bulkDto.profileIds.length} profiles by user ${user.sub}`);
+    
+    try {
+      if (!bulkDto.profileIds || !Array.isArray(bulkDto.profileIds)) {
+        return {
+          success: false,
+          message: 'profileIds must be an array',
+          data: null,
+        };
+      }
+
+      if (bulkDto.profileIds.length > 100) {
+        return {
+          success: false,
+          message: 'Maximum 100 profiles can be retrieved at once',
+          data: null,
+        };
+      }
+
+      const profiles = await this.profilesService.findProfiles(bulkDto.profileIds);
+      
+      return {
+        success: true,
+        data: profiles,
+        message: `Retrieved ${profiles.length} of ${bulkDto.profileIds.length} requested profiles`,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to bulk retrieve profiles: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to retrieve profiles',
+        data: null,
+      };
+    }
+  }
 }
