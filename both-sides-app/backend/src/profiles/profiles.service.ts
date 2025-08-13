@@ -5,6 +5,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Profile, Prisma } from '@prisma/client';
 import { ProfileValidationUtil } from './validators/profile-validation.util';
 import { ProfileCacheService } from './services/profile-cache.service';
+import { AuditService, AuditContext } from '../common/services/audit.service';
 
 // Types for Task 2.2.2 enhancements
 export interface ProfileProjection {
@@ -22,7 +23,8 @@ export class ProfilesService {
 
   constructor(
     private prisma: PrismaService,
-    private profileCache: ProfileCacheService
+    private profileCache: ProfileCacheService,
+    private auditService: AuditService
   ) {}
 
   /**
@@ -75,6 +77,15 @@ export class ProfilesService {
           },
         },
       });
+
+      // Audit log the profile creation
+      await this.auditService.logProfileChange(
+        profile.id,
+        'create',
+        null, // No old data for creation
+        profile,
+        { actorId: createProfileDto.user_id, actorType: 'user' }
+      );
 
       this.logger.log(`Created profile with ID: ${profile.id} for user: ${createProfileDto.user_id}`);
       return profile;
@@ -149,7 +160,16 @@ export class ProfilesService {
         },
       });
 
-      // Log the update with audit trail
+      // Audit log the profile update
+      await this.auditService.logProfileChange(
+        profile.id,
+        'update',
+        existingProfile,
+        profile,
+        { actorId: userId || existingProfile.user_id, actorType: 'user' }
+      );
+
+      // Log the update with audit trail (keeping existing logging for backwards compatibility)
       await this.logProfileUpdate(existingProfile, profile, userId);
 
       // Invalidate cache after update
@@ -268,8 +288,14 @@ export class ProfilesService {
   /**
    * Deactivate profile (soft delete - marks as not completed and clears sensitive data)
    */
-  async deactivateProfile(profileId: string): Promise<Profile> {
+  async deactivateProfile(profileId: string, userId?: string): Promise<Profile> {
     try {
+      // Get existing profile data for audit logging
+      const existingProfile = await this.findProfile(profileId);
+      if (!existingProfile) {
+        throw new NotFoundException(`Profile with ID ${profileId} not found`);
+      }
+
       const profile = await this.prisma.profile.update({
         where: { id: profileId },
                 data: { 
@@ -293,6 +319,15 @@ export class ProfilesService {
           },
         },
       });
+
+      // Audit log the profile deactivation
+      await this.auditService.logProfileChange(
+        profile.id,
+        'deactivate',
+        existingProfile,
+        profile,
+        { actorId: userId || profile.user_id, actorType: 'user' }
+      );
 
       this.logger.log(`Deactivated profile with ID: ${profile.id}`);
       return profile;

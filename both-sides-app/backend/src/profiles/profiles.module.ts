@@ -6,9 +6,10 @@ import { ProfileErrorInterceptor } from './interceptors/profile-error.intercepto
 import { ProfileCacheService } from './services/profile-cache.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { RedisModule } from '../redis/redis.module';
+import { CommonModule } from '../common/common.module';
 
 @Module({
-  imports: [PrismaModule, RedisModule],
+  imports: [PrismaModule, RedisModule, CommonModule],
   controllers: [ProfilesController],
   providers: [
     ProfilesService,

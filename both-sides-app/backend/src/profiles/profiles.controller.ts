@@ -19,13 +19,17 @@ import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from '../common/decorators/user.decorator';
+import { AuditConfigService } from '../common/services/audit-config.service';
 
 @Controller('profiles')
 @UseGuards(JwtAuthGuard)
 export class ProfilesController {
   private readonly logger = new Logger(ProfilesController.name);
 
-  constructor(private readonly profilesService: ProfilesService) {}
+  constructor(
+    private readonly profilesService: ProfilesService,
+    private readonly auditConfig: AuditConfigService
+  ) {}
 
   /**
    * Create a new profile
@@ -101,7 +105,7 @@ export class ProfilesController {
   ) {
     this.logger.log(`Deactivating profile: ${id} by user ${user.sub}`);
     
-    const profile = await this.profilesService.deactivateProfile(id);
+    const profile = await this.profilesService.deactivateProfile(id, user.sub);
     
     return {
       success: true,
@@ -913,6 +917,377 @@ export class ProfilesController {
       return {
         success: false,
         message: error.message || 'Failed to generate validation report',
+        data: null,
+      };
+    }
+  }
+
+  // =============================================================================
+  // AUDIT LOG ENDPOINTS - Task 2.2.4
+  // =============================================================================
+
+  /**
+   * Get audit logs for a specific profile
+   * GET /api/profiles/:id/audit
+   */
+  @Get(':id/audit')
+  async getProfileAuditLogs(
+    @Param('id', ParseUUIDPipe) profileId: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+    @Query('action') action?: string,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+    @User() user: any,
+  ) {
+    this.logger.log(`Getting audit logs for profile: ${profileId} by user: ${user.sub}`);
+    
+    try {
+      // Check if user has permission to view audit logs
+      const userRole = user.role || 'STUDENT'; // Default role if not provided
+      if (!this.auditConfig.canPerformAuditAction(userRole, 'viewAuditLogs')) {
+        return {
+          success: false,
+          message: 'Insufficient permissions to view audit logs',
+          data: null,
+        };
+      }
+      const auditService = this.profilesService['auditService'];
+      
+      const filters = {
+        entityType: 'profile',
+        entityId: profileId,
+        action,
+        dateFrom: dateFrom ? new Date(dateFrom) : undefined,
+        dateTo: dateTo ? new Date(dateTo) : undefined,
+        limit: limit ? parseInt(limit) : 20,
+        offset: offset ? parseInt(offset) : 0,
+        orderBy: 'created_at' as const,
+        orderDirection: 'desc' as const,
+      };
+
+      const result = await auditService.queryLogs(filters);
+      
+      return {
+        success: true,
+        data: result,
+        message: 'Profile audit logs retrieved successfully',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get profile audit logs: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to retrieve audit logs',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Get audit logs for all profiles with filtering
+   * GET /api/profiles/audit/query
+   */
+  @Get('audit/query')
+  async queryAllAuditLogs(
+    @Query('entityType') entityType?: string,
+    @Query('action') action?: string,
+    @Query('actorId') actorId?: string,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+    @Query('orderBy') orderBy?: string,
+    @Query('orderDirection') orderDirection?: string,
+    @User() user: any,
+  ) {
+    this.logger.log(`Querying audit logs by user: ${user.sub}`);
+    
+    try {
+      // Check permissions for viewing audit logs
+      const userRole = user.role || 'STUDENT';
+      if (!this.auditConfig.canPerformAuditAction(userRole, 'viewAuditLogs')) {
+        return {
+          success: false,
+          message: 'Insufficient permissions to query audit logs',
+          data: null,
+        };
+      }
+      const auditService = this.profilesService['auditService'];
+      
+      const filters = {
+        entityType: entityType || 'profile',
+        action,
+        actorId,
+        dateFrom: dateFrom ? new Date(dateFrom) : undefined,
+        dateTo: dateTo ? new Date(dateTo) : undefined,
+        limit: limit ? parseInt(limit) : 50,
+        offset: offset ? parseInt(offset) : 0,
+        orderBy: (orderBy as any) || 'created_at',
+        orderDirection: (orderDirection as any) || 'desc',
+      };
+
+      const result = await auditService.queryLogs(filters);
+      
+      return {
+        success: true,
+        data: result,
+        message: 'Audit logs retrieved successfully',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to query audit logs: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to retrieve audit logs',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Get audit history for a specific entity
+   * GET /api/profiles/audit/entity/:entityType/:entityId
+   */
+  @Get('audit/entity/:entityType/:entityId')
+  async getEntityAuditHistory(
+    @Param('entityType') entityType: string,
+    @Param('entityId', ParseUUIDPipe) entityId: string,
+    @Query('limit') limit?: string,
+    @User() user: any,
+  ) {
+    this.logger.log(`Getting audit history for ${entityType}:${entityId} by user: ${user.sub}`);
+    
+    try {
+      const auditService = this.profilesService['auditService'];
+      
+      const history = await auditService.getEntityHistory(
+        entityType,
+        entityId,
+        limit ? parseInt(limit) : 20
+      );
+      
+      return {
+        success: true,
+        data: history,
+        message: 'Entity audit history retrieved successfully',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get entity audit history: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to retrieve audit history',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Generate audit report for compliance
+   * POST /api/profiles/audit/report
+   */
+  @Post('audit/report')
+  async generateAuditReport(
+    @Body() reportRequest: {
+      dateFrom: string;
+      dateTo: string;
+      entityTypes?: string[];
+      format?: 'summary' | 'detailed';
+    },
+    @User() user: any,
+  ) {
+    this.logger.log(`Generating audit report by user: ${user.sub}`);
+    
+    try {
+      // Check permissions for generating reports
+      const userRole = user.role || 'STUDENT';
+      if (!this.auditConfig.canPerformAuditAction(userRole, 'generateReports')) {
+        return {
+          success: false,
+          message: 'Insufficient permissions to generate audit reports',
+          data: null,
+        };
+      }
+      const auditService = this.profilesService['auditService'];
+      
+      const report = await auditService.generateAuditReport(
+        new Date(reportRequest.dateFrom),
+        new Date(reportRequest.dateTo),
+        reportRequest.entityTypes,
+        reportRequest.format || 'summary'
+      );
+      
+      // Log the report generation as an audit event
+      await auditService.logUserAction(
+        user.sub,
+        'generate_audit_report',
+        'audit_report',
+        'system',
+        {
+          dateFrom: reportRequest.dateFrom,
+          dateTo: reportRequest.dateTo,
+          entityTypes: reportRequest.entityTypes,
+          format: reportRequest.format,
+          totalActions: report.totalActions,
+        },
+        { actorId: user.sub, actorType: 'user' }
+      );
+      
+      return {
+        success: true,
+        data: report,
+        message: 'Audit report generated successfully',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to generate audit report: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to generate audit report',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Get audit log statistics
+   * GET /api/profiles/audit/stats
+   */
+  @Get('audit/stats')
+  async getAuditStats(
+    @Query('days') days?: string,
+    @User() user: any,
+  ) {
+    this.logger.log(`Getting audit stats by user: ${user.sub}`);
+    
+    try {
+      const auditService = this.profilesService['auditService'];
+      const daysBack = days ? parseInt(days) : 30;
+      
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - daysBack);
+      
+      const stats = await auditService.generateAuditReport(
+        startDate,
+        endDate,
+        ['profile', 'user'],
+        'summary'
+      );
+      
+      return {
+        success: true,
+        data: {
+          period: {
+            days: daysBack,
+            startDate,
+            endDate,
+          },
+          ...stats,
+        },
+        message: 'Audit statistics retrieved successfully',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get audit stats: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to retrieve audit statistics',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Clean up old audit logs (Admin only)
+   * DELETE /api/profiles/audit/cleanup
+   */
+  @Delete('audit/cleanup')
+  async cleanupAuditLogs(
+    @Query('entityType') entityType?: string,
+    @Query('actionType') actionType?: string,
+    @User() user: any,
+  ) {
+    this.logger.log(`Cleaning up audit logs by user: ${user.sub}`);
+    
+    try {
+      // Check permissions for deleting audit logs (super admin only)
+      const userRole = user.role || 'STUDENT';
+      if (!this.auditConfig.canPerformAuditAction(userRole, 'deleteAuditLogs')) {
+        return {
+          success: false,
+          message: 'Insufficient permissions to delete audit logs. Super admin access required.',
+          data: null,
+        };
+      }
+
+      const auditService = this.profilesService['auditService'];
+      const result = await auditService.cleanupOldLogs(entityType, actionType);
+      
+      // Log the cleanup operation
+      await auditService.logUserAction(
+        user.sub,
+        'cleanup_audit_logs',
+        'audit_logs',
+        'system',
+        {
+          entityType,
+          actionType,
+          deletedCount: result.deletedCount,
+          retentionDays: result.retentionDays,
+        },
+        { actorId: user.sub, actorType: 'user' }
+      );
+      
+      return {
+        success: true,
+        data: result,
+        message: `Successfully cleaned up ${result.deletedCount} audit logs`,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to cleanup audit logs: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to cleanup audit logs',
+        data: null,
+      };
+    }
+  }
+
+  /**
+   * Get audit configuration and privacy settings (Admin only)
+   * GET /api/profiles/audit/config
+   */
+  @Get('audit/config')
+  async getAuditConfig(@User() user: any) {
+    try {
+      // Check permissions for viewing audit configuration
+      const userRole = user.role || 'STUDENT';
+      if (!this.auditConfig.canPerformAuditAction(userRole, 'viewAuditLogs')) {
+        return {
+          success: false,
+          message: 'Insufficient permissions to view audit configuration',
+          data: null,
+        };
+      }
+
+      const config = {
+        retentionPolicies: this.auditConfig.getRetentionPolicySummary(),
+        complianceSettings: this.auditConfig.getComplianceSettings(),
+        accessControl: this.auditConfig.getConfig().accessControl,
+        privacyControls: {
+          sensitiveFieldsCount: this.auditConfig.getConfig().sensitiveFields.length,
+          excludedFieldsCount: this.auditConfig.getConfig().excludeFields.length,
+          maskingRulesCount: Object.keys(this.auditConfig.getConfig().maskingRules).length,
+        },
+      };
+      
+      return {
+        success: true,
+        data: config,
+        message: 'Audit configuration retrieved successfully',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get audit config: ${error.message}`, error.stack);
+      return {
+        success: false,
+        message: error.message || 'Failed to retrieve audit configuration',
         data: null,
       };
     }
