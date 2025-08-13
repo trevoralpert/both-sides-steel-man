@@ -21,7 +21,7 @@ This roadmap breaks down the Both Sides AI-powered debate app into logical devel
 - [x] **Task 1.2.2**: Configure PostgreSQL database (Neon for MVP)
 - [x] **Task 1.2.3**: Set up Prisma ORM and migration tooling
 - [x] **Task 1.2.4**: Configure pgvector extension for embeddings
-- [ ] **Task 1.2.5**: Set up Redis (Upstash) for caching and sessions
+- [x] **Task 1.2.5**: Set up Redis (Upstash) for caching and sessions
 
 ### Step 1.3: Authentication & Authorization
 - [ ] **Task 1.3.1**: Integrate Clerk authentication in frontend
