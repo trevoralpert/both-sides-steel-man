@@ -33,6 +33,10 @@ import {
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { SurveysService } from './surveys.service';
+import { SurveyValidationService } from './validators/survey-validation.service';
+import { SurveyQualityService } from './validators/survey-quality.service';
+import { SurveyErrorHandlerService } from './error-handling/survey-error-handler.service';
+import { SurveyMonitoringService } from './monitoring/survey-monitoring.service';
 import { 
   SurveyResponseDto, 
   BulkSurveyResponseDto, 
@@ -54,7 +58,13 @@ import { User, UserRole } from '@prisma/client';
 export class SurveysController {
   private readonly logger = new Logger(SurveysController.name);
 
-  constructor(private readonly surveysService: SurveysService) {}
+  constructor(
+    private readonly surveysService: SurveysService,
+    private readonly validationService: SurveyValidationService,
+    private readonly qualityService: SurveyQualityService,
+    private readonly errorHandlerService: SurveyErrorHandlerService,
+    private readonly monitoringService: SurveyMonitoringService,
+  ) {}
 
   /**
    * Get active survey with questions
@@ -328,6 +338,181 @@ export class SurveysController {
     return {
       success: true,
       data: validation,
+    };
+  }
+
+  /**
+   * Get survey health metrics (Admins only)
+   * GET /api/surveys/health
+   */
+  @Get('health')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get real-time survey system health metrics' })
+  @ApiQuery({ name: 'surveyId', required: false, description: 'Specific survey ID' })
+  @ApiQuery({ name: 'forceRefresh', required: false, description: 'Force refresh of cached data' })
+  @ApiOkResponse({ description: 'Health metrics retrieved successfully' })
+  @ApiForbiddenResponse({ description: 'Access denied - requires admin role' })
+  async getSurveyHealth(
+    @Query('surveyId') surveyId?: string,
+    @Query('forceRefresh') forceRefresh?: boolean,
+    @CurrentUser() user: User,
+  ) {
+    this.logger.log(`Getting survey health metrics requested by admin: ${user.id}`);
+    
+    const healthMetrics = await this.monitoringService.getSurveyHealthMetrics(
+      surveyId, 
+      forceRefresh === true || forceRefresh === 'true'
+    );
+    
+    return {
+      success: true,
+      data: healthMetrics,
+    };
+  }
+
+  /**
+   * Get flagged responses for review (Admins only)
+   * GET /api/surveys/flagged-responses
+   */
+  @Get('flagged-responses')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get flagged survey responses for admin review' })
+  @ApiQuery({ name: 'severity', required: false, enum: ['low', 'medium', 'high'] })
+  @ApiQuery({ name: 'reviewed', required: false, description: 'Filter by review status' })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number (default: 1)' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Items per page (default: 20)' })
+  @ApiOkResponse({ description: 'Flagged responses retrieved successfully' })
+  @ApiForbiddenResponse({ description: 'Access denied - requires admin role' })
+  async getFlaggedResponses(
+    @Query('severity') severity?: 'low' | 'medium' | 'high',
+    @Query('reviewed') reviewed?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @CurrentUser() user: User,
+  ) {
+    this.logger.log(`Getting flagged responses requested by admin: ${user.id}`);
+    
+    const filters: any = {};
+    if (severity) filters.severity = severity;
+    if (reviewed !== undefined) filters.reviewed = reviewed === 'true';
+    
+    const pagination = {
+      page: parseInt(page || '1', 10),
+      limit: parseInt(limit || '20', 10),
+    };
+    
+    const result = await this.monitoringService.getFlaggedResponses(filters, pagination);
+    
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  /**
+   * Review a flagged response (Admins only)
+   * PUT /api/surveys/flagged-responses/:id/review
+   */
+  @Put('flagged-responses/:id/review')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Review and take action on a flagged response' })
+  @ApiParam({ name: 'id', description: 'Flagged response ID' })
+  @ApiOkResponse({ description: 'Response review completed successfully' })
+  @ApiForbiddenResponse({ description: 'Access denied - requires admin role' })
+  async reviewFlaggedResponse(
+    @Param('id', ParseUUIDPipe) flaggedResponseId: string,
+    @Body() reviewData: {
+      action: 'approved' | 'rejected' | 'modified';
+      notes?: string;
+      modifications?: any;
+    },
+    @CurrentUser() user: User,
+  ) {
+    this.logger.log(`Reviewing flagged response ${flaggedResponseId} by admin: ${user.id}`);
+    
+    await this.monitoringService.reviewFlaggedResponse(
+      flaggedResponseId,
+      user.id,
+      reviewData.action,
+      reviewData.notes,
+      reviewData.modifications,
+    );
+    
+    return {
+      success: true,
+      message: `Flagged response ${reviewData.action} successfully`,
+    };
+  }
+
+  /**
+   * Get quality metrics for a user (Teachers and Admins only)
+   * GET /api/surveys/quality/:userId
+   */
+  @Get('quality/:userId')
+  @Roles(UserRole.TEACHER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get quality metrics for a specific user' })
+  @ApiParam({ name: 'userId', description: 'User ID to analyze' })
+  @ApiQuery({ name: 'surveyId', required: false, description: 'Specific survey ID' })
+  @ApiOkResponse({ description: 'Quality metrics retrieved successfully' })
+  @ApiForbiddenResponse({ description: 'Access denied - requires teacher or admin role' })
+  async getUserQualityMetrics(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Query('surveyId') surveyId?: string,
+    @CurrentUser() user: User,
+  ) {
+    this.logger.log(`Getting quality metrics for user ${userId} by ${user.role}: ${user.id}`);
+    
+    const qualityMetrics = await this.qualityService.calculateQualityMetrics(userId, surveyId);
+    
+    return {
+      success: true,
+      data: qualityMetrics,
+    };
+  }
+
+  /**
+   * Get survey optimization recommendations (Admins only)
+   * GET /api/surveys/:id/optimization
+   */
+  @Get(':id/optimization')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get optimization recommendations for a survey' })
+  @ApiParam({ name: 'id', description: 'Survey ID to analyze' })
+  @ApiOkResponse({ description: 'Optimization recommendations generated successfully' })
+  @ApiForbiddenResponse({ description: 'Access denied - requires admin role' })
+  async getSurveyOptimization(
+    @Param('id', ParseUUIDPipe) surveyId: string,
+    @CurrentUser() user: User,
+  ) {
+    this.logger.log(`Getting optimization recommendations for survey ${surveyId} by admin: ${user.id}`);
+    
+    const optimizations = await this.monitoringService.generateOptimizationRecommendations(surveyId);
+    
+    return {
+      success: true,
+      data: optimizations,
+    };
+  }
+
+  /**
+   * Process offline sync queue (System endpoint - Admins only)
+   * POST /api/surveys/sync/offline-queue
+   */
+  @Post('sync/offline-queue')
+  @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Process the offline response sync queue' })
+  @ApiOkResponse({ description: 'Offline sync queue processed' })
+  @ApiForbiddenResponse({ description: 'Access denied - requires admin role' })
+  async processOfflineQueue(@CurrentUser() user: User) {
+    this.logger.log(`Processing offline sync queue requested by admin: ${user.id}`);
+    
+    const result = await this.errorHandlerService.processOfflineSyncQueue();
+    
+    return {
+      success: true,
+      message: `Processed ${result.processed} responses successfully, ${result.failed} failed`,
+      data: result,
     };
   }
 }
