@@ -43,6 +43,7 @@ model User {
   profile           Profile?
   enrollments       Enrollment[]
   created_classes   Class[]
+  teacher_notifications CompletionNotification[] @relation("TeacherNotifications")
   
   // Future Phase integration fields (Phase 9: TimeBack Integration)
   timeback_user_id     String?
@@ -60,15 +61,15 @@ model Profile {
   is_completed          Boolean   @default(false)
   completion_date       DateTime?
   
-  // Survey responses (JSON storage for flexibility)
-  survey_responses      Json?
+  // Legacy survey responses (JSON storage for backward compatibility)
+  legacy_survey_responses Json?
   
   // AI-generated analysis
   belief_summary        String?
   ideology_scores       Json?     // Conservative, Liberal, Libertarian, etc.
   opinion_plasticity    Float?    @default(0.5) // 0.0 = rigid, 1.0 = flexible
   
-  // Vector embeddings for matching (TO BE ADDED IN PHASE 3: Belief Mapping System)
+  // Vector embeddings for matching (Phase 3: Belief Mapping System - WILL BE ENABLED LATER)
   // belief_embedding      Unsupported("vector(1536)")?  // OpenAI ada-002 dimensions
   
   // Profile metadata
@@ -83,6 +84,8 @@ model Profile {
   // Relations
   user                  User      @relation(fields: [user_id], references: [id])
   survey_responses      SurveyResponse[]
+  survey_milestones     SurveyMilestone[]
+  completion_notifications CompletionNotification[]
   
   @@map("profiles")
   @@index([is_completed])
@@ -145,6 +148,7 @@ model Class {
   organization      Organization @relation(fields: [organization_id], references: [id])
   teacher           User         @relation(fields: [teacher_id], references: [id])
   enrollments       Enrollment[]
+  completion_stats  ClassCompletionStats[]
   
   // Future Phase integration fields (Phase 9: TimeBack Integration)
   timeback_class_id    String?
@@ -242,6 +246,7 @@ model Survey {
   // Relations
   questions   SurveyQuestion[]
   responses   SurveyResponse[] @relation(name: "SurveyToResponse")
+  completion_stats ClassCompletionStats[]
 
   @@map("surveys")
   @@index([is_active, version])
@@ -295,6 +300,113 @@ model SurveyResponse {
   @@index([profile_id])
   @@index([question_id])
   @@index([survey_id, survey_version])
+}
+
+// =============================================================================
+// Phase 3 Task 3.3.4: Onboarding Completion Tracking Models
+// =============================================================================
+
+enum MilestoneType {
+  SURVEY_STARTED
+  SECTION_COMPLETED
+  MILESTONE_25_PERCENT
+  MILESTONE_50_PERCENT
+  MILESTONE_75_PERCENT
+  SURVEY_COMPLETED
+  PROFILE_GENERATED
+  PROFILE_CONFIRMED
+}
+
+enum NotificationType {
+  COMPLETION_CELEBRATION
+  PROGRESS_REMINDER
+  TEACHER_NOTIFICATION
+  FOLLOW_UP_SURVEY
+  RE_ENGAGEMENT
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  EXPIRED
+}
+
+// Survey completion milestones and achievements tracking
+model SurveyMilestone {
+  id                String        @id @default(cuid())
+  profile_id        String
+  milestone_type    MilestoneType
+  achieved_at       DateTime      @default(now())
+  section_name      String?       // For section completion milestones
+  percentage        Int?          // For percentage milestones (25, 50, 75)
+  quality_score     Float?        // Response quality at milestone
+  completion_time   Int?          // Time to reach milestone (milliseconds)
+  metadata          Json?         // Additional milestone context
+
+  // Relations
+  profile           Profile       @relation(fields: [profile_id], references: [id])
+
+  @@map("survey_milestones")
+  @@index([profile_id, milestone_type])
+  @@index([achieved_at])
+  @@unique([profile_id, milestone_type, section_name])
+}
+
+// Completion analytics aggregated by class for educators
+model ClassCompletionStats {
+  id                    String    @id @default(cuid())
+  class_id              String
+  survey_id             String
+  total_students        Int       @default(0)
+  students_started      Int       @default(0)
+  students_completed    Int       @default(0)
+  avg_completion_time   Float?    // Average time in hours
+  avg_quality_score     Float?    // Average response quality
+  completion_rate       Float     @default(0) // Percentage completed
+  last_updated          DateTime  @default(now())
+  calculated_at         DateTime  @default(now())
+
+  // Section-level breakdown (JSON)
+  section_completion    Json?     // {section_name: completion_count}
+  
+  // Relations
+  class                 Class     @relation(fields: [class_id], references: [id])
+  survey                Survey    @relation(fields: [survey_id], references: [id])
+
+  @@map("class_completion_stats")
+  @@unique([class_id, survey_id])
+  @@index([class_id])
+  @@index([completion_rate])
+}
+
+// Notification system for completion tracking
+model CompletionNotification {
+  id                String             @id @default(cuid())
+  profile_id        String?            // Student being notified about
+  teacher_id        String?            // Teacher to notify
+  notification_type NotificationType
+  status            NotificationStatus @default(PENDING)
+  title             String
+  message           String
+  metadata          Json?              // Additional context
+  scheduled_for     DateTime?          // When to send notification
+  sent_at           DateTime?
+  delivered_at      DateTime?
+  expires_at        DateTime?
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+
+  // Relations
+  profile           Profile?           @relation(fields: [profile_id], references: [id])
+  teacher           User?              @relation("TeacherNotifications", fields: [teacher_id], references: [id])
+
+  @@map("completion_notifications")
+  @@index([status, scheduled_for])
+  @@index([profile_id])
+  @@index([teacher_id])
+  @@index([notification_type])
 }
 
 // =============================================================================

@@ -1,0 +1,53 @@
+/**
+ * Belief Analysis Module
+ * 
+ * NestJS module for AI-powered belief profile generation and analysis.
+ * This module handles OpenAI integration, belief summary generation,
+ * ideology scoring, and opinion plasticity analysis.
+ * 
+ * Task 3.2.1: Integrate OpenAI API for Belief Analysis
+ */
+
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { BeliefAnalysisController } from './belief-analysis.controller';
+import { BeliefAnalysisService } from './services/belief-analysis.service';
+import { BeliefEmbeddingService } from './services/belief-embedding.service';
+import { IdeologyMappingService } from './services/ideology-mapping.service';
+import { PlasticityAnalysisService } from './services/plasticity-analysis.service';
+import { CommonModule } from '../common/common.module';
+import { PrismaModule } from '../prisma/prisma.module';
+
+@Module({
+  imports: [
+    ConfigModule,
+    CommonModule,
+    PrismaModule,
+  ],
+  controllers: [
+    BeliefAnalysisController,
+  ],
+  providers: [
+    BeliefAnalysisService,
+    BeliefEmbeddingService,
+    IdeologyMappingService,
+    PlasticityAnalysisService,
+  ],
+  exports: [
+    BeliefAnalysisService,
+    BeliefEmbeddingService,
+    IdeologyMappingService,
+    PlasticityAnalysisService,
+  ],
+})
+export class BeliefAnalysisModule {
+  constructor() {
+    console.log('🧠 Belief Analysis Module initialized');
+    console.log('📊 Available features:');
+    console.log('  - OpenAI API integration for belief analysis');
+    console.log('  - AI-generated belief summaries');
+    console.log('  - Multi-dimensional ideology mapping');
+    console.log('  - Opinion plasticity scoring');
+    console.log('  - Vector embedding generation');
+  }
+}

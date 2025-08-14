@@ -8,10 +8,23 @@ export interface User {
 }
 
 export interface IdeologyScores {
+  // Modern multi-dimensional scoring (AI-powered)
+  economic?: number;        // -1 (left) to +1 (right)
+  social?: number;          // -1 (authoritarian) to +1 (libertarian)  
+  tradition?: number;       // -1 (progressive) to +1 (traditional)
+  globalism?: number;       // -1 (nationalist) to +1 (globalist)
+  environment?: number;     // -1 (economic) to +1 (environmental)
+  
+  // Legacy simple scoring (backwards compatibility)
   liberal?: number;
   conservative?: number;
   progressive?: number;
   libertarian?: number;
+  
+  // Meta-scores
+  certainty?: number;       // How confident in positions (0-1)
+  consistency?: number;     // Internal logical consistency (0-1)
+  
   [key: string]: number | undefined;
 }
 
@@ -81,3 +94,46 @@ export interface ApiResponse<T> {
 }
 
 export type ProfileVariant = 'compact' | 'detailed' | 'editable';
+
+// Belief Analysis System Types
+export interface BeliefAnalysisResult {
+  profileId: string;
+  beliefSummary: string;
+  ideologyScores: IdeologyScores;
+  opinionPlasticity: number;
+  confidenceScore: number;
+  analysisMetadata: {
+    analysisVersion: string;
+    completedAt: Date;
+    tokensUsed: number;
+    processingTime: number;
+    qualityScore: number;
+  };
+}
+
+export interface SurveyResponse {
+  questionId: string;
+  questionText: string;
+  questionCategory: string;
+  responseValue: any;
+  responseText?: string;
+  confidenceLevel?: number;
+  completionTime: number;
+}
+
+export interface ProfilePrivacySettings {
+  profileVisibility: 'private' | 'class_only' | 'school_only';
+  allowTeacherView: boolean;
+  allowPeerComparison: boolean;
+  shareForResearch: boolean;
+  enableMatching: boolean;
+  showInClassAnalytics: boolean;
+}
+
+export interface ResponseContribution {
+  questionText: string;
+  category: string;
+  response: string;
+  contributesToDimensions: string[];
+  impact: 'high' | 'medium' | 'low';
+}
