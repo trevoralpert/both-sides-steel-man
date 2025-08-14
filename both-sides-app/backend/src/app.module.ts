@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { ClassesModule } from './classes/classes.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
+import { SurveysModule } from './surveys/surveys.module';
 import clerkConfig from './config/clerk.config';
 
 @Module({
@@ -26,6 +27,7 @@ import clerkConfig from './config/clerk.config';
     ProfilesModule,
     ClassesModule,
     EnrollmentsModule,
+    SurveysModule,
   ],
   controllers: [AppController],
   providers: [AppService, CacheService],

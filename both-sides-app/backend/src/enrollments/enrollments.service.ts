@@ -1166,4 +1166,470 @@ export class EnrollmentsService {
 
     await Promise.all(patterns.map(pattern => this.cacheService.deletePattern(pattern)));
   }
+
+  /**
+   * Get enrollment analytics and statistics
+   */
+  async getEnrollmentAnalytics(
+    analyticsDto: any,
+    currentUser: User,
+  ): Promise<any> {
+    try {
+      const { 
+        organization_id, 
+        class_id, 
+        teacher_id, 
+        academic_year, 
+        term, 
+        include_status_breakdown, 
+        include_grade_distribution, 
+        include_trends 
+      } = analyticsDto;
+
+      // Build where clause based on filters and user permissions
+      const where: any = {};
+      
+      if (class_id) where.class_id = class_id;
+      if (organization_id) {
+        where.class = { organization_id };
+      }
+      if (teacher_id) {
+        where.class = { ...where.class, teacher_id };
+      }
+      if (academic_year) {
+        where.class = { ...where.class, academic_year };
+      }
+      if (term) {
+        where.class = { ...where.class, term };
+      }
+
+      // Apply role-based filtering
+      if (currentUser.role === 'TEACHER') {
+        where.class = { ...where.class, teacher_id: currentUser.id };
+      }
+
+      // Get basic enrollment statistics
+      const [
+        totalEnrollments,
+        enrollmentsByStatus,
+        recentEnrollments,
+        completedEnrollments,
+        enrollmentsWithDetails
+      ] = await Promise.all([
+        this.prisma.enrollment.count({ where }),
+        include_status_breakdown ? this.prisma.enrollment.groupBy({
+          by: ['enrollment_status'],
+          where,
+          _count: { enrollment_status: true },
+        }) : Promise.resolve([]),
+        this.prisma.enrollment.count({
+          where: {
+            ...where,
+            enrolled_at: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
+          }
+        }),
+        this.prisma.enrollment.count({
+          where: { ...where, enrollment_status: 'COMPLETED' }
+        }),
+        this.prisma.enrollment.findMany({
+          where,
+          include: {
+            user: true,
+            class: {
+              include: { organization: true, teacher: true }
+            }
+          },
+          take: 1000 // Limit for performance
+        })
+      ]);
+
+      // Calculate completion rate
+      const completionRate = totalEnrollments > 0 
+        ? Math.round((completedEnrollments / totalEnrollments) * 100)
+        : 0;
+
+      const analytics = {
+        overview: {
+          totalEnrollments,
+          recentEnrollments,
+          completedEnrollments,
+          completionRate,
+          averageClassSize: enrollmentsWithDetails.length > 0 
+            ? Math.round(totalEnrollments / new Set(enrollmentsWithDetails.map(e => e.class_id)).size)
+            : 0
+        },
+        breakdowns: {
+          ...(include_status_breakdown && { byStatus: enrollmentsByStatus })
+        },
+        metadata: {
+          generatedAt: new Date(),
+          filters: { organization_id, class_id, teacher_id, academic_year, term },
+          userRole: currentUser.role
+        }
+      };
+
+      this.logger.log(`Generated enrollment analytics for user ${currentUser.id}`);
+      return analytics;
+
+    } catch (error) {
+      this.logger.error(`Failed to generate enrollment analytics: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * Export class roster in various formats
+   */
+  async exportClassRoster(
+    classId: string,
+    exportDto: any,
+    currentUser: User,
+  ): Promise<any> {
+    try {
+      const { export_format = 'CSV', include_contact_info = false, include_grades = false } = exportDto;
+
+      // Get class and validate permissions
+      const classData = await this.prisma.class.findUnique({
+        where: { id: classId },
+        include: {
+          teacher: true,
+          organization: true,
+          enrollments: {
+            include: {
+              user: true
+            },
+            orderBy: { user: { last_name: 'asc' } }
+          }
+        }
+      });
+
+      if (!classData) {
+        throw new NotFoundException(`Class with ID "${classId}" not found`);
+      }
+
+      // Validate user can export this roster
+      if (currentUser.role === 'TEACHER' && classData.teacher_id !== currentUser.id) {
+        throw new ForbiddenException('You can only export rosters for your own classes');
+      }
+
+      // Prepare roster data
+      const rosterData = classData.enrollments.map(enrollment => {
+        const user = enrollment.user;
+        return {
+          student_id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          username: user.username,
+          enrollment_status: enrollment.enrollment_status,
+          enrolled_at: enrollment.enrolled_at.toISOString().split('T')[0],
+          ...(include_contact_info && { email: user.email }),
+          ...(include_grades && enrollment.final_grade && { final_grade: enrollment.final_grade })
+        };
+      });
+
+      const exportData = {
+        class: {
+          id: classData.id,
+          name: classData.name,
+          teacher: `${classData.teacher.first_name} ${classData.teacher.last_name}`,
+          organization: classData.organization.name,
+          academic_year: classData.academic_year,
+          term: classData.term
+        },
+        roster: rosterData,
+        summary: {
+          total_students: rosterData.length,
+          active_enrollments: rosterData.filter(r => r.enrollment_status === 'ACTIVE').length,
+          pending_enrollments: rosterData.filter(r => r.enrollment_status === 'PENDING').length,
+          completed_enrollments: rosterData.filter(r => r.enrollment_status === 'COMPLETED').length,
+          export_format,
+          exported_at: new Date(),
+          exported_by: `${currentUser.first_name} ${currentUser.last_name}`
+        }
+      };
+
+      // Log audit event
+      await this.auditService.logAction({
+        action: 'EXPORT',
+        entity_type: 'class_roster',
+        entity_id: classId,
+        actor_id: currentUser.id,
+        metadata: {
+          export_format,
+          include_contact_info,
+          include_grades,
+          student_count: rosterData.length
+        },
+      });
+
+      this.logger.log(`Exported roster for class ${classId} by user ${currentUser.id}`);
+      return exportData;
+
+    } catch (error) {
+      this.logger.error(`Failed to export class roster: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * Bulk update enrollment status
+   */
+  async bulkUpdateStatus(
+    bulkUpdateDto: any,
+    currentUser: User,
+  ): Promise<any> {
+    try {
+      const { enrollment_ids, new_status, status_change_reason } = bulkUpdateDto;
+
+      if (!enrollment_ids || enrollment_ids.length === 0) {
+        throw new BadRequestException('Enrollment IDs array cannot be empty');
+      }
+
+      if (enrollment_ids.length > 100) {
+        throw new BadRequestException('Cannot update more than 100 enrollments at once');
+      }
+
+      // Get enrollments and validate permissions
+      const enrollments = await this.prisma.enrollment.findMany({
+        where: { id: { in: enrollment_ids } },
+        include: {
+          user: true,
+          class: { include: { teacher: true } }
+        }
+      });
+
+      if (enrollments.length !== enrollment_ids.length) {
+        throw new NotFoundException('Some enrollments were not found');
+      }
+
+      // Validate user permissions for all enrollments
+      for (const enrollment of enrollments) {
+        if (currentUser.role === 'TEACHER' && enrollment.class.teacher_id !== currentUser.id) {
+          throw new ForbiddenException('You can only update enrollments in your own classes');
+        }
+      }
+
+      const results = [];
+      const now = new Date();
+
+      // Process each enrollment
+      for (const enrollment of enrollments) {
+        try {
+          // Validate status transition
+          await this.validateStatusTransition(enrollment.enrollment_status, new_status);
+
+          const updateData: any = {
+            enrollment_status: new_status,
+            updated_at: now
+          };
+
+          // Set completion/drop dates based on status
+          if (new_status === 'COMPLETED') {
+            updateData.completed_at = now;
+          } else if (new_status === 'DROPPED' || new_status === 'WITHDRAWN') {
+            updateData.dropped_at = now;
+          }
+
+          const updated = await this.prisma.enrollment.update({
+            where: { id: enrollment.id },
+            data: updateData
+          });
+
+          // Log audit event
+          await this.auditService.logAction({
+            action: 'BULK_STATUS_UPDATE',
+            entity_type: 'enrollment',
+            entity_id: enrollment.id,
+            actor_id: currentUser.id,
+            metadata: {
+              student_name: `${enrollment.user.first_name} ${enrollment.user.last_name}`,
+              class_name: enrollment.class.name,
+              previous_status: enrollment.enrollment_status,
+              new_status,
+              reason: status_change_reason
+            },
+          });
+
+          results.push({
+            enrollment_id: enrollment.id,
+            student_name: `${enrollment.user.first_name} ${enrollment.user.last_name}`,
+            class_name: enrollment.class.name,
+            status: 'success',
+            previous_status: enrollment.enrollment_status,
+            new_status
+          });
+
+        } catch (error) {
+          results.push({
+            enrollment_id: enrollment.id,
+            student_name: `${enrollment.user.first_name} ${enrollment.user.last_name}`,
+            class_name: enrollment.class.name,
+            status: 'failed',
+            error: error.message
+          });
+        }
+      }
+
+      const summary = {
+        total_requested: enrollment_ids.length,
+        successful: results.filter(r => r.status === 'success').length,
+        failed: results.filter(r => r.status === 'failed').length,
+        new_status,
+        reason: status_change_reason,
+        results
+      };
+
+      this.logger.log(`Completed bulk status update to ${new_status} on ${summary.successful}/${summary.total_requested} enrollments by user ${currentUser.id}`);
+      return summary;
+
+    } catch (error) {
+      this.logger.error(`Bulk status update failed: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * Transfer enrollment to another class
+   */
+  async transferEnrollment(
+    transferDto: any,
+    currentUser: User,
+  ): Promise<any> {
+    try {
+      const { enrollment_id, target_class_id, transfer_reason } = transferDto;
+
+      // Get source enrollment
+      const enrollment = await this.prisma.enrollment.findUnique({
+        where: { id: enrollment_id },
+        include: {
+          user: true,
+          class: { include: { teacher: true, organization: true } }
+        }
+      });
+
+      if (!enrollment) {
+        throw new NotFoundException(`Enrollment with ID "${enrollment_id}" not found`);
+      }
+
+      // Get target class
+      const targetClass = await this.prisma.class.findUnique({
+        where: { id: target_class_id },
+        include: {
+          teacher: true,
+          organization: true,
+          _count: { select: { enrollments: true } }
+        }
+      });
+
+      if (!targetClass) {
+        throw new NotFoundException(`Target class with ID "${target_class_id}" not found`);
+      }
+
+      // Validate permissions
+      if (currentUser.role === 'TEACHER') {
+        if (enrollment.class.teacher_id !== currentUser.id && targetClass.teacher_id !== currentUser.id) {
+          throw new ForbiddenException('You can only transfer enrollments between your own classes');
+        }
+      }
+
+      // Validate target class has capacity
+      if (targetClass._count.enrollments >= targetClass.max_students) {
+        throw new BadRequestException('Target class is at full capacity');
+      }
+
+      // Check for existing enrollment in target class
+      const existingEnrollment = await this.prisma.enrollment.findUnique({
+        where: {
+          user_id_class_id: {
+            user_id: enrollment.user_id,
+            class_id: target_class_id
+          }
+        }
+      });
+
+      if (existingEnrollment) {
+        throw new ConflictException('Student is already enrolled in the target class');
+      }
+
+      // Perform transfer as transaction
+      const result = await this.prisma.$transaction(async (tx) => {
+        // Create new enrollment in target class
+        const newEnrollment = await tx.enrollment.create({
+          data: {
+            user_id: enrollment.user_id,
+            class_id: target_class_id,
+            enrollment_status: 'PENDING'
+          }
+        });
+
+        // Archive old enrollment
+        const archivedEnrollment = await tx.enrollment.update({
+          where: { id: enrollment_id },
+          data: {
+            enrollment_status: 'WITHDRAWN',
+            dropped_at: new Date()
+          }
+        });
+
+        return { newEnrollment, archivedEnrollment };
+      });
+
+      // Log audit events
+      await Promise.all([
+        this.auditService.logAction({
+          action: 'TRANSFER_OUT',
+          entity_type: 'enrollment',
+          entity_id: enrollment_id,
+          actor_id: currentUser.id,
+          metadata: {
+            student_name: `${enrollment.user.first_name} ${enrollment.user.last_name}`,
+            source_class: enrollment.class.name,
+            target_class: targetClass.name,
+            reason: transfer_reason
+          },
+        }),
+        this.auditService.logAction({
+          action: 'TRANSFER_IN',
+          entity_type: 'enrollment',
+          entity_id: result.newEnrollment.id,
+          actor_id: currentUser.id,
+          metadata: {
+            student_name: `${enrollment.user.first_name} ${enrollment.user.last_name}`,
+            source_class: enrollment.class.name,
+            target_class: targetClass.name,
+            reason: transfer_reason
+          },
+        })
+      ]);
+
+      const transferResult = {
+        success: true,
+        transfer_id: `transfer_${Date.now()}`,
+        student: {
+          id: enrollment.user.id,
+          name: `${enrollment.user.first_name} ${enrollment.user.last_name}`
+        },
+        source_class: {
+          id: enrollment.class.id,
+          name: enrollment.class.name
+        },
+        target_class: {
+          id: targetClass.id,
+          name: targetClass.name
+        },
+        new_enrollment_id: result.newEnrollment.id,
+        archived_enrollment_id: enrollment_id,
+        transfer_reason,
+        transferred_at: new Date(),
+        transferred_by: `${currentUser.first_name} ${currentUser.last_name}`
+      };
+
+      this.logger.log(`Transferred enrollment ${enrollment_id} to class ${target_class_id} by user ${currentUser.id}`);
+      return transferResult;
+
+    } catch (error) {
+      this.logger.error(`Failed to transfer enrollment: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
 }

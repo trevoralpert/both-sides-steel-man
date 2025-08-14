@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 /**
  * Comprehensive validation rules and patterns for profile fields

@@ -274,8 +274,7 @@ export class EnrollmentsController {
     @CurrentUser() currentUser: User,
   ): Promise<any> {
     this.logger.log(`Getting enrollment analytics for user ${currentUser.id}`);
-    // TODO: Implement analytics service method
-    return { message: 'Enrollment analytics endpoint coming soon' };
+    return this.enrollmentsService.getEnrollmentAnalytics(analyticsDto, currentUser);
   }
 
   @Get('class/:classId/roster')
@@ -331,12 +330,7 @@ export class EnrollmentsController {
     @CurrentUser() currentUser: User,
   ): Promise<any> {
     this.logger.log(`Exporting roster for class ${classId} by user ${currentUser.id}`);
-    // TODO: Implement roster export functionality
-    return { 
-      message: 'Roster export functionality coming soon',
-      format: exportDto.export_format,
-      class_id: classId,
-    };
+    return this.enrollmentsService.exportClassRoster(classId, exportDto, currentUser);
   }
 
   @Get(':id')
@@ -498,12 +492,7 @@ export class EnrollmentsController {
     @CurrentUser() currentUser: User,
   ): Promise<any> {
     this.logger.log(`Bulk updating status for ${bulkUpdateDto.enrollment_ids.length} enrollments by user ${currentUser.id}`);
-    // TODO: Implement bulk status update service method
-    return { 
-      message: `Bulk status update to ${bulkUpdateDto.new_status} completed`,
-      processed_count: bulkUpdateDto.enrollment_ids.length,
-      new_status: bulkUpdateDto.new_status,
-    };
+    return this.enrollmentsService.bulkUpdateStatus(bulkUpdateDto, currentUser);
   }
 
   @Post('transfer')
@@ -524,13 +513,7 @@ export class EnrollmentsController {
     @CurrentUser() currentUser: User,
   ): Promise<any> {
     this.logger.log(`Transferring enrollment ${transferDto.enrollment_id} to class ${transferDto.target_class_id} by user ${currentUser.id}`);
-    // TODO: Implement transfer enrollment service method
-    return {
-      message: 'Enrollment transfer functionality coming soon',
-      enrollment_id: transferDto.enrollment_id,
-      target_class_id: transferDto.target_class_id,
-      reason: transferDto.transfer_reason,
-    };
+    return this.enrollmentsService.transferEnrollment(transferDto, currentUser);
   }
 
   @Delete(':id')

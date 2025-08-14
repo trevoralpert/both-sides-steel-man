@@ -837,4 +837,216 @@ export class ClassesService {
 
     await Promise.all(patterns.map(pattern => this.cacheService.deletePattern(pattern)));
   }
+
+  /**
+   * Get class analytics and statistics
+   */
+  async getClassAnalytics(
+    analyticsDto: any,
+    currentUser: User,
+  ): Promise<any> {
+    try {
+      const { organization_id, teacher_id, academic_year, term, include_subject_breakdown, include_grade_breakdown, include_trends } = analyticsDto;
+
+      // Build where clause based on filters and user permissions
+      const where: any = { is_active: true };
+      
+      if (organization_id) where.organization_id = organization_id;
+      if (teacher_id) where.teacher_id = teacher_id;
+      if (academic_year) where.academic_year = academic_year;
+      if (term) where.term = term;
+
+      // Apply role-based filtering
+      if (currentUser.role === 'TEACHER') {
+        where.teacher_id = currentUser.id;
+      }
+
+      // Get basic class statistics
+      const [totalClasses, activeClasses, classBySubject, classByGrade, classesWithEnrollments] = await Promise.all([
+        this.prisma.class.count({ where }),
+        this.prisma.class.count({ where: { ...where, is_active: true } }),
+        include_subject_breakdown ? this.prisma.class.groupBy({
+          by: ['subject'],
+          where,
+          _count: { subject: true },
+        }) : Promise.resolve([]),
+        include_grade_breakdown ? this.prisma.class.groupBy({
+          by: ['grade_level'],
+          where,
+          _count: { grade_level: true },
+        }) : Promise.resolve([]),
+        this.prisma.class.findMany({
+          where,
+          include: {
+            enrollments: true,
+            _count: {
+              select: { enrollments: true }
+            }
+          }
+        })
+      ]);
+
+      // Calculate enrollment statistics
+      const enrollmentStats = {
+        totalEnrollments: classesWithEnrollments.reduce((sum, cls) => sum + cls._count.enrollments, 0),
+        averageEnrollmentPerClass: classesWithEnrollments.length > 0 
+          ? Math.round(classesWithEnrollments.reduce((sum, cls) => sum + cls._count.enrollments, 0) / classesWithEnrollments.length)
+          : 0,
+        classCapacityUtilization: classesWithEnrollments.length > 0
+          ? Math.round((classesWithEnrollments.reduce((sum, cls) => sum + cls._count.enrollments, 0) / 
+              classesWithEnrollments.reduce((sum, cls) => sum + cls.max_students, 0)) * 100)
+          : 0
+      };
+
+      // Get enrollment trends if requested
+      let enrollmentTrends = null;
+      if (include_trends) {
+        const last30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        enrollmentTrends = await this.prisma.enrollment.groupBy({
+          by: ['enrolled_at'],
+          where: {
+            class: where,
+            enrolled_at: { gte: last30Days }
+          },
+          _count: { enrolled_at: true },
+          orderBy: { enrolled_at: 'asc' }
+        });
+      }
+
+      const analytics = {
+        overview: {
+          totalClasses,
+          activeClasses,
+          inactiveClasses: totalClasses - activeClasses,
+          ...enrollmentStats
+        },
+        breakdowns: {
+          ...(include_subject_breakdown && { bySubject: classBySubject }),
+          ...(include_grade_breakdown && { byGradeLevel: classByGrade })
+        },
+        ...(include_trends && { trends: enrollmentTrends }),
+        metadata: {
+          generatedAt: new Date(),
+          filters: { organization_id, teacher_id, academic_year, term },
+          userRole: currentUser.role
+        }
+      };
+
+      this.logger.log(`Generated class analytics for user ${currentUser.id}`);
+      return analytics;
+
+    } catch (error) {
+      this.logger.error(`Failed to generate class analytics: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * Perform bulk action on classes
+   */
+  async performBulkAction(
+    bulkActionDto: any,
+    currentUser: User,
+  ): Promise<any> {
+    try {
+      const { action, class_ids, reason } = bulkActionDto;
+
+      if (!class_ids || class_ids.length === 0) {
+        throw new BadRequestException('Class IDs array cannot be empty');
+      }
+
+      if (class_ids.length > 50) {
+        throw new BadRequestException('Cannot perform bulk action on more than 50 classes at once');
+      }
+
+      // Validate user has permission for all classes
+      const classes = await this.prisma.class.findMany({
+        where: { 
+          id: { in: class_ids },
+          ...(currentUser.role === 'TEACHER' && { teacher_id: currentUser.id })
+        },
+        include: { teacher: true, organization: true }
+      });
+
+      if (classes.length !== class_ids.length) {
+        throw new ForbiddenException('You do not have permission to modify some of the specified classes');
+      }
+
+      const results = [];
+      let updateData: any = {};
+
+      switch (action) {
+        case 'activate':
+          updateData = { is_active: true };
+          break;
+        case 'deactivate':
+          updateData = { is_active: false };
+          break;
+        case 'archive':
+          updateData = { is_active: false };
+          break;
+        default:
+          throw new BadRequestException(`Invalid bulk action: ${action}`);
+      }
+
+      // Perform bulk update
+      for (const classData of classes) {
+        try {
+          const updated = await this.prisma.class.update({
+            where: { id: classData.id },
+            data: updateData
+          });
+
+          // Log audit event
+          await this.auditService.logAction({
+            action: 'BULK_UPDATE',
+            entity_type: 'class',
+            entity_id: classData.id,
+            actor_id: currentUser.id,
+            metadata: {
+              bulk_action: action,
+              reason,
+              class_name: classData.name,
+              previous_status: classData.is_active,
+              new_status: updateData.is_active
+            },
+          });
+
+          results.push({
+            class_id: classData.id,
+            class_name: classData.name,
+            status: 'success',
+            action_performed: action
+          });
+
+        } catch (error) {
+          results.push({
+            class_id: classData.id,
+            class_name: classData.name,
+            status: 'failed',
+            error: error.message
+          });
+        }
+      }
+
+      // Clear relevant caches
+      await this.clearClassCaches(currentUser.id, classes[0]?.organization_id);
+
+      const summary = {
+        total_requested: class_ids.length,
+        successful: results.filter(r => r.status === 'success').length,
+        failed: results.filter(r => r.status === 'failed').length,
+        action: action,
+        reason,
+        results
+      };
+
+      this.logger.log(`Completed bulk ${action} on ${summary.successful}/${summary.total_requested} classes by user ${currentUser.id}`);
+      return summary;
+
+    } catch (error) {
+      this.logger.error(`Bulk action failed: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
 }

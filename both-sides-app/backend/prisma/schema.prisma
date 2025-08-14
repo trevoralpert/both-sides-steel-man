@@ -82,6 +82,7 @@ model Profile {
   
   // Relations
   user                  User      @relation(fields: [user_id], references: [id])
+  survey_responses      SurveyResponse[]
   
   @@map("profiles")
   @@index([is_completed])
@@ -206,6 +207,94 @@ model AuditLog {
   @@map("audit_logs")
   @@index([entity_type, entity_id])
   @@index([created_at])
+}
+
+// =============================================================================
+// Phase 3: Onboarding & Belief Mapping - Survey Models (Step 3.1.1)
+// =============================================================================
+
+enum SurveyQuestionCategory {
+  POLITICAL
+  SOCIAL
+  ECONOMIC
+  PHILOSOPHICAL
+  PERSONAL
+}
+
+enum SurveyQuestionType {
+  LIKERT
+  BINARY
+  MULTIPLE_CHOICE
+  RANKING
+  SLIDER
+  TEXT
+}
+
+model Survey {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  version     Int      @default(1)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  questions   SurveyQuestion[]
+  responses   SurveyResponse[] @relation(name: "SurveyToResponse")
+
+  @@map("surveys")
+  @@index([is_active, version])
+}
+
+model SurveyQuestion {
+  id                   String                  @id @default(cuid())
+  survey_id            String
+  section              String?
+  order                Int
+  category             SurveyQuestionCategory
+  type                 SurveyQuestionType
+  question             String
+  options              Json?
+  scale                Json?
+  weight               Float                   @default(1)
+  ideology_mapping     Json?
+  required             Boolean                 @default(true)
+  randomize_within_sec Boolean                 @default(false)
+  is_active            Boolean                 @default(true)
+  created_at           DateTime                @default(now())
+  updated_at           DateTime                @updatedAt
+
+  // Relations
+  survey               Survey                  @relation(fields: [survey_id], references: [id])
+  responses            SurveyResponse[]
+
+  @@map("survey_questions")
+  @@index([survey_id, section, order])
+  @@index([is_active])
+}
+
+model SurveyResponse {
+  id                String   @id @default(cuid())
+  profile_id        String
+  question_id       String
+  response_value    Json
+  response_text     String?
+  confidence_level  Int?
+  completion_time   Int      @default(0)
+  responded_at      DateTime @default(now())
+  survey_id         String
+  survey_version    Int
+
+  // Relations
+  profile           Profile  @relation(fields: [profile_id], references: [id])
+  question          SurveyQuestion @relation(fields: [question_id], references: [id])
+  survey            Survey   @relation(fields: [survey_id], references: [id], name: "SurveyToResponse")
+
+  @@map("survey_responses")
+  @@index([profile_id])
+  @@index([question_id])
+  @@index([survey_id, survey_version])
 }
 
 // =============================================================================

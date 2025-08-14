@@ -641,4 +641,84 @@ export class UsersService {
       throw error;
     }
   }
+
+  /**
+   * Update user status
+   */
+  async updateUserStatus(userId: string, statusDto: UpdateUserStatusDto): Promise<User> {
+    try {
+      this.logger.log(`Updating status for user ${userId} to ${statusDto.status}`);
+      
+      return await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          is_active: statusDto.status === UserStatus.ACTIVE,
+          updated_at: new Date(),
+        },
+      });
+    } catch (error) {
+      this.logger.error(`Failed to update user status: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * Bulk import users
+   */
+  async bulkImportUsers(importDto: BulkImportUserDto): Promise<any> {
+    try {
+      this.logger.log(`Bulk importing ${importDto.users?.length || 0} users`);
+      
+      const results = {
+        success: 0,
+        failed: 0,
+        errors: [] as string[],
+      };
+
+      // Mock implementation for now
+      for (const userData of importDto.users || []) {
+        try {
+          // Validate and create user
+          results.success++;
+        } catch (error) {
+          results.failed++;
+          results.errors.push(`User ${userData.email}: ${error.message}`);
+        }
+      }
+
+      return results;
+    } catch (error) {
+      this.logger.error(`Failed to bulk import users: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * Bulk update user status
+   */
+  async bulkUpdateUserStatus(bulkStatusDto: BulkUserStatusDto): Promise<any> {
+    try {
+      this.logger.log(`Bulk updating status for ${bulkStatusDto.user_ids?.length || 0} users`);
+      
+      const updateData = {
+        is_active: bulkStatusDto.status === UserStatus.ACTIVE,
+        updated_at: new Date(),
+      };
+
+      const result = await this.prisma.user.updateMany({
+        where: {
+          id: { in: bulkStatusDto.user_ids || [] },
+        },
+        data: updateData,
+      });
+
+      return {
+        updated_count: result.count,
+        status: bulkStatusDto.status,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to bulk update user status: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
 }

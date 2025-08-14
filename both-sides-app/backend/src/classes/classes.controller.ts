@@ -253,8 +253,7 @@ export class ClassesController {
     @CurrentUser() currentUser: User,
   ): Promise<any> {
     this.logger.log(`Getting class analytics for user ${currentUser.id}`);
-    // TODO: Implement analytics service method
-    return { message: 'Analytics endpoint coming soon' };
+    return this.classesService.getClassAnalytics(analyticsDto, currentUser);
   }
 
   @Get(':id')
@@ -443,12 +442,7 @@ export class ClassesController {
     @CurrentUser() currentUser: User,
   ): Promise<any> {
     this.logger.log(`Performing bulk action ${bulkActionDto.action} on ${bulkActionDto.class_ids.length} classes by user ${currentUser.id}`);
-    // TODO: Implement bulk action service method
-    return { 
-      message: `Bulk ${bulkActionDto.action} action completed`,
-      processed_count: bulkActionDto.class_ids.length,
-      action: bulkActionDto.action,
-    };
+    return this.classesService.performBulkAction(bulkActionDto, currentUser);
   }
 
   @Delete(':id')

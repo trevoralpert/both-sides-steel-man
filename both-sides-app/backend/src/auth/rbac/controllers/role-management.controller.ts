@@ -23,7 +23,8 @@ import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { RbacGuard } from '../guards/rbac.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { Permissions } from '../decorators/permissions.decorator';
-import { CurrentUser, AuthenticatedUser } from '../decorators/current-user.decorator';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import type { AuthenticatedUser } from '../decorators/current-user.decorator';
 import { RoleManagementService, RoleChangeRequest, PermissionCheckRequest } from '../services/role-management.service';
 import { Permission } from '../permissions';
 
