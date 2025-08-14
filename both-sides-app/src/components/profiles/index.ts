@@ -7,6 +7,7 @@ export { ProfileDashboard } from './ProfileDashboard';
 export { BeliefProfileVisualization } from './BeliefProfileVisualization';
 export { ProfileConfirmation } from './ProfileConfirmation';
 export { ResponseEditor } from './ResponseEditor';
+export { PartialProfileManager } from './PartialProfileManager';
 export { EducationalProfileGuide } from './EducationalProfileGuide';
 export { ProfilePrivacyManager } from './ProfilePrivacyManager';
 

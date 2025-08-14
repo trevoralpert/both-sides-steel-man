@@ -5,6 +5,11 @@
 
 // Core Survey Components (Phase 3.1)
 export { SurveyQuestionComponent } from './SurveyQuestion';
+export { EnhancedOnboardingFlow } from './EnhancedOnboardingFlow';
+export { OnboardingOptimizationSystem } from './OnboardingOptimizationSystem';
+export { OnboardingCompletionTracker } from './OnboardingCompletionTracker';
+export { OnboardingAnalyticsDashboard } from './OnboardingAnalyticsDashboard';
+export { OnboardingNotificationSystem } from './OnboardingNotificationSystem';
 export { SurveyFlow } from './SurveyFlow';
 export { SurveyProgressDisplay, SurveyProgressCompact } from './SurveyProgress';
 export { SurveyGamification, SurveyLeaderboard, CompletionCertificate } from './SurveyGamification';

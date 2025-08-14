@@ -15,6 +15,7 @@ import { BeliefAnalysisService } from './services/belief-analysis.service';
 import { BeliefEmbeddingService } from './services/belief-embedding.service';
 import { IdeologyMappingService } from './services/ideology-mapping.service';
 import { PlasticityAnalysisService } from './services/plasticity-analysis.service';
+import { VectorSimilarityService } from './services/vector-similarity.service';
 import { CommonModule } from '../common/common.module';
 import { PrismaModule } from '../prisma/prisma.module';
 
@@ -32,12 +33,14 @@ import { PrismaModule } from '../prisma/prisma.module';
     BeliefEmbeddingService,
     IdeologyMappingService,
     PlasticityAnalysisService,
+    VectorSimilarityService,
   ],
   exports: [
     BeliefAnalysisService,
     BeliefEmbeddingService,
     IdeologyMappingService,
     PlasticityAnalysisService,
+    VectorSimilarityService,
   ],
 })
 export class BeliefAnalysisModule {
@@ -49,5 +52,6 @@ export class BeliefAnalysisModule {
     console.log('  - Multi-dimensional ideology mapping');
     console.log('  - Opinion plasticity scoring');
     console.log('  - Vector embedding generation');
+    console.log('  - High-performance vector similarity calculations');
   }
 }

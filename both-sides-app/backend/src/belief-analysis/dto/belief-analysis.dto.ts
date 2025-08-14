@@ -6,7 +6,7 @@
  * AI-powered belief profile generation.
  */
 
-import { IsString, IsArray, IsObject, IsOptional, IsEnum, IsNumber, Min, Max, ValidateNested } from 'class-validator';
+import { IsString, IsArray, IsObject, IsOptional, IsEnum, IsNumber, IsBoolean, Min, Max, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class SurveyResponseDataDto {
@@ -201,6 +201,128 @@ export class EmbeddingMetadataDto {
 
   @IsString()
   version: string;
+}
+
+// Phase 4 Task 4.1.2: Vector Similarity DTOs
+
+export class SimilaritySearchDto {
+  @IsString()
+  profileId: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(1)
+  threshold?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  limit?: number;
+
+  @IsOptional()
+  @IsString()
+  classId?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  excludeUserIds?: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  includeDistance?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  useCache?: boolean;
+}
+
+export class BatchSimilarityDto {
+  @IsString()
+  targetId: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  candidateIds: string[];
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(1)
+  threshold?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  maxResults?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  includeMetadata?: boolean;
+}
+
+export class SimilarityScoreDto {
+  @IsString()
+  profileId: string;
+
+  @IsOptional()
+  @IsString()
+  userId?: string;
+
+  @IsNumber()
+  similarityScore: number;
+
+  @IsNumber()
+  distance: number;
+
+  @IsNumber()
+  rank: number;
+
+  @IsOptional()
+  @IsObject()
+  metadata?: {
+    calculatedAt: string;
+    algorithmVersion: string;
+  };
+}
+
+export class SimilarityResultDto {
+  @IsString()
+  targetProfileId: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SimilarityScoreDto)
+  matches: SimilarityScoreDto[];
+
+  @IsNumber()
+  threshold: number;
+
+  @IsNumber()
+  totalCandidates: number;
+
+  @IsNumber()
+  processingTime: number;
+
+  @IsBoolean()
+  cacheHit: boolean;
+}
+
+export class OptimalMatchesDto {
+  @IsString()
+  profileId: string;
+
+  @IsString()
+  classId: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(50)
+  limit?: number;
 }
 
 export class EmbeddingResponseDto {

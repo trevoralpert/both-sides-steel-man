@@ -25,6 +25,7 @@ import { BeliefAnalysisService } from './services/belief-analysis.service';
 import { BeliefEmbeddingService } from './services/belief-embedding.service';
 import { IdeologyMappingService } from './services/ideology-mapping.service';
 import { PlasticityAnalysisService } from './services/plasticity-analysis.service';
+import { VectorSimilarityService } from './services/vector-similarity.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RBACGuard } from '../auth/rbac/guards/rbac.guard';
 import { Permissions } from '../auth/rbac/decorators/permissions.decorator';
@@ -38,6 +39,12 @@ import {
   SimilarityMatchDto,
   AnalyzePlasticityDto,
   PlasticityAnalysisResponseDto,
+  // Phase 4 Task 4.1.2: Vector Similarity DTOs
+  SimilaritySearchDto,
+  BatchSimilarityDto,
+  SimilarityResultDto,
+  OptimalMatchesDto,
+  SimilarityScoreDto,
 } from './dto/belief-analysis.dto';
 
 @Controller('api/belief-analysis')
@@ -50,6 +57,7 @@ export class BeliefAnalysisController {
     private readonly embeddingService: BeliefEmbeddingService,
     private readonly ideologyService: IdeologyMappingService,
     private readonly plasticityService: PlasticityAnalysisService,
+    private readonly vectorSimilarityService: VectorSimilarityService,
   ) {}
 
   /**
@@ -681,5 +689,243 @@ export class BeliefAnalysisController {
 
     // Placeholder - always allow for now
     this.logger.debug(`Verified access for user ${user.id} to profile ${profileId}`);
+  }
+
+  // ===== Phase 4 Task 4.1.2: Vector Similarity Endpoints =====
+
+  /**
+   * Find similar profiles using vector similarity search
+   * POST /api/belief-analysis/similarity/search
+   */
+  @Post('similarity/search')
+  @UseGuards(RBACGuard)
+  @Permissions('profile:analyze', 'profile:read')
+  async findSimilarProfiles(
+    @Body() searchDto: SimilaritySearchDto,
+    @CurrentUser() user: any,
+  ): Promise<SimilarityResultDto> {
+    try {
+      this.logger.log(`Finding similar profiles for ${searchDto.profileId} by user ${user.id}`);
+
+      // Verify user can access this profile
+      await this.verifyProfileAccess(searchDto.profileId, user);
+
+      // Find similar profiles
+      const result = await this.vectorSimilarityService.findSimilarProfiles(
+        searchDto.profileId,
+        {
+          threshold: searchDto.threshold,
+          limit: searchDto.limit,
+          classId: searchDto.classId,
+          excludeUserIds: searchDto.excludeUserIds,
+          includeDistance: searchDto.includeDistance,
+          useCache: searchDto.useCache,
+        }
+      );
+
+      // Transform to DTO format
+      const responseDto: SimilarityResultDto = {
+        targetProfileId: result.targetProfileId,
+        matches: result.matches.map(match => ({
+          profileId: match.profileId,
+          userId: match.userId,
+          similarityScore: match.similarityScore,
+          distance: match.distance,
+          rank: match.rank,
+          metadata: match.metadata ? {
+            calculatedAt: match.metadata.calculatedAt.toISOString(),
+            algorithmVersion: match.metadata.algorithmVersion
+          } : undefined
+        })),
+        threshold: result.threshold,
+        totalCandidates: result.totalCandidates,
+        processingTime: result.processingTime,
+        cacheHit: result.cacheHit
+      };
+
+      this.logger.log(`Found ${result.matches.length} similar profiles in ${result.processingTime}ms`);
+      
+      return responseDto;
+
+    } catch (error) {
+      this.logger.error(`Failed to find similar profiles: ${error.message}`, error.stack);
+      throw new HttpException(
+        error.message || 'Failed to find similar profiles',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * Calculate similarity score between two specific profiles
+   * POST /api/belief-analysis/similarity/calculate
+   */
+  @Post('similarity/calculate')
+  @UseGuards(RBACGuard)
+  @Permissions('profile:analyze', 'profile:read')
+  async calculateSimilarity(
+    @Body() body: { profileId1: string; profileId2: string },
+    @CurrentUser() user: any,
+  ): Promise<{ similarity: number; distance: number }> {
+    try {
+      const { profileId1, profileId2 } = body;
+      
+      this.logger.log(`Calculating similarity between ${profileId1} and ${profileId2} by user ${user.id}`);
+
+      // Verify user can access both profiles
+      await this.verifyProfileAccess(profileId1, user);
+      await this.verifyProfileAccess(profileId2, user);
+
+      // Calculate similarity and distance
+      const [similarity, distance] = await Promise.all([
+        this.vectorSimilarityService.calculateCosineSimilarity(profileId1, profileId2),
+        this.vectorSimilarityService.calculateEuclideanDistance(profileId1, profileId2)
+      ]);
+
+      this.logger.log(`Similarity: ${similarity.toFixed(4)}, Distance: ${distance.toFixed(4)}`);
+      
+      return {
+        similarity: Math.round(similarity * 10000) / 10000, // Round to 4 decimal places
+        distance: Math.round(distance * 10000) / 10000
+      };
+
+    } catch (error) {
+      this.logger.error(`Failed to calculate similarity: ${error.message}`, error.stack);
+      throw new HttpException(
+        error.message || 'Failed to calculate similarity',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * Get optimal matches for a profile within a class (for matching engine)
+   * POST /api/belief-analysis/similarity/optimal-matches
+   */
+  @Post('similarity/optimal-matches')
+  @UseGuards(RBACGuard)
+  @Permissions('profile:analyze', 'class:read')
+  async getOptimalMatches(
+    @Body() matchesDto: OptimalMatchesDto,
+    @CurrentUser() user: any,
+  ): Promise<SimilarityScoreDto[]> {
+    try {
+      this.logger.log(
+        `Getting optimal matches for profile ${matchesDto.profileId} in class ${matchesDto.classId}`
+      );
+
+      // Verify user can access this profile and class
+      await this.verifyProfileAccess(matchesDto.profileId, user);
+      // TODO: Add class access verification
+
+      // Get optimal matches
+      const matches = await this.vectorSimilarityService.getOptimalMatches(
+        matchesDto.profileId,
+        matchesDto.classId,
+        matchesDto.limit
+      );
+
+      // Transform to DTOs
+      const matchDtos: SimilarityScoreDto[] = matches.map(match => ({
+        profileId: match.profileId,
+        userId: match.userId,
+        similarityScore: match.similarityScore,
+        distance: match.distance,
+        rank: match.rank,
+        metadata: match.metadata ? {
+          calculatedAt: match.metadata.calculatedAt.toISOString(),
+          algorithmVersion: match.metadata.algorithmVersion
+        } : undefined
+      }));
+
+      this.logger.log(`Found ${matches.length} optimal matches`);
+      
+      return matchDtos;
+
+    } catch (error) {
+      this.logger.error(`Failed to get optimal matches: ${error.message}`, error.stack);
+      throw new HttpException(
+        error.message || 'Failed to get optimal matches',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * Batch similarity calculation for multiple candidates
+   * POST /api/belief-analysis/similarity/batch
+   */
+  @Post('similarity/batch')
+  @UseGuards(RBACGuard)
+  @Permissions('profile:analyze', 'profile:read')
+  async batchSimilarityCalculation(
+    @Body() batchDto: BatchSimilarityDto,
+    @CurrentUser() user: any,
+  ): Promise<SimilarityScoreDto[]> {
+    try {
+      this.logger.log(
+        `Batch similarity calculation for ${batchDto.candidateIds.length} candidates against ${batchDto.targetId}`
+      );
+
+      // Verify user can access target profile
+      await this.verifyProfileAccess(batchDto.targetId, user);
+
+      // Calculate batch similarities
+      const similarities = await this.vectorSimilarityService.batchSimilarityCalculation({
+        targetId: batchDto.targetId,
+        candidateIds: batchDto.candidateIds,
+        threshold: batchDto.threshold,
+        maxResults: batchDto.maxResults,
+        includeMetadata: batchDto.includeMetadata
+      });
+
+      // Transform to DTOs
+      const similarityDtos: SimilarityScoreDto[] = similarities.map(sim => ({
+        profileId: sim.profileId,
+        userId: sim.userId,
+        similarityScore: sim.similarityScore,
+        distance: sim.distance,
+        rank: sim.rank,
+        metadata: sim.metadata ? {
+          calculatedAt: sim.metadata.calculatedAt.toISOString(),
+          algorithmVersion: sim.metadata.algorithmVersion
+        } : undefined
+      }));
+
+      this.logger.log(`Processed batch similarity calculation: ${similarities.length} results`);
+      
+      return similarityDtos;
+
+    } catch (error) {
+      this.logger.error(`Failed batch similarity calculation: ${error.message}`, error.stack);
+      throw new HttpException(
+        error.message || 'Failed batch similarity calculation',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * Get similarity thresholds configuration
+   * GET /api/belief-analysis/similarity/thresholds
+   */
+  @Get('similarity/thresholds')
+  @UseGuards(RBACGuard)
+  @Permissions('profile:read')
+  async getSimilarityThresholds(): Promise<Record<string, number>> {
+    try {
+      const thresholds = this.vectorSimilarityService.getSimilarityThresholds();
+      
+      this.logger.log('Retrieved similarity thresholds configuration');
+      
+      return thresholds;
+
+    } catch (error) {
+      this.logger.error(`Failed to get similarity thresholds: ${error.message}`, error.stack);
+      throw new HttpException(
+        'Failed to get similarity thresholds',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

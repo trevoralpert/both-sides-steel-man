@@ -8,6 +8,7 @@
 import { useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { SurveyFlow, OnboardingFlow } from '@/components/surveys';
+import { EnhancedOnboardingFlow } from '@/components/surveys/EnhancedOnboardingFlow';
 import { Card, CardContent } from '@/components/ui/card';
 
 type PageState = 'onboarding' | 'survey' | 'completed';
@@ -56,9 +57,11 @@ export default function SurveyPage() {
 
   if (pageState === 'onboarding') {
     return (
-      <OnboardingFlow
+      <EnhancedOnboardingFlow
         onComplete={handleOnboardingComplete}
         onStartSurvey={handleStartSurvey}
+        enableAutoSave={true}
+        enableCrossDeviceSync={true}
       />
     );
   }

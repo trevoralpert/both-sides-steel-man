@@ -45,6 +45,14 @@ model User {
   created_classes   Class[]
   teacher_notifications CompletionNotification[] @relation("TeacherNotifications")
   
+  // Phase 4: Matching system relations
+  student1_matches  Match[]         @relation("Student1Matches")
+  student2_matches  Match[]         @relation("Student2Matches") 
+  created_topics    DebateTopic[]   @relation("CreatedTopics")
+  match_history     MatchHistory[]  @relation("UserMatchHistory")
+  matched_user_history MatchHistory[] @relation("MatchedUserHistory")
+  match_responses   MatchResponse[] @relation("MatchResponses")
+  
   // Future Phase integration fields (Phase 9: TimeBack Integration)
   timeback_user_id     String?
   timeback_synced_at   DateTime?
@@ -149,6 +157,9 @@ model Class {
   teacher           User         @relation(fields: [teacher_id], references: [id])
   enrollments       Enrollment[]
   completion_stats  ClassCompletionStats[]
+  
+  // Phase 4: Matching system relations
+  matches           Match[]
   
   // Future Phase integration fields (Phase 9: TimeBack Integration)
   timeback_class_id    String?
@@ -407,6 +418,138 @@ model CompletionNotification {
   @@index([profile_id])
   @@index([teacher_id])
   @@index([notification_type])
+}
+
+// =============================================================================
+// Phase 4: Matching Engine & Debate Setup - Database Models
+// =============================================================================
+
+enum MatchStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+enum DebatePosition {
+  PRO
+  CON
+}
+
+enum MatchOutcome {
+  COMPLETED
+  CANCELLED
+  NO_RESPONSE
+  EXPIRED
+}
+
+// Phase 4 Task 4.1.1: Matches table for student pairing
+model Match {
+  id                    String         @id @default(cuid())
+  class_id              String
+  student1_id           String
+  student2_id           String
+  status                MatchStatus    @default(PENDING)
+  match_quality_score   Float?         // 0-100 quality prediction
+  topic_id              String?        // Nullable until topic selection
+  student1_position     DebatePosition?
+  student2_position     DebatePosition?
+  expires_at            DateTime?      // Match expiration time
+  match_metadata        Json?          // Algorithm decision details
+  created_at            DateTime       @default(now())
+  updated_at            DateTime       @updatedAt
+
+  // Relations
+  class                 Class          @relation(fields: [class_id], references: [id])
+  student1              User           @relation("Student1Matches", fields: [student1_id], references: [id])
+  student2              User           @relation("Student2Matches", fields: [student2_id], references: [id])
+  topic                 DebateTopic?   @relation(fields: [topic_id], references: [id])
+  match_history         MatchHistory[]
+  match_responses       MatchResponse[]
+
+  @@map("matches")
+  @@index([class_id])
+  @@index([status])
+  @@index([student1_id])
+  @@index([student2_id])
+  @@index([topic_id])
+  @@index([expires_at])
+}
+
+// Phase 4 Task 4.1.1: Debate topics management
+model DebateTopic {
+  id                    String    @id @default(cuid())
+  title                 String
+  description           String
+  category              String    // "Politics", "Ethics", "Technology", etc.
+  difficulty_level      Int       @default(5)  // 1-10 scale
+  complexity_score      Float?    // Calculated complexity metric
+  pro_resources         Json?     // Resources supporting PRO position
+  con_resources         Json?     // Resources supporting CON position
+  is_active             Boolean   @default(true)
+  usage_count           Int       @default(0)  // Track topic usage
+  success_rate          Float?    // Completion rate for this topic
+  created_by            String?   // Teacher who created it
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+
+  // Relations
+  creator               User?     @relation("CreatedTopics", fields: [created_by], references: [id])
+  matches               Match[]
+
+  @@map("debate_topics")
+  @@index([category])
+  @@index([difficulty_level])
+  @@index([is_active])
+  @@index([created_by])
+}
+
+// Phase 4 Task 4.1.1: Match history tracking
+model MatchHistory {
+  id                    String      @id @default(cuid())
+  user_id               String
+  matched_user_id       String
+  match_id              String
+  outcome               MatchOutcome
+  satisfaction_rating   Int?        // 1-5 rating from user
+  learning_rating       Int?        // 1-5 how much they learned
+  quality_feedback      String?     // Optional feedback text
+  completion_time       Int?        // Duration in minutes
+  created_at            DateTime    @default(now())
+
+  // Relations
+  user                  User        @relation("UserMatchHistory", fields: [user_id], references: [id])
+  matched_user          User        @relation("MatchedUserHistory", fields: [matched_user_id], references: [id])
+  match                 Match       @relation(fields: [match_id], references: [id])
+
+  @@map("match_history")
+  @@index([user_id])
+  @@index([matched_user_id])
+  @@index([match_id])
+  @@index([outcome])
+  @@index([created_at])
+}
+
+// Phase 4 Task 4.3.3: Match response tracking
+model MatchResponse {
+  id                    String      @id @default(cuid())
+  match_id              String
+  user_id               String
+  response              String      // 'accept' or 'reject'
+  reason                String?     // Optional reason for rejection
+  responded_at          DateTime    @default(now())
+
+  // Relations
+  match                 Match       @relation(fields: [match_id], references: [id])
+  user                  User        @relation("MatchResponses", fields: [user_id], references: [id])
+
+  @@map("match_responses")
+  @@unique([match_id, user_id])
+  @@index([match_id])
+  @@index([user_id])
 }
 
 // =============================================================================

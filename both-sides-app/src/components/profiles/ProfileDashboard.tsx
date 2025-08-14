@@ -34,6 +34,7 @@ import {
   Settings
 } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
+import { PartialProfileManager } from './PartialProfileManager';
 
 interface DashboardStats {
   totalProfiles: number;

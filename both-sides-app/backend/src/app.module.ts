@@ -12,6 +12,7 @@ import { ClassesModule } from './classes/classes.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { SurveysModule } from './surveys/surveys.module';
 import { BeliefAnalysisModule } from './belief-analysis/belief-analysis.module';
+import { TopicsModule } from './topics/topics.module';
 import clerkConfig from './config/clerk.config';
 
 @Module({
@@ -30,6 +31,7 @@ import clerkConfig from './config/clerk.config';
     EnrollmentsModule,
     SurveysModule,
     BeliefAnalysisModule,
+    TopicsModule,
   ],
   controllers: [AppController],
   providers: [AppService, CacheService],
