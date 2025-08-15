@@ -53,6 +53,9 @@ model User {
   matched_user_history MatchHistory[] @relation("MatchedUserHistory")
   match_responses   MatchResponse[] @relation("MatchResponses")
   
+  // Phase 5: Real-time debate relations
+  messages          Message[]       // Messages sent by this user
+  
   // Future Phase integration fields (Phase 9: TimeBack Integration)
   timeback_user_id     String?
   timeback_synced_at   DateTime?
@@ -469,6 +472,9 @@ model Match {
   topic                 DebateTopic?   @relation(fields: [topic_id], references: [id])
   match_history         MatchHistory[]
   match_responses       MatchResponse[]
+  
+  // Phase 5: Real-time debate relations
+  conversation          Conversation?  // One-to-one relationship
 
   @@map("matches")
   @@index([class_id])
@@ -553,24 +559,131 @@ model MatchResponse {
 }
 
 // =============================================================================
+// Phase 5: Real-time Debate System - Database Models
+// =============================================================================
+
+enum ConversationStatus {
+  PREPARING
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum DebatePhase {
+  PREPARATION
+  OPENING
+  DISCUSSION
+  REBUTTAL
+  CLOSING
+  REFLECTION
+}
+
+enum MessageContentType {
+  TEXT
+  SYSTEM
+  MODERATION
+  COACHING
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+  MODERATED
+  DELETED
+}
+
+enum ModerationStatus {
+  APPROVED
+  FLAGGED
+  BLOCKED
+  REVIEWED
+}
+
+// Phase 5 Task 5.1.1: Conversations table linking accepted matches to debates
+model Conversation {
+  id                    String             @id @default(cuid())
+  match_id              String             @unique // Links to Phase 4 matches
+  status                ConversationStatus @default(PREPARING)
+  debate_phase          DebatePhase        @default(PREPARATION)
+  phase_deadline        DateTime?          // When current phase ends
+  started_at            DateTime?          // When debate actually began
+  ended_at              DateTime?          // When debate completed/cancelled
+  conversation_metadata Json?              // Session config, rules, etc.
+  created_at            DateTime           @default(now())
+  updated_at            DateTime           @updatedAt
+
+  // Relations
+  match                 Match              @relation(fields: [match_id], references: [id], onDelete: Cascade)
+  messages              Message[]
+  debate_sessions       DebateSession[]
+
+  @@map("conversations")
+  @@index([status])
+  @@index([debate_phase])
+  @@index([phase_deadline])
+  @@index([match_id, status])
+}
+
+// Phase 5 Task 5.1.1: Messages table for real-time chat in debates
+model Message {
+  id                    String             @id @default(cuid())
+  conversation_id       String
+  user_id               String
+  content               String
+  content_type          MessageContentType @default(TEXT)
+  message_metadata      Json?              // Formatting, attachments, etc.
+  reply_to_id           String?            // For threaded discussions
+  status                MessageStatus      @default(SENT)
+  moderation_status     ModerationStatus   @default(APPROVED)
+  created_at            DateTime           @default(now())
+  updated_at            DateTime           @updatedAt
+  edited_at             DateTime?          // Track message edits
+
+  // Relations
+  conversation          Conversation       @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  user                  User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  reply_to              Message?           @relation("MessageReplies", fields: [reply_to_id], references: [id])
+  replies               Message[]          @relation("MessageReplies")
+
+  @@map("messages")
+  @@index([conversation_id])
+  @@index([user_id])
+  @@index([created_at])
+  @@index([status])
+  @@index([moderation_status])
+  @@index([reply_to_id])
+  @@index([conversation_id, created_at])
+  @@index([conversation_id, status])
+}
+
+// Phase 5 Task 5.1.1: Debate sessions for session state management
+model DebateSession {
+  id                    String       @id @default(cuid())
+  conversation_id       String       @unique
+  session_config        Json?        // Debate rules, time limits, etc.
+  participant_states    Json?        // Online status, typing, etc.
+  phase_history         Json?        // Track phase transitions
+  performance_metrics   Json?        // Real-time analytics
+  created_at            DateTime     @default(now())
+  updated_at            DateTime     @updatedAt
+
+  // Relations
+  conversation          Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+
+  @@map("debate_sessions")
+  @@index([conversation_id])
+}
+
+
+
+// =============================================================================
 // FUTURE PHASES - COMMENTED OUT FOR NOW (Will be uncommented in later phases)
 // =============================================================================
 
 /*
-// Phase 5+ Models - To be implemented in later phases
-// These models are commented out to maintain Phase 2 scope
-
-model Debate {
-  // Will be implemented in Phase 5: Real-time Debate System
-}
-
-model DebateParticipation {
-  // Will be implemented in Phase 5: Real-time Debate System
-}
-
-model DebateMessage {
-  // Will be implemented in Phase 5: Real-time Debate System
-}
+// Phase 7+ Models - To be implemented in later phases
 
 model Reflection {
   // Will be implemented in Phase 7: Reflection & Learning System

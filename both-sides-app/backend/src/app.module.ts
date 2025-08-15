@@ -13,6 +13,8 @@ import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { SurveysModule } from './surveys/surveys.module';
 import { BeliefAnalysisModule } from './belief-analysis/belief-analysis.module';
 import { TopicsModule } from './topics/topics.module';
+import { RealtimeModule } from './realtime/realtime.module';
+import { ConversationsModule } from './conversations/conversations.module';
 import clerkConfig from './config/clerk.config';
 
 @Module({
@@ -32,6 +34,8 @@ import clerkConfig from './config/clerk.config';
     SurveysModule,
     BeliefAnalysisModule,
     TopicsModule,
+    RealtimeModule,
+    ConversationsModule,
   ],
   controllers: [AppController],
   providers: [AppService, CacheService],
