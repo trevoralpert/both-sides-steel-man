@@ -55,6 +55,12 @@ model User {
   
   // Phase 5: Real-time debate relations
   messages          Message[]       // Messages sent by this user
+  analysis_feedback AnalysisFeedback[] @relation("AnalysisFeedbackProvider")
+  moderation_appeals_created ModerationAppeal[] @relation("ModerationAppealUser")
+  moderation_appeals_reviewed ModerationAppeal[] @relation("ModerationAppealReviewer")
+  review_queue_items ReviewQueue[] @relation("ReviewQueueUser")
+  review_queue_assigned ReviewQueue[] @relation("ReviewQueueAssignee")
+  coaching_feedback CoachingFeedback[] @relation("CoachingFeedbackUser")
   
   // Future Phase integration fields (Phase 9: TimeBack Integration)
   timeback_user_id     String?
@@ -618,6 +624,8 @@ model Conversation {
   match                 Match              @relation(fields: [match_id], references: [id], onDelete: Cascade)
   messages              Message[]
   debate_sessions       DebateSession[]
+  message_analyses      MessageAnalysis[]
+  review_queue_items    ReviewQueue[]
 
   @@map("conversations")
   @@index([status])
@@ -646,6 +654,11 @@ model Message {
   user                  User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
   reply_to              Message?           @relation("MessageReplies", fields: [reply_to_id], references: [id])
   replies               Message[]          @relation("MessageReplies")
+  analyses              MessageAnalysis[]
+  analysis_feedback     AnalysisFeedback[]
+  moderation_results    ModerationResult[]
+  moderation_appeals    ModerationAppeal[]
+  review_queue_items    ReviewQueue[]
 
   @@map("messages")
   @@index([conversation_id])
@@ -676,7 +689,294 @@ model DebateSession {
   @@index([conversation_id])
 }
 
+// Phase 5 Task 5.3.1: Message analysis for AI moderation
+model MessageAnalysis {
+  id                    String       @id @default(cuid())
+  message_id            String       
+  conversation_id       String       
+  results               Json         // Analysis results (toxicity, quality, educational)
+  action_recommended    String       // approve, review, block, coach
+  processing_time       Int          // Milliseconds
+  created_at            DateTime     @default(now())
+  updated_at            DateTime     @updatedAt
 
+  // Relations
+  message               Message      @relation(fields: [message_id], references: [id], onDelete: Cascade)
+  conversation          Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  feedback              AnalysisFeedback[]
+
+  @@map("message_analyses")
+  @@index([message_id])
+  @@index([conversation_id])
+  @@index([action_recommended])
+  @@index([created_at])
+}
+
+// Phase 5 Task 5.3.1: Analysis feedback for model improvement
+model AnalysisFeedback {
+  id                    String          @id @default(cuid())
+  message_id            String          
+  analysis_id           String          
+  feedback_type         String          // accuracy, quality, usefulness
+  rating                Int             // 1-5
+  comments              String?         
+  provider_id           String          // teacher or moderator ID
+  created_at            DateTime        @default(now())
+
+  // Relations
+  message               Message         @relation(fields: [message_id], references: [id], onDelete: Cascade)
+  analysis              MessageAnalysis @relation(fields: [analysis_id], references: [id], onDelete: Cascade)
+  provider              User            @relation("AnalysisFeedbackProvider", fields: [provider_id], references: [id])
+
+  @@map("analysis_feedback")
+  @@index([analysis_id])
+  @@index([provider_id])
+  @@index([feedback_type])
+  @@index([created_at])
+}
+
+// Phase 5 Task 5.3.2: Automated moderation results and actions
+model ModerationResult {
+  id                    String       @id @default(cuid())
+  message_id            String       
+  action                String       // approve, warn, block, review, escalate, suspend
+  severity              String       // low, medium, high
+  reason                String       
+  rule_triggered        String       
+  auto_executed         Boolean      @default(false)
+  appealable            Boolean      @default(false)
+  executed_at           DateTime     @default(now())
+  executor_id           String?      // System or moderator ID
+  metadata              Json?        // Analysis results, user history, etc.
+  created_at            DateTime     @default(now())
+
+  // Relations
+  message               Message      @relation(fields: [message_id], references: [id], onDelete: Cascade)
+  appeals               ModerationAppeal[]
+
+  @@map("moderation_results")
+  @@index([message_id])
+  @@index([action])
+  @@index([severity])
+  @@index([auto_executed])
+  @@index([executed_at])
+}
+
+// Phase 5 Task 5.3.2: Appeal system for moderation decisions
+model ModerationAppeal {
+  id                    String       @id @default(cuid())
+  message_id            String       
+  moderation_result_id  String       
+  user_id               String       
+  reason                String       
+  additional_evidence   String?      
+  status                String       @default("pending") // pending, approved, rejected, under_review
+  reviewer_id           String?      
+  review_notes          String?      
+  created_at            DateTime     @default(now())
+  updated_at            DateTime     @updatedAt
+  reviewed_at           DateTime?    
+
+  // Relations
+  message               Message            @relation(fields: [message_id], references: [id], onDelete: Cascade)
+  moderation_result     ModerationResult   @relation(fields: [moderation_result_id], references: [id], onDelete: Cascade)
+  user                  User               @relation("ModerationAppealUser", fields: [user_id], references: [id])
+  reviewer              User?              @relation("ModerationAppealReviewer", fields: [reviewer_id], references: [id])
+
+  @@map("moderation_appeals")
+  @@index([message_id])
+  @@index([moderation_result_id])
+  @@index([user_id])
+  @@index([status])
+  @@index([created_at])
+}
+
+// Phase 5 Task 5.3.2: Review queue for manual moderation
+model ReviewQueue {
+  id                    String       @id @default(cuid())
+  type                  String       // message_review, appeal_review, escalation
+  message_id            String       
+  conversation_id       String       
+  user_id               String       
+  content               String       
+  reason                String       
+  priority              String       // low, medium, high
+  analysis_results      Json?        
+  appeal_id             String?      
+  queued_at             DateTime     @default(now())
+  assigned_at           DateTime?    
+  assigned_to           String?      
+  completed_at          DateTime?    
+  resolution_notes      String?      
+
+  // Relations
+  message               Message      @relation(fields: [message_id], references: [id], onDelete: Cascade)
+  conversation          Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  user                  User         @relation("ReviewQueueUser", fields: [user_id], references: [id])
+  assignee              User?        @relation("ReviewQueueAssignee", fields: [assigned_to], references: [id])
+
+  @@map("review_queue")
+  @@index([type])
+  @@index([message_id])
+  @@index([conversation_id])
+  @@index([user_id])
+  @@index([priority])
+  @@index([assigned_to])
+  @@index([queued_at])
+}
+
+// Phase 5 Task 5.3.3: AI Coaching feedback tracking
+model CoachingFeedback {
+  id                    String       @id @default(cuid())
+  suggestion_id         String       
+  user_id               String       
+  rating                String       // helpful, not_helpful, irrelevant, excellent
+  comments              String?      
+  was_acted_upon        Boolean      @default(false)
+  quality_rating        Int?         // 1-5 rating
+  created_at            DateTime     @default(now())
+
+  // Relations
+  user                  User         @relation("CoachingFeedbackUser", fields: [user_id], references: [id])
+
+  @@map("coaching_feedback")
+  @@index([suggestion_id])
+  @@index([user_id])
+  @@index([rating])
+  @@index([was_acted_upon])
+  @@index([created_at])
+}
+
+// Phase 5 Task 5.3.4: Content Safety & Compliance - Safety incident tracking
+model SafetyIncident {
+  id                    String       @id @default(cuid())
+  type                  String       // inappropriate_content, personal_info_disclosure, harassment, etc.
+  severity              String       // low, medium, high, critical
+  description           String       
+  message_id            String?      
+  conversation_id       String?      
+  user_id               String?      
+  reported_by           String       
+  evidence              Json?        
+  additional_context    String?      
+  status                String       @default("OPEN") // OPEN, INVESTIGATING, RESOLVED, CLOSED
+  assigned_to           String?      
+  occurred_at           DateTime     @default(now())
+  created_at            DateTime     @default(now())
+  updated_at            DateTime     @updatedAt
+  resolved_at           DateTime?    
+  resolution            String?      
+
+  @@map("safety_incidents")
+  @@index([type])
+  @@index([severity])
+  @@index([status])
+  @@index([message_id])
+  @@index([conversation_id])
+  @@index([user_id])
+  @@index([reported_by])
+  @@index([occurred_at])
+}
+
+// Phase 5 Task 5.3.4: Content retention and deletion scheduling
+model ContentDeletionSchedule {
+  id                    String       @id @default(cuid())
+  content_id            String       
+  content_type          String       // conversation, message, profile, etc.
+  policy_id             String       
+  scheduled_for         DateTime     
+  reason                String       
+  status                String       @default("SCHEDULED") // SCHEDULED, PROCESSING, COMPLETED, FAILED
+  created_at            DateTime     @default(now())
+  updated_at            DateTime     @updatedAt
+  processed_at          DateTime?    
+  error_message         String?      
+
+  @@map("content_deletion_schedule")
+  @@index([content_id])
+  @@index([content_type])
+  @@index([policy_id])
+  @@index([scheduled_for])
+  @@index([status])
+  @@index([created_at])
+}
+
+// Phase 5 Task 5.3.4: Content access auditing for compliance
+model ContentAccessLog {
+  id                    String       @id @default(cuid())
+  user_id               String       
+  content_id            String       
+  action                String       // view, edit, delete, export, etc.
+  purpose               String?      
+  metadata              Json?        
+  ip_address            String?      
+  user_agent            String?      
+  accessed_at           DateTime     @default(now())
+
+  @@map("content_access_logs")
+  @@index([user_id])
+  @@index([content_id])
+  @@index([action])
+  @@index([accessed_at])
+}
+
+// Phase 5 Task 5.3.4: Incident escalation queue management
+model EscalationQueue {
+  id                    String       @id @default(cuid())
+  incident_id           String       
+  level                 String       // auto_handled, moderator_review, admin_review, etc.
+  recipients            String[]     // Array of recipient identifiers
+  scheduled_for         DateTime     
+  status                String       @default("SCHEDULED") // SCHEDULED, PROCESSING, COMPLETED, FAILED
+  created_at            DateTime     @default(now())
+  updated_at            DateTime     @updatedAt
+  processed_at          DateTime?    
+  error_message         String?      
+
+  @@map("escalation_queue")
+  @@index([incident_id])
+  @@index([level])
+  @@index([scheduled_for])
+  @@index([status])
+  @@index([created_at])
+}
+
+// Phase 5 Task 5.3.4: Safety check audit logs
+model SafetyCheckLog {
+  id                    String       @id @default(cuid())
+  content_id            String       
+  user_age              Int?         
+  is_appropriate        Boolean      
+  violations            String[]     // Array of violation types
+  warnings              String[]     // Array of warning messages
+  confidence_score      Float?       
+  recommended_action    String?      
+  created_at            DateTime     @default(now())
+
+  @@map("safety_check_logs")
+  @@index([content_id])
+  @@index([user_age])
+  @@index([is_appropriate])
+  @@index([created_at])
+}
+
+// Phase 5 Task 5.3.4: Data anonymization audit trail
+model DataAnonymizationLog {
+  id                    String       @id @default(cuid())
+  content_id            String       
+  content_type          String       // conversation, message, profile, etc.
+  has_minors            Boolean      @default(false)
+  anonymized_at         DateTime     @default(now())
+  reason                String       
+  fields_anonymized     String[]     // Array of field names that were anonymized
+  metadata              Json?        
+
+  @@map("data_anonymization_logs")
+  @@index([content_id])
+  @@index([content_type])
+  @@index([has_minors])
+  @@index([anonymized_at])
+}
 
 // =============================================================================
 // FUTURE PHASES - COMMENTED OUT FOR NOW (Will be uncommented in later phases)
