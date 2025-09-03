@@ -85,6 +85,33 @@ const navigationItems: NavigationItem[] = [
     ]
   },
   {
+    id: 'students',
+    label: 'Students',
+    href: '/teacher/students',
+    icon: BookOpen,
+    description: 'Student management and intervention tools',
+    children: [
+      {
+        id: 'students-list',
+        label: 'All Students',
+        href: '/teacher/students',
+        icon: BookOpen
+      },
+      {
+        id: 'students-at-risk',
+        label: 'At-Risk Students',
+        href: '/teacher/students?tab=at-risk',
+        icon: Shield
+      },
+      {
+        id: 'students-groups',
+        label: 'Student Groups',
+        href: '/teacher/students?tab=groups',
+        icon: Users
+      }
+    ]
+  },
+  {
     id: 'sessions',
     label: 'Sessions',
     href: '/teacher/sessions',
@@ -117,7 +144,21 @@ const navigationItems: NavigationItem[] = [
     label: 'Analytics',
     href: '/teacher/analytics',
     icon: BarChart3,
-    description: 'Performance insights and reports'
+    description: 'Performance insights and reports',
+    children: [
+      {
+        id: 'analytics-overview',
+        label: 'Overview',
+        href: '/teacher/analytics',
+        icon: BarChart3
+      },
+      {
+        id: 'analytics-performance',
+        label: 'Performance',
+        href: '/teacher/performance',
+        icon: Target
+      }
+    ]
   },
   {
     id: 'reviews',
