@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from '../prisma/prisma.module';
 import { RedisModule } from '../redis/redis.module';
+import { BeliefAnalysisModule } from '../belief-analysis/belief-analysis.module';
 
 // Task 7.1.2: Data Access Services
 import { DebateTranscriptService } from './services/debate-transcript.service';
@@ -28,11 +29,25 @@ import { GamificationService } from './services/gamification.service';
 import { QualityValidationService } from './services/quality-validation.service';
 import { TeacherReviewService } from './services/teacher-review.service';
 
+// Task 7.4.1: Opinion Plasticity Measurement Services
+import { PlasticityMeasurementService } from './services/plasticity-measurement.service';
+import { PlasticityVisualizationService } from './services/plasticity-visualization.service';
+
+// Task 7.4.2: Learning Progress Tracking Services
+import { LearningProgressTrackingService } from './services/learning-progress-tracking.service';
+
+// Task 7.4.3: Performance Analytics & Benchmarking Services
+import { PerformanceAnalyticsService } from './services/performance-analytics.service';
+import { BenchmarkingService } from './services/benchmarking.service';
+
 // Controllers
 import { ReflectionPromptController } from './controllers/reflection-prompt.controller';
 import { ReflectionController } from './controllers/reflection.controller';
 import { ProgressTrackingController } from './controllers/progress-tracking.controller';
 import { QualityValidationController } from './controllers/quality-validation.controller';
+import { PlasticityMeasurementController } from './controllers/plasticity-measurement.controller';
+import { LearningProgressController } from './controllers/learning-progress.controller';
+import { PerformanceAnalyticsController } from './controllers/performance-analytics.controller';
 
 /**
  * Module for Phase 7: Reflection & Learning System
@@ -55,12 +70,16 @@ import { QualityValidationController } from './controllers/quality-validation.co
  * - Quality validation and automated scoring (Task 7.3.4)
  * - Teacher review workflows and collaboration
  * - Completion validation and quality control
+ * - Opinion plasticity measurement and analysis (Task 7.4.1)
+ * - Learning progress tracking across competencies (Task 7.4.2)
+ * - Performance analytics and benchmarking (Task 7.4.3)
  */
 @Module({
   imports: [
     PrismaModule,
     RedisModule,
     ConfigModule,
+    BeliefAnalysisModule,
   ],
   providers: [
     // Task 7.1.2: Core data access services
@@ -87,12 +106,26 @@ import { QualityValidationController } from './controllers/quality-validation.co
     // Task 7.3.4: Quality validation and teacher review services
     QualityValidationService,
     TeacherReviewService,
+    
+    // Task 7.4.1: Opinion plasticity measurement services
+    PlasticityMeasurementService,
+    PlasticityVisualizationService,
+    
+    // Task 7.4.2: Learning progress tracking services
+    LearningProgressTrackingService,
+    
+    // Task 7.4.3: Performance analytics and benchmarking services
+    PerformanceAnalyticsService,
+    BenchmarkingService,
   ],
   controllers: [
     ReflectionPromptController,
     ReflectionController,
     ProgressTrackingController,
     QualityValidationController,
+    PlasticityMeasurementController,
+    LearningProgressController,
+    PerformanceAnalyticsController,
   ],
   exports: [
     // Export data access services for use in other modules
@@ -119,6 +152,17 @@ import { QualityValidationController } from './controllers/quality-validation.co
     // Export quality validation and teacher review services
     QualityValidationService,
     TeacherReviewService,
+    
+    // Export opinion plasticity measurement services
+    PlasticityMeasurementService,
+    PlasticityVisualizationService,
+    
+    // Export learning progress tracking services
+    LearningProgressTrackingService,
+    
+    // Export performance analytics and benchmarking services
+    PerformanceAnalyticsService,
+    BenchmarkingService,
   ],
 })
 export class ReflectionSystemModule {}

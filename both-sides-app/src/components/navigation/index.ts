@@ -1,26 +1,81 @@
 /**
- * Phase 6 Task 6.1.5: Navigation Components Export
+ * Learning Navigation Integration - Main Export
  * 
- * Centralized exports for all navigation-related components and utilities
+ * Task 7.5.3: Centralized exports for all learning navigation and integration components.
+ * This provides a single import point for the entire navigation system.
  */
 
-// Core navigation components
-export { RouteGuard, withRouteGuard } from './RouteGuard';
-export type { RouteGuardProps } from './RouteGuard';
+// Core Navigation Provider
+export { 
+  LearningNavigationProvider, 
+  useLearningNavigation 
+} from './LearningNavigationProvider';
 
-export { Breadcrumb, DebateBreadcrumb, ProfileBreadcrumb } from './Breadcrumb';
-export type { BreadcrumbProps, BreadcrumbItem } from './Breadcrumb';
+// Navigation Components
+export { 
+  LearningNavMenu,
+  LearningBreadcrumbs,
+  ContextualNavigation,
+  QuickAccessToolbar,
+  LearningWidget
+} from './LearningNavigation';
 
-export { NavigationLayout, DebateNavigationLayout } from './NavigationLayout';
-export type { NavigationLayoutProps, NavigationAction } from './NavigationLayout';
+// Notification System
+export { 
+  NotificationCenter,
+  LearningNotificationToast
+} from './LearningNotifications';
 
-// Hooks and utilities
-export { default as useUrlState, useDebateUrlState, usePaginationState, useFilterState } from '@/lib/hooks/useUrlState';
-export type { UrlStateOptions, DebateUrlState } from '@/lib/hooks/useUrlState';
+// Deep Links and Search
+export { 
+  LearningSearch,
+  DeepLinkHandler,
+  ShareableLink,
+  LearningBookmarks
+} from './LearningDeepLinks';
 
-// Deep linking utilities  
-export { default as deepLinking } from '@/lib/utils/deepLinking';
-export type { DeepLinkConfig, ParsedDeepLink } from '@/lib/utils/deepLinking';
+// Workflow Integration
+export { 
+  LearningWorkflowIntegration
+} from './LearningWorkflowIntegration';
 
-// Re-export commonly used types
-export type { DebatePhase } from '@/types/debate';
+// Type definitions for external use
+export interface LearningNavigationConfig {
+  enableWorkflowIntegration?: boolean;
+  enableNotifications?: boolean;
+  enableDeepLinking?: boolean;
+  defaultRole?: 'student' | 'teacher' | 'admin';
+  customBreadcrumbs?: boolean;
+}
+
+export interface LearningIntegrationProps {
+  config?: LearningNavigationConfig;
+  children: React.ReactNode;
+}
+
+/**
+ * Main Learning Integration Wrapper Component
+ * 
+ * This component provides the complete learning navigation integration
+ * with all features enabled by default. Use this as the main wrapper
+ * for sections of your app that need learning navigation features.
+ */
+export function LearningIntegration({ 
+  config = {}, 
+  children 
+}: LearningIntegrationProps) {
+  const {
+    enableWorkflowIntegration = true,
+    enableNotifications = true,
+    enableDeepLinking = true,
+    customBreadcrumbs = true
+  } = config;
+
+  return (
+    <LearningNavigationProvider>
+      {enableDeepLinking && <DeepLinkHandler />}
+      {enableWorkflowIntegration && <LearningWorkflowIntegration />}
+      {children}
+    </LearningNavigationProvider>
+  );
+}
