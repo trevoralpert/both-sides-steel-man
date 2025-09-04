@@ -62,13 +62,25 @@ model User {
   review_queue_assigned ReviewQueue[] @relation("ReviewQueueAssignee")
   coaching_feedback CoachingFeedback[] @relation("CoachingFeedbackUser")
   
-  // Future Phase integration fields (Phase 9: TimeBack Integration)
+  // Phase 9: Integration Layer - External system integration fields
+  external_id          String?    // External system user ID (replaces timeback_user_id)
+  external_system_id   String?    // Which integration system this came from
+  sync_status          SyncStatus? @default(PENDING)
+  last_sync_at         DateTime?
+  sync_version         Int?       @default(1)
+  sync_metadata        Json?      // Additional sync information
+  
+  // Legacy TimeBack fields (deprecated in favor of external_id)
   timeback_user_id     String?
   timeback_synced_at   DateTime?
   timeback_sync_status TimeBackSyncStatus? @default(PENDING)
   timeback_sync_version Int?     @default(1)
   
   @@map("users")
+  @@index([external_id])
+  @@index([external_system_id])
+  @@index([sync_status])
+  @@index([last_sync_at])
   @@index([timeback_user_id])
 }
 
@@ -134,13 +146,25 @@ model Organization {
   // Relations
   classes           Class[]
   
-  // Future Phase integration fields (Phase 9: TimeBack Integration)
+  // Phase 9: Integration Layer - External system integration fields
+  external_id          String?    // External system organization ID
+  external_system_id   String?    // Which integration system this came from
+  sync_status          SyncStatus? @default(PENDING)
+  last_sync_at         DateTime?
+  sync_version         Int?       @default(1)
+  sync_metadata        Json?      // Additional sync information
+  
+  // Legacy TimeBack fields (deprecated in favor of external_id)
   timeback_org_id      String?
   timeback_synced_at   DateTime?
   timeback_sync_status TimeBackSyncStatus? @default(PENDING)
   timeback_sync_version Int?     @default(1)
   
   @@map("organizations")
+  @@index([external_id])
+  @@index([external_system_id])
+  @@index([sync_status])
+  @@index([last_sync_at])
   @@index([timeback_org_id])
 }
 
@@ -170,7 +194,15 @@ model Class {
   // Phase 4: Matching system relations
   matches           Match[]
   
-  // Future Phase integration fields (Phase 9: TimeBack Integration)
+  // Phase 9: Integration Layer - External system integration fields
+  external_id          String?    // External system class ID
+  external_system_id   String?    // Which integration system this came from
+  sync_status          SyncStatus? @default(PENDING)
+  last_sync_at         DateTime?
+  sync_version         Int?       @default(1)
+  sync_metadata        Json?      // Additional sync information
+  
+  // Legacy TimeBack fields (deprecated in favor of external_id)
   timeback_class_id    String?
   timeback_synced_at   DateTime?
   timeback_sync_status TimeBackSyncStatus? @default(PENDING)
@@ -179,6 +211,10 @@ model Class {
   @@map("classes")
   @@index([organization_id])
   @@index([teacher_id])
+  @@index([external_id])
+  @@index([external_system_id])
+  @@index([sync_status])
+  @@index([last_sync_at])
   @@index([timeback_class_id])
 }
 
@@ -209,9 +245,21 @@ model Enrollment {
   user              User              @relation(fields: [user_id], references: [id])
   class             Class             @relation(fields: [class_id], references: [id])
   
+  // Phase 9: Integration Layer - External system integration fields
+  external_id          String?    // External system enrollment ID
+  external_system_id   String?    // Which integration system this came from
+  sync_status          SyncStatus? @default(PENDING)
+  last_sync_at         DateTime?
+  sync_version         Int?       @default(1)
+  sync_metadata        Json?      // Additional sync information
+  
   @@unique([user_id, class_id])
   @@map("enrollments")
   @@index([class_id, enrollment_status])
+  @@index([external_id])
+  @@index([external_system_id])
+  @@index([sync_status])
+  @@index([last_sync_at])
 }
 
 // Phase 2 Task 2.2.4: Audit logging for profile changes
@@ -976,6 +1024,298 @@ model DataAnonymizationLog {
   @@index([content_type])
   @@index([has_minors])
   @@index([anonymized_at])
+}
+
+// =============================================================================
+// Phase 9: Integration Layer & TimeBack Preparation - Database Models
+// =============================================================================
+
+enum IntegrationStatus {
+  ACTIVE
+  INACTIVE
+  ERROR
+  CONNECTING
+  DISCONNECTED
+  MAINTENANCE
+}
+
+enum SyncStatus {
+  PENDING
+  SYNCED
+  ERROR
+  CONFLICT
+  PROCESSING
+}
+
+enum WebhookEventStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+  DUPLICATE
+}
+
+// Phase 9 Task 9.1.2: Integration management tables
+model Integration {
+  id                    String             @id @default(cuid())
+  provider_id           String             // e.g., 'timeback', 'google-classroom'
+  provider_name         String             // Human-readable name
+  provider_version      String             @default("1.0.0")
+  status                IntegrationStatus  @default(INACTIVE)
+  enabled               Boolean            @default(true)
+  priority              Int                @default(50)
+  environment           String             @default("sandbox") // sandbox, production, staging
+  
+  // Connection details
+  base_url              String?
+  api_version           String?
+  
+  // Health monitoring
+  last_health_check     DateTime?
+  last_successful_sync  DateTime?
+  last_error            String?
+  error_count           Int                @default(0)
+  uptime_percentage     Float?
+  average_response_time Float?
+  
+  // Metadata
+  capabilities          String[]           // JSON array of supported capabilities
+  tags                  String[]           @default([])
+  description           String?
+  contact_info          Json?              // Contact information for support
+  
+  // Timestamps
+  created_at            DateTime           @default(now())
+  updated_at            DateTime           @updatedAt
+  
+  // Relations
+  configurations        IntegrationConfiguration[]
+  webhooks              IntegrationWebhook[]
+  audit_logs            IntegrationAuditLog[]
+  external_mappings     ExternalSystemMapping[]
+  status_logs           IntegrationStatusLog[]
+  
+  @@map("integrations")
+  @@unique([provider_id])
+  @@index([status])
+  @@index([enabled])
+  @@index([provider_id, environment])
+}
+
+// Phase 9 Task 9.1.2: Integration-specific configurations
+model IntegrationConfiguration {
+  id                    String      @id @default(cuid())
+  integration_id        String
+  config_key            String      // e.g., 'authentication', 'rateLimit', 'sync'
+  config_value          Json        // Configuration data (encrypted if sensitive)
+  is_sensitive          Boolean     @default(false)
+  is_encrypted          Boolean     @default(false)
+  environment           String      @default("sandbox")
+  
+  // Version control
+  version               Int         @default(1)
+  previous_version_id   String?
+  
+  // Timestamps
+  created_at            DateTime    @default(now())
+  updated_at            DateTime    @updatedAt
+  expires_at            DateTime?   // For token expiration
+  
+  // Relations
+  integration           Integration @relation(fields: [integration_id], references: [id], onDelete: Cascade)
+  previous_version      IntegrationConfiguration? @relation("ConfigurationVersion", fields: [previous_version_id], references: [id])
+  next_versions         IntegrationConfiguration[] @relation("ConfigurationVersion")
+  
+  @@map("integration_configurations")
+  @@unique([integration_id, config_key, environment])
+  @@index([integration_id])
+  @@index([config_key])
+  @@index([is_sensitive])
+  @@index([expires_at])
+}
+
+// Phase 9 Task 9.1.2: Integration status monitoring
+model IntegrationStatusLog {
+  id                    String             @id @default(cuid())
+  integration_id        String
+  status                IntegrationStatus
+  previous_status       IntegrationStatus?
+  response_time         Float?             // Response time in milliseconds
+  error_message         String?
+  capabilities_checked  String[]           @default([])
+  metadata              Json?              // Additional health check data
+  checked_at            DateTime           @default(now())
+  
+  // Relations
+  integration           Integration        @relation(fields: [integration_id], references: [id], onDelete: Cascade)
+  
+  @@map("integration_status_logs")
+  @@index([integration_id])
+  @@index([status])
+  @@index([checked_at])
+}
+
+// Phase 9 Task 9.1.2: External system ID mappings
+model ExternalSystemMapping {
+  id                    String      @id @default(cuid())
+  integration_id        String
+  entity_type           String      // 'user', 'organization', 'class', 'enrollment'
+  external_id           String      // ID in external system
+  internal_id           String      // ID in our system
+  
+  // Sync metadata
+  sync_status           SyncStatus  @default(PENDING)
+  last_sync_at          DateTime?
+  sync_version          Int         @default(1)
+  conflict_data         Json?       // Data for conflict resolution
+  
+  // Entity metadata
+  external_data         Json?       // Snapshot of external entity data
+  internal_data         Json?       // Snapshot of internal entity data
+  
+  // Timestamps
+  created_at            DateTime    @default(now())
+  updated_at            DateTime    @updatedAt
+  
+  // Relations
+  integration           Integration @relation(fields: [integration_id], references: [id], onDelete: Cascade)
+  
+  @@map("external_system_mappings")
+  @@unique([integration_id, entity_type, external_id])
+  @@unique([integration_id, entity_type, internal_id])
+  @@index([integration_id])
+  @@index([entity_type])
+  @@index([external_id])
+  @@index([internal_id])
+  @@index([sync_status])
+  @@index([last_sync_at])
+}
+
+// Phase 9 Task 9.1.2: Webhook configuration and management
+model IntegrationWebhook {
+  id                    String      @id @default(cuid())
+  integration_id        String
+  webhook_id            String?     // External webhook ID from provider
+  endpoint_url          String      // URL to receive webhooks
+  shared_secret         String      // For signature verification
+  
+  // Configuration
+  events                String[]    // Array of subscribed event types
+  is_active             Boolean     @default(true)
+  max_retries           Int         @default(3)
+  timeout               Int         @default(30000) // Timeout in milliseconds
+  
+  // Security
+  signature_header      String      @default("X-Webhook-Signature")
+  timestamp_header      String      @default("X-Webhook-Timestamp")
+  verify_ssl            Boolean     @default(true)
+  
+  // Monitoring
+  last_received_at      DateTime?
+  total_received        Int         @default(0)
+  total_processed       Int         @default(0)
+  total_failed          Int         @default(0)
+  
+  // Timestamps
+  created_at            DateTime    @default(now())
+  updated_at            DateTime    @updatedAt
+  
+  // Relations
+  integration           Integration @relation(fields: [integration_id], references: [id], onDelete: Cascade)
+  webhook_events        IntegrationWebhookEvent[]
+  
+  @@map("integration_webhooks")
+  @@index([integration_id])
+  @@index([is_active])
+  @@index([endpoint_url])
+}
+
+// Phase 9 Task 9.1.2: Webhook events and processing
+model IntegrationWebhookEvent {
+  id                    String               @id @default(cuid())
+  webhook_id            String
+  event_type            String               // Type of event
+  event_id              String?              // External event ID for deduplication
+  status                WebhookEventStatus   @default(PENDING)
+  
+  // Event data
+  payload               Json                 // Raw webhook payload
+  headers               Json?                // HTTP headers
+  signature             String?              // Webhook signature
+  
+  // Processing
+  processed_at          DateTime?
+  processing_time       Int?                 // Processing time in milliseconds
+  error_message         String?
+  retry_count           Int                  @default(0)
+  max_retries           Int                  @default(3)
+  
+  // Idempotency
+  idempotency_key       String?              // For preventing duplicate processing
+  
+  // Timestamps
+  received_at           DateTime             @default(now())
+  next_retry_at         DateTime?
+  
+  // Relations
+  webhook               IntegrationWebhook   @relation(fields: [webhook_id], references: [id], onDelete: Cascade)
+  
+  @@map("integration_webhook_events")
+  @@unique([webhook_id, event_id])
+  @@index([webhook_id])
+  @@index([status])
+  @@index([event_type])
+  @@index([received_at])
+  @@index([next_retry_at])
+  @@index([idempotency_key])
+}
+
+// Phase 9 Task 9.1.2: Integration audit logging
+model IntegrationAuditLog {
+  id                    String      @id @default(cuid())
+  integration_id        String
+  
+  // Event details
+  event_type            String      // 'sync', 'config_change', 'error', 'health_check'
+  event_category        String      // 'operation', 'configuration', 'security', 'performance'
+  severity              String      @default("info") // 'error', 'warn', 'info', 'debug'
+  
+  // Event data
+  description           String
+  details               Json?       // Additional event details
+  entity_type           String?     // Affected entity type
+  entity_id             String?     // Affected entity ID
+  external_entity_id    String?     // External entity ID
+  
+  // Context
+  user_id               String?     // User who triggered the event (if applicable)
+  session_id            String?     // Session or operation ID
+  correlation_id        String?     // For tracking related events
+  
+  // Performance
+  duration_ms           Int?        // Duration in milliseconds
+  
+  // Error information
+  error_code            String?
+  error_message         String?
+  stack_trace           String?
+  
+  // Timestamps
+  occurred_at           DateTime    @default(now())
+  
+  // Relations
+  integration           Integration @relation(fields: [integration_id], references: [id], onDelete: Cascade)
+  
+  @@map("integration_audit_logs")
+  @@index([integration_id])
+  @@index([event_type])
+  @@index([event_category])
+  @@index([severity])
+  @@index([entity_type, entity_id])
+  @@index([external_entity_id])
+  @@index([user_id])
+  @@index([occurred_at])
+  @@index([correlation_id])
 }
 
 // =============================================================================
