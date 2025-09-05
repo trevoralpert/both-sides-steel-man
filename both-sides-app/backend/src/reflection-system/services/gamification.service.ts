@@ -707,7 +707,7 @@ export class GamificationService {
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     
     // Check if this activity applies to this streak
-    if (!this.activityAppliesTo streak(streak, activity)) {
+    if (!this.activityAppliesToStreak(streak, activity)) {
       return null;
     }
 
@@ -737,7 +737,7 @@ export class GamificationService {
     return streak;
   }
 
-  private activityAppliesTo streak(streak: Streak, activity: string): boolean {
+  private activityAppliesToStreak(streak: Streak, activity: string): boolean {
     switch (streak.type) {
       case 'daily':
         return activity === 'reflection_completed';

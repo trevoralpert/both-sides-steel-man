@@ -282,7 +282,7 @@ export interface ImprovementGoal {
 export interface PlanMilestone {
   description: string;
   targetDate: Date;
-  success Criteria: string[];
+  successCriteria: string[];
   completed: boolean;
   completedAt?: Date;
 }
