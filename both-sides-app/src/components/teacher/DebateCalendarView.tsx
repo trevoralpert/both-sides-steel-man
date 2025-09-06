@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,8 +48,8 @@ import {
   Settings,
   RefreshCw
 } from 'lucide-react';
-
 import { LoadingState } from '@/components/ui/loading-state';
+
 import { useTeacherDashboard } from './TeacherDashboardProvider';
 import { SessionCreationWizard } from './SessionCreationWizard';
 
@@ -283,7 +284,8 @@ export function DebateCalendarView({
       addNotification({
         type: 'warning',
         title: 'Scheduling Conflict',
-        message: `Cannot move session: ${conflicts[0]}`
+        message: `Cannot move session: ${conflicts[0]}`,
+        read: false
       });
       return;
     }
@@ -295,13 +297,15 @@ export function DebateCalendarView({
       addNotification({
         type: 'success',
         title: 'Session Moved',
-        message: `"${event.title}" has been moved to ${newStart.toLocaleString()}`
+        message: `"${event.title}" has been moved to ${newStart.toLocaleString()}`,
+        read: false
       });
     } catch (error) {
       addNotification({
         type: 'error',
         title: 'Move Failed',
-        message: 'Failed to move the session. Please try again.'
+        message: 'Failed to move the session. Please try again.',
+        read: false
       });
     } finally {
       setLoading(false);

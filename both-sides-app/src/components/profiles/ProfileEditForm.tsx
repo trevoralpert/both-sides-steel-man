@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { z } from 'zod';
+
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Profile, UpdateProfileRequest, IdeologyScores, SurveyResponses } from '@/types/profile';
 import { ProfileAPI, ProfileAPIError } from '@/lib/api/profile';
 import {

@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Phase 6 Task 6.1.4: useScrollManager Hook
  * 
@@ -54,7 +56,7 @@ export function useScrollManager(
     clientHeight: 0
   });
 
-  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const savedScrollPositionRef = useRef<number>(0);
   const lastScrollTopRef = useRef<number>(0);
 

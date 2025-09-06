@@ -8,8 +8,10 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useConversationConnection } from './useRealtimeConnection';
+
 import { Message, MessageAction, DebatePhase } from '@/types/debate';
+
+import { useConversationConnection } from './useRealtimeConnection';
 
 export interface OptimisticMessage extends Message {
   isOptimistic: true;

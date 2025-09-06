@@ -11,6 +11,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -497,7 +498,7 @@ export default function RichTextDemo() {
                 <div className="space-y-1">
                   <div className="flex justify-between">
                     <span>Quote</span>
-                    <Badge variant="outline" className="text-xs">Ctrl+></Badge>
+                    <Badge variant="outline" className="text-xs">Ctrl+&gt;</Badge>
                   </div>
                   <div className="flex justify-between">
                     <span>Link</span>

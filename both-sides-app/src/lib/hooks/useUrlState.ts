@@ -6,6 +6,7 @@
  */
 
 import { useCallback, useMemo } from 'react';
+
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { DebatePhase } from '@/types/debate';
 

@@ -5,6 +5,7 @@
  */
 
 import React, { useState } from 'react';
+
 import { DebatePhase, DebatePosition } from '@/types/debate';
 import { TurnIndicator } from '@/components/debate-room/TurnIndicator';
 import { SpeakingQueue } from '@/components/debate-room/SpeakingQueue';
@@ -311,7 +312,7 @@ export default function TurnTakingDemoPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={handleStartTurn}
+                            onClick={() => handleStartTurn('participant-1')}
                             className="justify-start"
                           >
                             <Play className="h-3 w-3 mr-2" />

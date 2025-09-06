@@ -8,6 +8,8 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { formatDistanceToNow, format } from 'date-fns';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,7 +33,6 @@ import {
   BarChart3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { formatDistanceToNow, format } from 'date-fns';
 
 interface EngagementPoint {
   timestamp: Date;

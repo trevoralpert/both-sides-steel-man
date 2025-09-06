@@ -313,9 +313,9 @@ export function BeliefProfileVisualization({
                   const axisInfo = IDEOLOGY_AXES[key as keyof typeof IDEOLOGY_AXES];
                   if (!axisInfo) return null;
 
-                  const normalizedScore = (score + 1) / 2; // Convert from -1,1 to 0,1
-                  const isLeft = score < -0.1;
-                  const isRight = score > 0.1;
+                  const normalizedScore = ((score ?? 0) + 1) / 2; // Convert from -1,1 to 0,1
+                  const isLeft = (score ?? 0) < -0.1;
+                  const isRight = (score ?? 0) > 0.1;
                   const isCenter = !isLeft && !isRight;
 
                   return (
@@ -357,9 +357,9 @@ export function BeliefProfileVisualization({
                         
                         <div className="flex justify-center mt-2">
                           <span className="text-sm font-medium">
-                            {Math.abs(score) < 0.1 ? 'Moderate' : 
-                             isLeft ? `${axisInfo.leftLabel} (${Math.abs(Math.round(score * 100))}%)` :
-                             `${axisInfo.rightLabel} (${Math.round(score * 100)}%)`
+                            {Math.abs(score ?? 0) < 0.1 ? 'Moderate' : 
+                             isLeft ? `${axisInfo.leftLabel} (${Math.abs(Math.round((score ?? 0) * 100))}%)` :
+                             `${axisInfo.rightLabel} (${Math.round((score ?? 0) * 100)}%)`
                             }
                           </span>
                         </div>

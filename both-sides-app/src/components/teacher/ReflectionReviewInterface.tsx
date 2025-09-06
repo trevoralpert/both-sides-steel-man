@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -117,7 +118,7 @@ export function ReflectionReviewInterface({ reflections, classId }: ReflectionRe
 
   // Filter and sort reflections
   const filteredReflections = useMemo(() => {
-    let filtered = reflections.filter(reflection => {
+    const filtered = reflections.filter(reflection => {
       const matchesSearch = !searchTerm || 
         reflection.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         reflection.debateTitle.toLowerCase().includes(searchTerm.toLowerCase());

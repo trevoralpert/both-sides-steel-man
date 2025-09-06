@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -42,14 +43,14 @@ import {
   Heart,
   Zap
 } from 'lucide-react';
+import { LoadingState } from '@/components/ui/loading-state';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 
 import { ClassPerformanceDashboard } from './ClassPerformanceDashboard';
 import { StudentRiskAssessment } from './StudentRiskAssessment';
 import { ReflectionReviewInterface } from './ReflectionReviewInterface';
 import { EngagementHeatMaps } from './EngagementHeatMaps';
 import { ReportGenerator } from './ReportGenerator';
-import { LoadingState } from '@/components/ui/loading-state';
-import { ErrorBoundary } from '@/components/ui/error-boundary';
 
 interface ClassOverview {
   classId: string;

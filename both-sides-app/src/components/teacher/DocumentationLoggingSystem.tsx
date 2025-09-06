@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,16 +32,6 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { 
   FileText,
   ClipboardList,
   AlertTriangle,
@@ -63,7 +54,7 @@ import {
   CheckCircle2,
   XCircle,
   Info,
-  Warning,
+  AlertTriangle as Warning,
   Ban,
   MessageSquare,
   Mic,
@@ -92,10 +83,22 @@ import {
   ExternalLink,
   Copy,
   Trash2,
-  MoreHorizontal
+  MoreHorizontal,
+  Users
 } from 'lucide-react';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
+
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 // Types
 interface SessionLog {
@@ -507,7 +510,8 @@ export function DocumentationLoggingSystem({
       addNotification({
         type: 'error',
         title: 'Note Required',
-        message: 'Please enter a note before logging.'
+        message: 'Please enter a note before logging.',
+        read: false
       });
       return;
     }
@@ -543,7 +547,8 @@ export function DocumentationLoggingSystem({
     addNotification({
       type: 'success',
       title: 'Observation Logged',
-      message: `${quickNoteCategory} observation saved successfully.`
+      message: `${quickNoteCategory} observation saved successfully.`,
+      read: false
     });
   };
 
@@ -552,7 +557,8 @@ export function DocumentationLoggingSystem({
       addNotification({
         type: 'error',
         title: 'Missing Information',
-        message: 'Please provide both title and description for the incident.'
+        message: 'Please provide both title and description for the incident.',
+        read: false
       });
       return;
     }
@@ -591,7 +597,8 @@ export function DocumentationLoggingSystem({
     addNotification({
       type: 'warning',
       title: 'Incident Reported',
-      message: 'Critical incident has been documented and flagged for review.'
+      message: 'Critical incident has been documented and flagged for review.',
+      read: false
     });
   };
 
@@ -618,7 +625,8 @@ export function DocumentationLoggingSystem({
     addNotification({
       type: 'success',
       title: 'Export Started',
-      message: `Session log export in ${format.toUpperCase()} format has been queued.`
+      message: `Session log export in ${format.toUpperCase()} format has been queued.`,
+      read: false
     });
   };
 
@@ -634,7 +642,8 @@ export function DocumentationLoggingSystem({
     addNotification({
       type: 'info',
       title: 'Session Log Locked',
-      message: 'Session log has been locked for editing.'
+      message: 'Session log has been locked for editing.',
+      read: false
     });
   };
 

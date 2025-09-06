@@ -7,6 +7,7 @@
  */
 
 import React, { useMemo } from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebatePhase, DebatePosition } from '@/types/debate';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -81,6 +82,11 @@ const PHASE_TURN_RULES = {
     requiresTurns: false,
     allowsQueue: false,
     description: 'Individual reflection time'
+  },
+  COMPLETED: {
+    requiresTurns: false,
+    allowsQueue: false,
+    description: 'Debate finished'
   }
 } as const;
 
@@ -101,7 +107,7 @@ export function SpeakingQueue({
     if (queueOrder) return queueOrder;
     
     // Default queue generation based on phase
-    switch (phaseRules.pattern) {
+    switch ((phaseRules as any).pattern || 'none') {
       case 'sequential':
         // PRO first, then CON (for opening/closing)
         return participants
@@ -126,7 +132,7 @@ export function SpeakingQueue({
         // Natural order (for discussion)
         return participants.map(p => p.id);
     }
-  }, [queueOrder, participants, phaseRules.pattern]);
+  }, [queueOrder, participants, (phaseRules as any).pattern]);
 
   // Get current speaker index
   const currentSpeakerIndex = currentSpeakerId ? 
@@ -141,7 +147,7 @@ export function SpeakingQueue({
     if (participantId === currentSpeakerId) return 'speaking';
     
     const participant = getParticipant(participantId);
-    if (participant?.hasSpoken && phaseRules.pattern === 'sequential') return 'completed';
+    if (participant?.hasSpoken && (phaseRules as any).pattern === 'sequential') return 'completed';
     
     if (currentSpeakerIndex >= 0) {
       const participantIndex = effectiveQueue.indexOf(participantId);

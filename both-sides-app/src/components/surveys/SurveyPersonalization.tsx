@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+
 import { SurveyQuestion, SaveResponseRequest } from '@/types/survey';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +28,7 @@ import {
   Clock,
   BookOpen
 } from 'lucide-react';
+
 import { useAccessibleContent } from './';
 
 interface SurveyPersonalizationProps {

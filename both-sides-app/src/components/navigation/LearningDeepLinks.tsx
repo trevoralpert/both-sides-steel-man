@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -34,8 +35,9 @@ import {
   Bookmark,
   Share
 } from 'lucide-react';
-import { useLearningNavigation } from './LearningNavigationProvider';
 import { cn } from '@/lib/utils';
+
+import { useLearningNavigation } from './LearningNavigationProvider';
 
 interface DeepLinkConfig {
   type: 'reflection' | 'progress' | 'achievement' | 'goal' | 'analytics';
@@ -95,7 +97,7 @@ export function LearningSearch({ onSelect, placeholder = "Search learning data..
     
     try {
       // Mock search results - in a real app, this would hit an API
-      const mockResults: SearchResult[] = [
+      const mockResults = [
         {
           id: 'reflection-123',
           type: 'reflection',
@@ -168,7 +170,7 @@ export function LearningSearch({ onSelect, placeholder = "Search learning data..
         return true;
       });
 
-      setResults(filteredResults.sort((a, b) => b.relevance - a.relevance));
+      setResults(filteredResults.sort((a, b) => b.relevance - a.relevance) as SearchResult[]);
       
       // Save to recent searches
       if (!recentSearches.includes(searchQuery)) {

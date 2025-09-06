@@ -5,6 +5,7 @@
  */
 
 import React, { useState } from 'react';
+
 import { DebatePhase } from '@/types/debate';
 import { RulesPanel } from '@/components/debate-room/RulesPanel';
 import { BestPracticesTips } from '@/components/debate-room/BestPracticesTips';

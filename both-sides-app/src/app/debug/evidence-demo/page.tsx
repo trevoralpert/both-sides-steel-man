@@ -5,6 +5,7 @@
  */
 
 import React, { useState } from 'react';
+
 import { DebatePhase, DebatePosition } from '@/types/debate';
 import { EvidencePanel, EvidenceSuggestion, EvidenceSource } from '@/components/debate-room/EvidencePanel';
 import { SourceCard } from '@/components/debate-room/SourceCard';

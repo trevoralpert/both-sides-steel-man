@@ -340,7 +340,7 @@
 ### **Task 10.2.2**: **Implement FERPA Compliance Measures**
 **Priority**: P0 - Critical  
 **Duration**: 2 days  
-**Dependencies**: Task 10.2.1 complete
+**Dependencies**: Tasks 10.2.1, 10.2.3, and 10.2.5 complete
 
 **Deliverables**:
 - [ ] **Student data classification and protection**
@@ -384,7 +384,7 @@
 ### **Task 10.2.3**: **Add Data Encryption & Key Management**
 **Priority**: P1 - High  
 **Duration**: 2 days  
-**Dependencies**: Task 10.2.2 complete
+**Dependencies**: Task 10.2.1 complete
 
 **Deliverables**:
 - [ ] **Database encryption implementation**
@@ -422,7 +422,7 @@
 ### **Task 10.2.4**: **Create Privacy Policy & Terms of Service**
 **Priority**: P1 - High  
 **Duration**: 1-2 days  
-**Dependencies**: Task 10.2.3 complete
+**Dependencies**: Task 10.2.2 complete
 
 **Deliverables**:
 - [ ] **Comprehensive privacy policy documentation**
@@ -460,7 +460,7 @@
 ### **Task 10.2.5**: **Implement Audit Logging & Monitoring**
 **Priority**: P1 - High  
 **Duration**: 1-2 days  
-**Dependencies**: Task 10.2.4 complete
+**Dependencies**: Task 10.2.3 complete
 
 **Deliverables**:
 - [ ] **Comprehensive audit logging framework**

@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -46,8 +47,8 @@ import {
   Target,
   TrendingUp
 } from 'lucide-react';
-
 import { LoadingState } from '@/components/ui/loading-state';
+
 import { useTeacherDashboard } from './TeacherDashboardProvider';
 
 // Types
@@ -172,9 +173,9 @@ export function AvailabilityManager({
     try {
       setLoading(true);
       
-      const token = await user.getToken();
+      // const token = await user.getToken();
       const response = await fetch(`/api/availability/patterns${classId ? `?classId=${classId}` : ''}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        // headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (response.ok) {
@@ -236,7 +237,8 @@ export function AvailabilityManager({
       addNotification({
         type: 'error',
         title: 'Validation Error',
-        message: 'Please provide a name and at least one time slot.'
+        message: 'Please provide a name and at least one time slot.',
+        read: false
       });
       return;
     }
@@ -262,7 +264,8 @@ export function AvailabilityManager({
       addNotification({
         type: 'success',
         title: 'Pattern Saved',
-        message: `Availability pattern "${patternToSave.name}" has been saved.`
+        message: `Availability pattern "${patternToSave.name}" has been saved.`,
+        read: false
       });
 
       resetPatternForm();
@@ -272,7 +275,8 @@ export function AvailabilityManager({
       addNotification({
         type: 'error',
         title: 'Save Failed',
-        message: 'Failed to save availability pattern. Please try again.'
+        message: 'Failed to save availability pattern. Please try again.',
+        read: false
       });
     } finally {
       setLoading(false);
@@ -284,7 +288,8 @@ export function AvailabilityManager({
     addNotification({
       type: 'success',
       title: 'Pattern Deleted',
-      message: 'Availability pattern has been deleted.'
+      message: 'Availability pattern has been deleted.',
+      read: false
     });
   };
 
@@ -347,7 +352,7 @@ export function AvailabilityManager({
   };
 
   if (loading && patterns.length === 0) {
-    return <LoadingState message="Loading availability patterns..." />;
+    return <LoadingState text="Loading availability patterns..." />;
   }
 
   return (

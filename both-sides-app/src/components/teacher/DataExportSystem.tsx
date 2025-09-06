@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,15 +32,11 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import { 
   Download,
   Upload,
@@ -91,6 +88,17 @@ import {
 } from 'lucide-react';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
+
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 // Types
 interface ExportJob {
@@ -887,7 +895,8 @@ export function DataExportSystem({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to export data.'
+        message: 'You do not have permission to export data.',
+        read: false
       });
       return;
     }
@@ -986,7 +995,8 @@ export function DataExportSystem({
     addNotification({
       type: 'success',
       title: 'Export Created',
-      message: `Export job "${newJob.name}" has been created and will start shortly.`
+      message: `Export job "${newJob.name}" has been created and will start shortly.`,
+      read: false
     });
 
     // Start export after a short delay
@@ -1005,7 +1015,8 @@ export function DataExportSystem({
     addNotification({
       type: 'info',
       title: 'Export Cancelled',
-      message: 'The export job has been cancelled.'
+      message: 'The export job has been cancelled.',
+      read: false
     });
   };
 
@@ -1014,7 +1025,8 @@ export function DataExportSystem({
       addNotification({
         type: 'error',
         title: 'Download Unavailable',
-        message: 'This export is not ready for download yet.'
+        message: 'This export is not ready for download yet.',
+        read: false
       });
       return;
     }
@@ -1022,7 +1034,8 @@ export function DataExportSystem({
     addNotification({
       type: 'success',
       title: 'Download Started',
-      message: `Downloading ${job.name}...`
+      message: `Downloading ${job.name}...`,
+      read: false
     });
 
     // Simulate download
@@ -1042,7 +1055,8 @@ export function DataExportSystem({
     addNotification({
       type: 'success',
       title: 'Export Deleted',
-      message: 'The export job has been deleted.'
+      message: 'The export job has been deleted.',
+      read: false
     });
   };
 
@@ -1351,13 +1365,13 @@ export function DataExportSystem({
                       
                       <div className="flex items-center space-x-2">
                         {job.configuration.encryption.enabled && (
-                          <Lock className="h-3 w-3 text-green-600" title="Encrypted" />
+                          <Lock className="h-3 w-3 text-green-600" />
                         )}
                         {job.configuration.compression !== 'none' && (
-                          <Archive className="h-3 w-3 text-blue-600" title="Compressed" />
+                          <Archive className="h-3 w-3 text-blue-600" />
                         )}
                         {job.privacy_settings.gdpr_compliant && (
-                          <Shield className="h-3 w-3 text-purple-600" title="GDPR Compliant" />
+                          <Shield className="h-3 w-3 text-purple-600" />
                         )}
                       </div>
                     </div>
@@ -1528,10 +1542,12 @@ export function DataExportSystem({
                   setNewExportJob(prev => ({
                     ...prev,
                     privacy_settings: {
+                      exclude_sensitive_fields: false,
+                      data_retention_days: 30,
                       ...prev?.privacy_settings,
                       anonymize_personal_data: !!checked
                     }
-                  }))
+                  }) as Partial<ExportJob>)
                 }
               />
               <Label htmlFor="privacy" className="text-sm">

@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,16 +31,6 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -83,7 +74,7 @@ import {
   Calendar as CalendarIcon,
   MoreHorizontal,
   Wrench,
-  Tool,
+  Settings as Tool,
   Bug,
   TestTube,
   Gauge,
@@ -105,6 +96,17 @@ import {
 } from 'lucide-react';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
+
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 // Types
 interface BackupJob {
@@ -1000,7 +1002,8 @@ export function BackupMaintenanceTools({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to run backups.'
+        message: 'You do not have permission to run backups.',
+        read: false
       });
       return;
     }
@@ -1028,7 +1031,8 @@ export function BackupMaintenanceTools({
     addNotification({
       type: 'info',
       title: 'Backup Started',
-      message: 'Backup job has been started and is now running.'
+      message: 'Backup job has been started and is now running.',
+      read: false
     });
 
     // Simulate backup progress
@@ -1068,7 +1072,8 @@ export function BackupMaintenanceTools({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to run integrity checks.'
+        message: 'You do not have permission to run integrity checks.',
+        read: false
       });
       return;
     }
@@ -1082,7 +1087,8 @@ export function BackupMaintenanceTools({
     addNotification({
       type: 'info',
       title: 'Integrity Check Started',
-      message: 'Integrity check is now running and will complete shortly.'
+      message: 'Integrity check is now running and will complete shortly.',
+      read: false
     });
 
     // Simulate check completion
@@ -1102,7 +1108,8 @@ export function BackupMaintenanceTools({
       addNotification({
         type: 'success',
         title: 'Integrity Check Complete',
-        message: 'Integrity check completed successfully with no critical issues found.'
+        message: 'Integrity check completed successfully with no critical issues found.',
+        read: false
       });
     }, 3000);
   };
@@ -1112,7 +1119,8 @@ export function BackupMaintenanceTools({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to enable maintenance mode.'
+        message: 'You do not have permission to enable maintenance mode.',
+        read: false
       });
       return;
     }
@@ -1131,7 +1139,8 @@ export function BackupMaintenanceTools({
     addNotification({
       type: 'warning',
       title: 'Maintenance Mode Enabled',
-      message: 'System is now in maintenance mode. Users will see a maintenance page.'
+      message: 'System is now in maintenance mode. Users will see a maintenance page.',
+      read: false
     });
   };
 
@@ -1140,7 +1149,8 @@ export function BackupMaintenanceTools({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to disable maintenance mode.'
+        message: 'You do not have permission to disable maintenance mode.',
+        read: false
       });
       return;
     }
@@ -1159,7 +1169,8 @@ export function BackupMaintenanceTools({
     addNotification({
       type: 'success',
       title: 'Maintenance Mode Disabled',
-      message: 'System has returned to normal operation.'
+      message: 'System has returned to normal operation.',
+      read: false
     });
   };
 

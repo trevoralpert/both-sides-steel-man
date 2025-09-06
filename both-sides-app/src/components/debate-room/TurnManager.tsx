@@ -7,12 +7,9 @@
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebatePhase, DebatePosition } from '@/types/debate';
-import { TurnIndicator } from './TurnIndicator';
-import { SpeakingQueue } from './SpeakingQueue';
-import { TurnTimer } from './TurnTimer';
-import { TurnNotificationManager } from './TurnNotification';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +24,11 @@ import {
   SkipForward,
   RefreshCw
 } from 'lucide-react';
+
+import { TurnNotificationManager } from './TurnNotification';
+import { TurnTimer } from './TurnTimer';
+import { SpeakingQueue } from './SpeakingQueue';
+import { TurnIndicator } from './TurnIndicator';
 
 export interface ParticipantInfo {
   id: string;
@@ -67,7 +69,8 @@ const DEFAULT_TURN_DURATIONS = {
   DISCUSSION: 120, // 2 minutes (suggested)
   REBUTTAL: 90, // 1.5 minutes
   CLOSING: 180, // 3 minutes
-  REFLECTION: 0
+  REFLECTION: 0,
+  COMPLETED: 0
 } as const;
 
 // Notification state interface
@@ -170,7 +173,7 @@ export function TurnManager({
     if (completed) {
       const newCompletedTurns = [...effectiveTurnState.completedTurns, effectiveTurnState.currentSpeakerId];
       
-      onTurnStateChange?({
+      onTurnStateChange?.({
         currentSpeakerId: undefined,
         turnStartTime: undefined,
         completedTurns: newCompletedTurns
@@ -190,7 +193,7 @@ export function TurnManager({
     } else {
       // Turn was skipped
       onTurnSkip?.(effectiveTurnState.currentSpeakerId);
-      onTurnStateChange?({
+      onTurnStateChange?.({
         currentSpeakerId: undefined,
         turnStartTime: undefined
       });
@@ -217,7 +220,7 @@ export function TurnManager({
 
   // Extend current turn
   const extendTurn = useCallback((additionalSeconds: number) => {
-    onTurnStateChange?({
+    onTurnStateChange?.({
       turnDurationSeconds: effectiveTurnState.turnDurationSeconds + additionalSeconds
     });
   }, [effectiveTurnState.turnDurationSeconds, onTurnStateChange]);

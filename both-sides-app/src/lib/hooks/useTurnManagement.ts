@@ -7,6 +7,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+
 import { DebatePhase, DebatePosition } from '@/types/debate';
 
 export interface ParticipantInfo {

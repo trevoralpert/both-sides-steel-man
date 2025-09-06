@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -59,8 +60,8 @@ import {
   Eye,
   RefreshCw
 } from 'lucide-react';
-
 import { LoadingState } from '@/components/ui/loading-state';
+
 import { useTeacherDashboard } from './TeacherDashboardProvider';
 
 // Types

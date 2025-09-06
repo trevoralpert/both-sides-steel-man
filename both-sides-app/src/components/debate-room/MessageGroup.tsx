@@ -8,12 +8,14 @@
  */
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 import { Message } from '@/types/debate';
-import { MessageBubble } from './MessageBubble';
-import { SystemMessage } from './SystemMessage';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+
+import { MessageBubble } from './MessageBubble';
+import { SystemMessage } from './SystemMessage';
 
 export interface MessageGroupProps {
   messages: Message[];

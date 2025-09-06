@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -103,7 +104,6 @@ function PresenceStatus({ isOnline, isTyping, lastSeen, size, className }: Prese
           config.statusPosition,
           className
         )}
-        title="Online"
         aria-label="User is online"
       />
     );
@@ -131,7 +131,6 @@ function PresenceStatus({ isOnline, isTyping, lastSeen, size, className }: Prese
         config.statusPosition,
         className
       )}
-      title={getOfflineTime()}
       aria-label={`User was last seen ${getOfflineTime()}`}
     />
   );

@@ -7,6 +7,7 @@
 'use client';
 
 import React from 'react';
+
 import { StudentManagementDashboard } from '@/components/teacher/StudentManagementDashboard';
 
 export default function TeacherStudentsPage() {

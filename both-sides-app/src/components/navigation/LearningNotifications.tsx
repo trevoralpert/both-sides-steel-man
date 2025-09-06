@@ -8,6 +8,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -25,11 +27,11 @@ import {
   X,
   Settings,
   Filter,
-  MarkAsUnread
+  MailOpen as MarkAsUnread
 } from 'lucide-react';
-import { useLearningNavigation } from './LearningNavigationProvider';
 import { cn } from '@/lib/utils';
-import { formatDistanceToNow } from 'date-fns';
+
+import { useLearningNavigation } from './LearningNavigationProvider';
 
 interface NotificationCenterProps {
   className?: string;
@@ -78,7 +80,7 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger>
         <Button variant="outline" size="sm" className={cn("relative", className)}>
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (

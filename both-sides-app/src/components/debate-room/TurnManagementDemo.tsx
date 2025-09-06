@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebatePhase, ParticipantInfo } from '@/types/debate';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,12 +16,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  TurnManager,
-  TurnTimer,
-  TurnNotifications,
-  useTurnNotifications
-} from './index';
 import { 
   Play,
   Pause,
@@ -31,6 +26,13 @@ import {
   Bell,
   Shuffle
 } from 'lucide-react';
+
+import { 
+  TurnManager,
+  TurnTimer,
+  TurnNotifications,
+  useTurnNotifications
+} from './index';
 
 export interface TurnManagementDemoProps {
   className?: string;
@@ -354,14 +356,11 @@ export function TurnManagementDemo({ className }: TurnManagementDemoProps) {
             </CardHeader>
             <CardContent>
               <TurnManager
-                currentTurn={currentTurn}
+                currentPhase={currentPhase}
                 participants={MOCK_PARTICIPANTS}
-                phase={currentPhase}
-                turnTimeLimit={maxTurnTime}
-                timeRemaining={turnTimeRemaining}
+                currentUserId="current-user"
                 onTurnComplete={handleTurnComplete}
                 onTurnSkip={handleTurnSkip}
-                canManageTurns={true}
               />
             </CardContent>
           </Card>
@@ -377,14 +376,15 @@ export function TurnManagementDemo({ className }: TurnManagementDemoProps) {
               </CardHeader>
               <CardContent>
                 <TurnTimer
-                  timeRemaining={turnTimeRemaining}
-                  totalTime={maxTurnTime}
+                  turnStartTime={new Date(Date.now() - (maxTurnTime - turnTimeRemaining) * 1000)}
+                  turnDurationSeconds={maxTurnTime}
+                  currentPhase={currentPhase}
                   isActive={isTimerActive}
-                  onTimeUp={() => console.log('Time up!')}
+                  onTurnComplete={() => console.log('Time up!')}
                   onWarning={(time) => console.log(`Warning: ${time}s remaining`)}
                   variant="default"
                   showControls={true}
-                  enableSound={true}
+                  soundEnabled={true}
                 />
               </CardContent>
             </Card>
@@ -396,18 +396,20 @@ export function TurnManagementDemo({ className }: TurnManagementDemoProps) {
               </CardHeader>
               <CardContent>
                 <TurnTimer
-                  timeRemaining={turnTimeRemaining}
-                  totalTime={maxTurnTime}
+                  turnStartTime={new Date(Date.now() - (maxTurnTime - turnTimeRemaining) * 1000)}
+                  turnDurationSeconds={maxTurnTime}
+                  currentPhase={currentPhase}
                   isActive={isTimerActive}
                   variant="compact"
-                  enableSound={false}
+                  soundEnabled={false}
                 />
                 
                 <div className="mt-4">
                   <h4 className="text-sm font-medium mb-2">Minimal Timer</h4>
                   <TurnTimer
-                    timeRemaining={turnTimeRemaining}
-                    totalTime={maxTurnTime}
+                    turnStartTime={new Date(Date.now() - (maxTurnTime - turnTimeRemaining) * 1000)}
+                    turnDurationSeconds={maxTurnTime}
+                    currentPhase={currentPhase}
                     isActive={isTimerActive}
                     variant="minimal"
                   />

@@ -7,6 +7,7 @@
  */
 
 import React, { useState } from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebatePhase } from '@/types/debate';
 import { Button } from '@/components/ui/button';
@@ -305,7 +306,7 @@ export function HelpTooltip({
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger>
         <TriggerComponent />
       </PopoverTrigger>
       

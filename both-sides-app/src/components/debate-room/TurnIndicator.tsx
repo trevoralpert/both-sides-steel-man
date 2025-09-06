@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebatePhase, DebatePosition } from '@/types/debate';
 import { Card, CardContent } from '@/components/ui/card';
@@ -80,6 +81,12 @@ const PHASE_TURN_CONFIG = {
     message: 'Reflect on the debate experience',
     icon: Clock,
     color: 'bg-amber-100 text-amber-800 border-amber-200'
+  },
+  COMPLETED: {
+    allowsSpeaking: false,
+    message: 'Debate finished',
+    icon: CheckCircle2,
+    color: 'bg-gray-100 text-gray-800 border-gray-200'
   }
 } as const;
 

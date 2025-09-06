@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import { Profile, ProfileVariant } from '@/types/profile';
 import {
   Card,
@@ -61,7 +62,7 @@ function getRoleColor(role: string): string {
 
 function getCompletionPercentage(profile: Profile): number {
   let completedFields = 0;
-  let totalFields = 5;
+  const totalFields = 5;
 
   if (profile.survey_responses) completedFields++;
   if (profile.belief_summary) completedFields++;

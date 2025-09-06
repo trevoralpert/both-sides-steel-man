@@ -6,7 +6,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@clerk/nextjs';
+
+import { useAuth, useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -94,7 +95,8 @@ export function OnboardingCompletionTracker({
   onCertificateEarned,
   className = ''
 }: OnboardingCompletionTrackerProps) {
-  const { getToken, user } = useAuth();
+  const { isLoaded } = useAuth();
+  const { user } = useUser();
   
   // State Management
   const [milestones, setMilestones] = useState<CompletionMilestone[]>([]);
@@ -218,8 +220,8 @@ export function OnboardingCompletionTracker({
   // Simulate completion tracking (in real app, this would come from API)
   const loadCompletionData = useCallback(async () => {
     try {
-      const token = await getToken();
-      if (!token) return;
+      // const token = await getToken();
+      // if (!token) return;
 
       // Mock data - in real implementation, this would come from backend
       const mockEngagement: UserEngagement = {
@@ -265,7 +267,7 @@ export function OnboardingCompletionTracker({
     } catch (error) {
       console.error('Failed to load completion data:', error);
     }
-  }, [userId, user, getToken]);
+  }, [userId, user]);
 
   const checkMilestoneProgress = (stats: any, engagement: UserEngagement) => {
     const updatedMilestones = milestones.map(milestone => {

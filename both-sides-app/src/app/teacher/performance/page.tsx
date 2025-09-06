@@ -7,6 +7,7 @@
 'use client';
 
 import React from 'react';
+
 import { PerformanceMonitoringDashboard } from '@/components/teacher/PerformanceMonitoringDashboard';
 
 export default function TeacherPerformancePage() {

@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+
 import { useAuth } from '@clerk/nextjs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -689,8 +690,8 @@ export function OnboardingOptimizationSystem({
                 <div className="space-y-4">
                   <h4 className="font-semibold">Optimization Goals</h4>
                   <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• Increase overall completion rate to >80%</li>
-                    <li>• Reduce average completion time to <5 minutes</li>
+                    <li>• Increase overall completion rate to &gt;80%</li>
+                    <li>• Reduce average completion time to &lt;5 minutes</li>
                     <li>• Minimize dropoff at "expectations" step</li>
                     <li>• Improve mobile user experience</li>
                   </ul>

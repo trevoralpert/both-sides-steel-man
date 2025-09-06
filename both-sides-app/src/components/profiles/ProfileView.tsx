@@ -66,7 +66,7 @@ function getRoleColor(role: string): string {
 
 function getCompletionPercentage(profile: Profile): number {
   let completedFields = 0;
-  let totalFields = 5;
+  const totalFields = 5;
 
   if (profile.survey_responses) completedFields++;
   if (profile.belief_summary) completedFields++;
@@ -318,7 +318,7 @@ export function ProfileView({
                       Q{index + 1}: {question}
                     </h4>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                      {profile.survey_responses.answers[index] || 'No response provided'}
+                      {profile.survey_responses?.answers[index] || 'No response provided'}
                     </p>
                   </div>
                 ))}

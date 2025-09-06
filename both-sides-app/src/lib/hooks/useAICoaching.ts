@@ -8,6 +8,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+
 import { Message, DebatePhase } from '@/types/debate';
 import { CoachingSuggestion } from '@/components/debate-room/CoachingSidebar';
 

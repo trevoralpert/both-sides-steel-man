@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -67,12 +68,12 @@ import {
   Group,
   BarChart3
 } from 'lucide-react';
+import { LoadingState } from '@/components/ui/loading-state';
 
 import { StudentDetailPanel } from './StudentDetailPanel';
 import { StudentProgressTracker } from './StudentProgressTracker';
 import { StudentRiskAlerts } from './StudentRiskAlerts';
 import { StudentGroupingInterface } from './StudentGroupingInterface';
-import { LoadingState } from '@/components/ui/loading-state';
 import { useTeacherDashboard } from './TeacherDashboardProvider';
 
 // Types

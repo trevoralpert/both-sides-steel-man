@@ -8,8 +8,8 @@
  */
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+
 import { cn } from '@/lib/utils';
-import { MarkdownRenderer } from './MarkdownRenderer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -39,6 +39,8 @@ import {
   AlignRight,
   Strikethrough
 } from 'lucide-react';
+
+import { MarkdownRenderer } from './MarkdownRenderer';
 
 export interface RichTextEditorProps {
   value: string;
@@ -413,7 +415,7 @@ function FormattingToolbar({
       <div className="flex items-center space-x-0.5 mr-2">
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <Button
                 variant="ghost"
                 size={buttonSize}
@@ -432,7 +434,7 @@ function FormattingToolbar({
         
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <Button
                 variant="ghost"
                 size={buttonSize}
@@ -459,7 +461,7 @@ function FormattingToolbar({
             {groupedActions.basic.map((action) => (
               <TooltipProvider key={action.key}>
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger>
                     <Button
                       variant="ghost"
                       size={buttonSize}
@@ -488,7 +490,7 @@ function FormattingToolbar({
             {groupedActions.structure.map((action) => (
               <TooltipProvider key={action.key}>
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger>
                     <Button
                       variant="ghost"
                       size={buttonSize}
@@ -517,7 +519,7 @@ function FormattingToolbar({
             {groupedActions.media.map((action) => (
               <TooltipProvider key={action.key}>
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger>
                     <Button
                       variant="ghost"
                       size={buttonSize}
@@ -537,7 +539,7 @@ function FormattingToolbar({
             {features.emoji && (
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger>
                     <Button
                       variant="ghost"
                       size={buttonSize}
@@ -563,7 +565,7 @@ function FormattingToolbar({
       <div className="ml-auto flex items-center space-x-0.5">
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <Button
                 variant={showPreview ? "default" : "ghost"}
                 size={buttonSize}

@@ -308,7 +308,7 @@ export async function validateDeepLinkAccess(
   }
 }
 
-export default {
+const deepLinking = {
   generateDeepLink,
   parseDeepLink,
   generateShareableLink,
@@ -318,3 +318,6 @@ export default {
   copyDeepLink,
   validateDeepLinkAccess
 };
+
+export { deepLinking };
+export default deepLinking;

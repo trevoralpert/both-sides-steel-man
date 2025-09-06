@@ -8,6 +8,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { format } from 'date-fns';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -43,7 +45,6 @@ import {
   Filter,
   CheckCircle2
 } from 'lucide-react';
-import { format } from 'date-fns';
 
 interface ClassOverview {
   classId: string;

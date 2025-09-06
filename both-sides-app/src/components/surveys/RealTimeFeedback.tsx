@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+
 import { SurveyQuestion, SaveResponseRequest } from '@/types/survey';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +31,7 @@ import {
   Users,
   BookOpen
 } from 'lucide-react';
+
 import { useAccessibleContent } from './';
 
 interface RealTimeFeedbackProps {
@@ -207,7 +209,7 @@ function getOptimalEngagementTime(questionType: string): number {
     'SLIDER': 25          // 25 seconds
   };
   
-  return baseOptimalTimes[questionType] || 30;
+  return (baseOptimalTimes as any)[questionType] || 30;
 }
 
 function generateFeedbackMessages(

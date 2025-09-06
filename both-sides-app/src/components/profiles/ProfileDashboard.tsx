@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { Profile, ProfileStats, User } from '@/types/profile';
 import { ProfileAPI, ProfileAPIError } from '@/lib/api/profile';
-import { ProfileCard } from './ProfileCard';
 import {
   Card,
   CardContent,
@@ -34,6 +34,8 @@ import {
   Settings
 } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
+
+import { ProfileCard } from './ProfileCard';
 import { PartialProfileManager } from './PartialProfileManager';
 
 interface DashboardStats {
@@ -104,8 +106,8 @@ export function ProfileDashboard({
           topIdeologies: Object.entries(statsResponse.data.most_common_ideology || {})
             .map(([ideology, count]) => ({
               ideology,
-              count: count as number,
-              percentage: ((count as number) / statsResponse.data.total_profiles) * 100
+              count: Number(count),
+              percentage: (Number(count) / statsResponse.data.total_profiles) * 100
             }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 5)

@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { useAuth } from '@clerk/nextjs';
 import { Profile } from '@/types/profile';
 import { ProfileAPI } from '@/lib/api/profile';
@@ -165,12 +166,12 @@ export function PartialProfileManager({
         surveyProgress: surveyProgress.progress_percentage,
         profileGenerated: !!profile?.belief_summary,
         beliefAnalysisComplete: !!profile?.ideology_scores,
-        embeddingGenerated: !!profile?.belief_embedding,
+        embeddingGenerated: !!(profile as any)?.belief_embedding,
         sections: {
           basic_info: profile ? 100 : 0,
           survey_responses: surveyProgress.progress_percentage,
           belief_analysis: profile?.belief_summary ? 100 : 0,
-          matching_preferences: profile?.privacy_settings ? 100 : 50 // Partial if basic settings exist
+          matching_preferences: (profile as any)?.privacy_settings ? 100 : 50 // Partial if basic settings exist
         }
       };
 

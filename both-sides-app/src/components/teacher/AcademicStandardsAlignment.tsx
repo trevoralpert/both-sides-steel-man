@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -383,7 +384,8 @@ export function AcademicStandardsAlignment({
       addNotification({
         type: 'error',
         title: 'Load Failed',
-        message: 'Failed to load standards data. Please try again.'
+        message: 'Failed to load standards data. Please try again.',
+        read: false
       });
     } finally {
       setLoading(false);
@@ -429,14 +431,16 @@ export function AcademicStandardsAlignment({
       addNotification({
         type: 'success',
         title: 'Standard Created',
-        message: `Academic standard "${newStandard.code}" has been created.`
+        message: `Academic standard "${newStandard.code}" has been created.`,
+        read: false
       });
 
     } catch (error) {
       addNotification({
         type: 'error',
         title: 'Creation Failed',
-        message: 'Failed to create academic standard. Please try again.'
+        message: 'Failed to create academic standard. Please try again.',
+        read: false
       });
     }
   };
@@ -446,7 +450,8 @@ export function AcademicStandardsAlignment({
       addNotification({
         type: 'error',
         title: 'Validation Error',
-        message: 'Please fill in all required fields.'
+        message: 'Please fill in all required fields.',
+        read: false
       });
       return;
     }
@@ -530,14 +535,16 @@ export function AcademicStandardsAlignment({
       addNotification({
         type: 'success',
         title: 'Evidence Added',
-        message: 'Evidence has been successfully recorded and competency tracking updated.'
+        message: 'Evidence has been successfully recorded and competency tracking updated.',
+        read: false
       });
 
     } catch (error) {
       addNotification({
         type: 'error',
         title: 'Evidence Failed',
-        message: 'Failed to add evidence. Please try again.'
+        message: 'Failed to add evidence. Please try again.',
+        read: false
       });
     }
   };
@@ -557,28 +564,18 @@ export function AcademicStandardsAlignment({
     }
   };
 
-  const getBlooms
-
-const getBlooms
-
-Level = (level: string) => {
-    switch (level) {
-      case 'Remember':
-        return 'bg-purple-100 text-purple-800';
-      case 'Understand':
-        return 'bg-blue-100 text-blue-800';
-      case 'Apply':
-        return 'bg-green-100 text-green-800';
-      case 'Analyze':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'Evaluate':
-        return 'bg-orange-100 text-orange-800';
-      case 'Create':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  const getBloomsLevel = (level: string) => {
+    const levels = {
+      'Remember': 'bg-blue-100 text-blue-800',
+      'Understand': 'bg-green-100 text-green-800', 
+      'Apply': 'bg-yellow-100 text-yellow-800',
+      'Analyze': 'bg-orange-100 text-orange-800',
+      'Evaluate': 'bg-red-100 text-red-800',
+      'Create': 'bg-purple-100 text-purple-800'
+    };
+    return (levels as any)[level] || 'bg-gray-100 text-gray-800';
   };
+
 
   const filteredStandards = standards.filter(standard => {
     if (filters.framework && standard.framework !== filters.framework) return false;
@@ -740,9 +737,7 @@ Level = (level: string) => {
                         <div className="flex items-center space-x-2">
                           <Badge variant="outline">{standard.framework}</Badge>
                           <Badge variant="secondary">{standard.subject}</Badge>
-                          <Badge className={getBlooms
-
-Level(standard.bloomsLevel)}>
+                          <Badge className={getBloomsLevel(standard.bloomsLevel)}>
                             {standard.bloomsLevel}
                           </Badge>
                           <div className="flex items-center">

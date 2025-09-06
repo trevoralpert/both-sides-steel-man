@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -297,7 +298,6 @@ export default function PresenceTypingDemo() {
                     <div className="flex items-center space-x-2">
                       <Badge 
                         variant={user.isTyping ? "default" : "outline"}
-                        size="sm"
                       >
                         {user.isTyping ? 'Typing' : 'Not Typing'}
                       </Badge>
@@ -355,7 +355,6 @@ export default function PresenceTypingDemo() {
                       <span>Typing:</span>
                       <Badge 
                         variant={participant.isTyping ? "default" : "outline"}
-                        size="sm"
                       >
                         {participant.isTyping ? 'Yes' : 'No'}
                       </Badge>
@@ -408,9 +407,9 @@ export default function PresenceTypingDemo() {
                 
                 <div className="space-y-2">
                   <p className="text-xs text-muted-foreground">Tooltip</p>
-                  <PresenceIndicator status="online" variant="tooltip" showIcon={true} />
-                  <PresenceIndicator status="offline" variant="tooltip" showIcon={true} lastSeen={new Date(Date.now() - 1800000)} />
-                  <PresenceIndicator status="typing" variant="tooltip" showIcon={true} />
+                  <PresenceIndicator status="online" variant="full" showIcon={true} />
+                  <PresenceIndicator status="offline" variant="full" showIcon={true} lastSeen={new Date(Date.now() - 1800000)} />
+                  <PresenceIndicator status="typing" variant="full" showIcon={true} />
                 </div>
                 
                 <div className="space-y-2">

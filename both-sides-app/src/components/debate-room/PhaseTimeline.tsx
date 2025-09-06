@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebatePhase } from '@/types/debate';
 import { Card } from '@/components/ui/card';
@@ -275,7 +276,7 @@ function PhaseTimelineItem({
       connector: 'bg-green-500'
     },
     current: {
-      icon: config.icon.type,
+      icon: config.icon,
       iconColor: config.color.text,
       bgColor: config.color.background,
       borderColor: config.color.border,
@@ -318,7 +319,12 @@ function PhaseTimelineItem({
         currentConfig.bgColor,
         currentConfig.borderColor
       )}>
-        <IconComponent className={cn("h-5 w-5", currentConfig.iconColor)} />
+        {React.isValidElement(IconComponent) ? 
+          <div className={cn("h-5 w-5", currentConfig.iconColor)}>{IconComponent}</div> :
+          React.createElement(IconComponent as React.ComponentType<any>, { 
+            className: cn("h-5 w-5", currentConfig.iconColor) 
+          })
+        }
         
         {status === 'current' && (
           <motion.div

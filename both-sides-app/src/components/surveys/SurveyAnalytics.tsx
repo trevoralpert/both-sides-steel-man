@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import { useAuth } from '@clerk/nextjs';
 import { SurveyAPI } from '@/lib/api/survey';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -225,7 +226,7 @@ function StatsCard({
     <Card>
       <CardContent className="p-4">
         <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg ${colorClasses[color]}`}>
+          <div className={`p-2 rounded-lg ${(colorClasses as any)[color]}`}>
             {icon}
           </div>
           <div>

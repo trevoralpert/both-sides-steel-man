@@ -5,6 +5,7 @@
  */
 
 import React, { useState } from 'react';
+
 import { DebatePhase, Message } from '@/types/debate';
 import { CoachingSidebar } from '@/components/debate-room/CoachingSidebar';
 import { CoachingToggle } from '@/components/debate-room/CoachingToggle';

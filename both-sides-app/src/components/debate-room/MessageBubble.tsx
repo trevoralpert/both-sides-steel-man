@@ -8,13 +8,11 @@
  */
 
 import React, { useState } from 'react';
+
 import { cn } from '@/lib/utils';
 import { Message } from '@/types/debate';
-import { MarkdownRenderer } from './MarkdownRenderer';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ParticipantAvatar } from './ParticipantAvatar';
-import { PositionBadge } from './PositionBadge';
 import { 
   Clock, 
   Check, 
@@ -31,6 +29,11 @@ import {
   Trash2,
   Copy
 } from 'lucide-react';
+
+import { MarkdownRenderer } from './MarkdownRenderer';
+import { ParticipantAvatar } from './ParticipantAvatar';
+import { PositionBadge } from './PositionBadge';
+
 
 export interface MessageBubbleProps {
   message: Message;
@@ -107,7 +110,6 @@ function MessageStatus({
           status === 'sending' && "animate-pulse",
           isOptimistic && "opacity-60"
         )}
-        title={config.label}
       />
       {showTimestamp && (
         <span className={cn(
@@ -412,12 +414,13 @@ export function MessageBubble({
           {showAvatar && !isGrouped && participantInfo && (
             <div className="flex-shrink-0 mt-1">
               <ParticipantAvatar
-                userId={message.authorId}
-                src={participantInfo.avatar}
-                alt={participantInfo.name}
-                isOnline={true}
-                isTyping={false}
-                size="sm"
+                participant={{
+                  id: message.authorId,
+                  name: participantInfo.name,
+                  avatar: participantInfo.avatar,
+                  isOnline: true,
+                  isTyping: false
+                } as any}
               />
             </div>
           )}

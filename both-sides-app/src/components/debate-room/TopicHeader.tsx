@@ -8,12 +8,12 @@
  */
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebateTopic, DebatePosition } from '@/types/debate';
 import { CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { PositionBadge } from './PositionBadge';
 import { 
   Clock, 
   Tag, 
@@ -23,6 +23,8 @@ import {
   Target,
   User
 } from 'lucide-react';
+
+import { PositionBadge } from './PositionBadge';
 
 export interface TopicHeaderProps {
   topic: DebateTopic;

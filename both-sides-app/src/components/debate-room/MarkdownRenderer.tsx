@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
+
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -377,14 +378,14 @@ function CodeBlock({ code, language, compact }: { code: string; language?: strin
         <div className="flex items-center space-x-2">
           <Code className="h-3 w-3" />
           {language && (
-            <Badge variant="secondary" size="sm">
+            <Badge variant="secondary">
               {language}
             </Badge>
           )}
         </div>
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <Button
                 variant="ghost"
                 size="sm"
@@ -489,7 +490,7 @@ export function MarkdownRenderer({
         );
         
       case 'heading':
-        const HeadingTag = `h${Math.min(element.level || 1, 6)}` as keyof JSX.IntrinsicElements;
+        const HeadingTag = `h${Math.min(element.level || 1, 6)}` as any;
         const headingClasses = {
           1: 'text-2xl font-bold',
           2: 'text-xl font-semibold', 

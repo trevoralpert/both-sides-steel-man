@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -633,7 +634,8 @@ export function AuditLogViewer({
           addNotification({
             type: newLog.severity === 'critical' ? 'error' : 'warning',
             title: `${newLog.severity.toUpperCase()} Audit Event`,
-            message: `${newLog.action} on ${newLog.resource} by ${newLog.userName}`
+            message: `${newLog.action} on ${newLog.resource} by ${newLog.userName}`,
+            read: false
           });
         }
 
@@ -702,7 +704,8 @@ export function AuditLogViewer({
       addNotification({
         type: 'error',
         title: 'Export Denied',
-        message: 'You do not have permission to export audit logs.'
+        message: 'You do not have permission to export audit logs.',
+        read: false
       });
       return;
     }
@@ -730,7 +733,8 @@ export function AuditLogViewer({
     addNotification({
       type: 'success',
       title: 'Export Started',
-      message: `Exporting ${logsToExport.length} audit log entries as ${exportConfig.format.toUpperCase()}`
+      message: `Exporting ${logsToExport.length} audit log entries as ${exportConfig.format.toUpperCase()}`,
+      read: false
     });
   };
 
@@ -763,7 +767,8 @@ export function AuditLogViewer({
     addNotification({
       type: 'info',
       title: 'PDF Export',
-      message: 'PDF export functionality would be implemented with jsPDF library'
+      message: 'PDF export functionality would be implemented with jsPDF library',
+      read: false
     });
   };
 
@@ -772,7 +777,8 @@ export function AuditLogViewer({
     addNotification({
       type: 'info',
       title: 'Excel Export',
-      message: 'Excel export functionality would be implemented with xlsx library'
+      message: 'Excel export functionality would be implemented with xlsx library',
+      read: false
     });
   };
 

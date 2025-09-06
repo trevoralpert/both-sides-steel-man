@@ -8,9 +8,11 @@
  */
 
 import { useState, useCallback, useRef } from 'react';
+
+import { Message, DebatePhase, ParticipantInfo } from '@/types/debate';
+
 import { useRealtimeMessages } from './useRealtimeMessages';
 import { usePresence } from './usePresence';
-import { Message, DebatePhase, ParticipantInfo } from '@/types/debate';
 
 export interface ReplyContext {
   id: string;

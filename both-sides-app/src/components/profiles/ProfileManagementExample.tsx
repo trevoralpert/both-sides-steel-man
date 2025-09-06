@@ -17,19 +17,8 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import { useAuth } from '@clerk/nextjs';
-import {
-  ProfileCard,
-  ProfileView,
-  ProfileEditForm,
-  ProfileSearch,
-  ProfileDashboard,
-  ProfileNavigation,
-  ProfilePageHeader,
-  useProfileNavigation,
-  ProfileRoutes,
-  type Profile
-} from './index';
 import { ProfileAPI } from '@/lib/api/profile';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -42,6 +31,19 @@ import {
   Settings,
   Info
 } from 'lucide-react';
+
+import {
+  ProfileCard,
+  ProfileView,
+  ProfileEditForm,
+  ProfileSearch,
+  ProfileDashboard,
+  ProfileNavigation,
+  ProfilePageHeader,
+  useProfileNavigation,
+  ProfileRoutes,
+  type Profile
+} from './index';
 
 interface ProfileManagementExampleProps {
   userRole?: 'STUDENT' | 'TEACHER' | 'ADMIN';
@@ -138,7 +140,7 @@ export function ProfileManagementExample({
 
       {/* Navigation Header */}
       <ProfileNavigation
-        currentProfile={currentProfile}
+        currentProfile={currentProfile || undefined}
         userRole={userRole}
         onNavigateDashboard={() => setActiveTab('dashboard')}
         onNavigateProfiles={() => setActiveTab('search')}
@@ -195,8 +197,8 @@ export function ProfileManagementExample({
               ? `View ${selectedProfile.user?.first_name || selectedProfile.user?.username}'s profile`
               : 'Your complete profile information'
             }
-            breadcrumbItems={getBreadcrumbItems(selectedProfile)}
-            profile={selectedProfile || currentProfile}
+            breadcrumbItems={getBreadcrumbItems(selectedProfile || undefined)}
+            profile={(selectedProfile || currentProfile) || undefined}
             userRole={userRole}
             showBackButton={!!selectedProfile}
             onBack={() => setActiveTab('dashboard')}
@@ -231,7 +233,7 @@ export function ProfileManagementExample({
               ? 'Update profile information and settings'
               : 'Set up your profile to get started'
             }
-            breadcrumbItems={getBreadcrumbItems(selectedProfile)}
+            breadcrumbItems={getBreadcrumbItems(selectedProfile || undefined)}
             showBackButton={true}
             onBack={() => setActiveTab(selectedProfile ? 'view' : 'dashboard')}
           />

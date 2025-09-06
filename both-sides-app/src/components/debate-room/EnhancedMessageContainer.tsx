@@ -8,11 +8,9 @@
  */
 
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+
 import { cn } from '@/lib/utils';
-import { Message, MessageContainerProps, DebatePhase } from '@/types/debate';
-import { MessageGroup } from './MessageGroup';
-import { MessageSearch } from './MessageSearch';
-import { JumpToMessage } from './JumpToMessage';
+import { Message, DebatePhase } from '@/types/debate';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -37,12 +35,31 @@ import {
   Clock
 } from 'lucide-react';
 
+import { JumpToMessage } from './JumpToMessage';
+import { MessageSearch } from './MessageSearch';
+import { MessageGroup } from './MessageGroup';
+
+interface MessageContainerProps {
+  conversationId: string;
+  currentUserId: string;
+  participantMap: any;
+  initialMessages: any[];
+  currentPhase: DebatePhase;
+  onMessageSent?: (message: any) => void;
+  onMessageReceived?: (message: any) => void;
+  onReactionAdded?: (messageId: string, emoji: string, userId: string) => void;
+  onReply?: any;
+}
+
 export interface EnhancedMessageContainerProps extends Omit<MessageContainerProps, 'initialMessages'> {
   // Enhanced functionality
   enableSearch?: boolean;
   enableJumpToMessage?: boolean;
   enableInfiniteScroll?: boolean;
   pageSize?: number;
+  autoScrollEnabled?: boolean;
+  showTimestamps?: boolean;
+  showAvatars?: boolean;
   searchDebounceMs?: number;
   highlightMessageId?: string;
   className?: string;
@@ -136,7 +153,7 @@ export function EnhancedMessageContainer({
     endIndex: 0
   });
   
-  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   
   // Extract data from message history hook
   const { 
@@ -360,7 +377,7 @@ export function EnhancedMessageContainer({
   return (
     <ErrorBoundary
       fallback={MessageErrorFallback}
-      context="enhanced-message-container"
+      context="message"
       level="component"
     >
       <div className={cn("flex h-full", className)}>

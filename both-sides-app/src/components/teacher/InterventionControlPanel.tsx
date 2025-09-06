@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,16 +32,6 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { 
   Shield,
   MessageSquare,
@@ -68,7 +59,7 @@ import {
   XCircle,
   AlertCircle,
   Info,
-  Warning,
+  AlertTriangle as Warning,
   HelpCircle,
   ThumbsUp,
   ThumbsDown,
@@ -95,6 +86,17 @@ import {
 } from 'lucide-react';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
+
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 // Types
 interface SessionParticipant {
@@ -453,7 +455,8 @@ export function InterventionControlPanel({
     addNotification({
       type: 'success',
       title: 'Intervention Applied',
-      message: `${template.name} applied to ${participant.name}`
+      message: `${template.name} applied to ${participant.name}`,
+      read: false
     });
 
     setShowInterventionDialog(false);
@@ -492,7 +495,8 @@ export function InterventionControlPanel({
     addNotification({
       type: 'warning',
       title: 'Restriction Applied',
-      message: `Participant restriction: ${restriction.type.replace('_', ' ')}`
+      message: `Participant restriction: ${restriction.type.replace('_', ' ')}`,
+      read: false
     });
   };
 
@@ -503,7 +507,8 @@ export function InterventionControlPanel({
     addNotification({
       type: 'info',
       title: 'Session Redirect',
-      message: `Participant moved to ${redirect.title}`
+      message: `Participant moved to ${redirect.title}`,
+      read: false
     });
   };
 

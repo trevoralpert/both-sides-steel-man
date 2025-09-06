@@ -8,9 +8,9 @@
  */
 
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+
 import { cn } from '@/lib/utils';
-import { Message, MessageContainerProps, DebatePhase } from '@/types/debate';
-import { MessageGroup } from './MessageGroup';
+import { Message, DebatePhase } from '@/types/debate';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -28,9 +28,12 @@ import {
   ChevronDown
 } from 'lucide-react';
 
+import { MessageGroup } from './MessageGroup';
+
 export interface MessageContainerProps {
-  conversationId: string;
+  conversationId?: string;
   currentUserId: string;
+  messages?: Message[];
   participantMap: Record<string, {
     name: string;
     avatar?: string;
@@ -42,6 +45,8 @@ export interface MessageContainerProps {
   showTimestamps?: boolean;
   showAvatars?: boolean;
   className?: string;
+  onLoadMore?: () => void;
+  isLoading?: boolean;
   
   // Real-time event handlers
   onMessageSent?: (message: Message) => void;
@@ -79,7 +84,7 @@ export function MessageContainer({
 }: MessageContainerProps) {
   // Real-time messages hook
   const realtimeMessages = useRealtimeMessages({
-    conversationId,
+    conversationId: conversationId || 'default',
     userId: currentUserId,
     initialMessages
   });
@@ -104,7 +109,7 @@ export function MessageContainer({
     loadMoreMessages,
     hasMoreMessages
   } = realtimeMessages;
-  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Virtual scrolling state
   const [virtualState, setVirtualState] = useState<VirtualScrollState>({
@@ -184,10 +189,10 @@ export function MessageContainer({
     }, 150);
 
     // Load more messages when scrolled to top
-    if (scrollTop === 0 && hasMore && onLoadMore && !isLoading) {
-      onLoadMore();
+    if (scrollTop === 0 && hasMoreMessages && loadMoreMessages && !isLoading) {
+      loadMoreMessages();
     }
-  }, [hasMore, onLoadMore, isLoading, messages.length]);
+  }, [hasMoreMessages, loadMoreMessages, isLoading, messages.length]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -218,9 +223,9 @@ export function MessageContainer({
   };
 
   // Retry loading on error
-  const handleRetry = () => {
-    if (onRetry) {
-      onRetry();
+  const handleLoadRetry = () => {
+    if (loadMoreMessages) {
+      loadMoreMessages();
     }
   };
 
@@ -381,7 +386,7 @@ export function MessageContainer({
         )}
 
         {/* Loading indicator */}
-        {isLoading && !hasMore && (
+        {isLoading && !hasMoreMessages && (
           <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
             <Card className="p-4">
               <div className="flex items-center space-x-2">

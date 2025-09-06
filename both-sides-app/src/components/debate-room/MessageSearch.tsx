@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
+
 import { cn } from '@/lib/utils';
 import { Message } from '@/types/debate';
 import { Input } from '@/components/ui/input';
@@ -115,7 +116,6 @@ function SearchResultItem({
             <span className="font-medium">{participantName}</span>
             <Badge 
               variant={position === 'PRO' ? 'default' : 'destructive'}
-              size="sm"
             >
               {position}
             </Badge>
@@ -133,11 +133,11 @@ function SearchResultItem({
         
         {/* Message metadata */}
         <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <Badge variant="outline" size="sm">
+          <Badge variant="outline">
             {message.phase}
           </Badge>
           {message.type !== 'USER' && (
-            <Badge variant="secondary" size="sm">
+            <Badge variant="secondary">
               {message.type}
             </Badge>
           )}
@@ -266,7 +266,7 @@ export function MessageSearch({
               <>
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger asChild>
+                    <TooltipTrigger>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -284,7 +284,7 @@ export function MessageSearch({
                 
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger asChild>
+                    <TooltipTrigger>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -376,7 +376,7 @@ export function MessageSearch({
                 {/* Sort Options */}
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger asChild>
+                    <TooltipTrigger>
                       <Button
                         variant="ghost"
                         size="sm"

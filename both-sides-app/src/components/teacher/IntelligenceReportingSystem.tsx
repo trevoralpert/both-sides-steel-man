@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -74,7 +75,8 @@ import {
   FileText,
   BarChart3,
   LineChart,
-  PieChart
+  PieChart,
+  Plus
 } from 'lucide-react';
 import {
   LineChart as RechartsLineChart,
@@ -500,7 +502,8 @@ export function IntelligenceReportingSystem({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to generate AI insights.'
+        message: 'You do not have permission to generate AI insights.',
+        read: false
       });
       return;
     }
@@ -510,7 +513,8 @@ export function IntelligenceReportingSystem({
     addNotification({
       type: 'info',
       title: 'Generating AI Insights',
-      message: 'Analyzing platform data to generate new intelligent insights...'
+      message: 'Analyzing platform data to generate new intelligent insights...',
+      read: false
     });
 
     // Simulate AI processing time
@@ -519,7 +523,8 @@ export function IntelligenceReportingSystem({
       addNotification({
         type: 'success',
         title: 'Insights Generated',
-        message: '3 new AI-powered insights have been generated and are ready for review.'
+        message: '3 new AI-powered insights have been generated and are ready for review.',
+        read: false
       });
       
       // Refresh data
@@ -1040,7 +1045,7 @@ export function IntelligenceReportingSystem({
                   </div>
                   <div>
                     <Label>Impact Level</Label>
-                    <Badge className={getImpactColor(selectedInsight.impact_level)} size="sm">
+                    <Badge className={getImpactColor(selectedInsight.impact_level)}>
                       {selectedInsight.impact_level}
                     </Badge>
                   </div>

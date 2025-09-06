@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+
 import { useDebounce } from 'use-debounce';
 import { Profile } from '@/types/profile';
 import { ProfileAPI, ProfileAPIError } from '@/lib/api/profile';
-import { ProfileCard } from './ProfileCard';
 import {
   Card,
   CardContent,
@@ -43,6 +43,8 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
+
+import { ProfileCard } from './ProfileCard';
 
 interface SearchFilters {
   query: string;
@@ -133,14 +135,16 @@ export function ProfileSearch({
       if (searchFilters.ideology) {
         filteredProfiles = filteredProfiles.filter(profile => 
           profile.ideology_scores && 
+          searchFilters.ideology &&
           profile.ideology_scores[searchFilters.ideology] && 
-          profile.ideology_scores[searchFilters.ideology] > 0.5
+          (profile.ideology_scores[searchFilters.ideology] || 0) > 0.5
         );
       }
 
       if (searchFilters.plasticityMin !== undefined) {
         filteredProfiles = filteredProfiles.filter(profile => 
           profile.opinion_plasticity !== null && 
+          profile.opinion_plasticity !== undefined &&
           profile.opinion_plasticity >= searchFilters.plasticityMin!
         );
       }
@@ -148,6 +152,7 @@ export function ProfileSearch({
       if (searchFilters.plasticityMax !== undefined) {
         filteredProfiles = filteredProfiles.filter(profile => 
           profile.opinion_plasticity !== null && 
+          profile.opinion_plasticity !== undefined &&
           profile.opinion_plasticity <= searchFilters.plasticityMax!
         );
       }

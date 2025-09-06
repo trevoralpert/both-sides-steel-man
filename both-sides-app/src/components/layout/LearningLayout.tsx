@@ -8,6 +8,7 @@
 'use client';
 
 import React from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { 
   LearningNavMenu,
@@ -59,7 +60,7 @@ export function LearningLayout({
           {/* Mobile Menu Trigger */}
           {showSidebar && (
             <Sheet>
-              <SheetTrigger asChild>
+              <SheetTrigger>
                 <Button variant="outline" size="sm" className="md:hidden">
                   <Menu className="h-4 w-4" />
                 </Button>

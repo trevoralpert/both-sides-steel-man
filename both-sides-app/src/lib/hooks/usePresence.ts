@@ -9,9 +9,11 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+
 import { useAuth } from '@clerk/nextjs';
-import { useConversationConnection } from './useRealtimeConnection';
 import { ParticipantInfo } from '@/types/debate';
+
+import { useConversationConnection } from './useRealtimeConnection';
 
 export interface PresenceState {
   participants: {

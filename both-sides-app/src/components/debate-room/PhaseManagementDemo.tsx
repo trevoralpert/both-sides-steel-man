@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebatePhase } from '@/types/debate';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,14 +17,6 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  PhaseTimer,
-  PhaseIndicator, 
-  PhaseStatus,
-  PhaseTimeline,
-  TransitionNotification,
-  useTransitionNotifications
-} from './index';
-import { 
   Play,
   Pause,
   RotateCcw,
@@ -31,6 +24,15 @@ import {
   Eye,
   ArrowRight
 } from 'lucide-react';
+
+import { 
+  PhaseTimer,
+  PhaseIndicator, 
+  PhaseStatus,
+  PhaseTimeline,
+  TransitionNotification,
+  useTransitionNotifications
+} from './index';
 
 export interface PhaseManagementDemoProps {
   className?: string;
@@ -265,15 +267,11 @@ export function PhaseManagementDemo({ className }: PhaseManagementDemoProps) {
                 <div className="space-y-3">
                   <h4 className="font-medium">Default Variant</h4>
                   <PhaseTimer
-                    currentPhase={currentPhase}
-                    timeRemaining={timeRemaining}
-                    totalPhaseTime={totalPhaseTime}
-                    onPhaseTransition={handleManualTransition}
-                    canPause={true}
-                    isActive={isTimerActive}
-                    variant="default"
-                    showProgressRing={true}
-                    showPhaseIndicator={true}
+                    phase={currentPhase}
+                    phaseStartTime={new Date(Date.now() - (totalPhaseTime - timeRemaining))}
+                    phaseDurationMs={totalPhaseTime}
+                    onPhaseComplete={() => handleManualTransition(currentPhase)}
+                    isPaused={!isTimerActive}
                   />
                 </div>
                 
@@ -281,12 +279,10 @@ export function PhaseManagementDemo({ className }: PhaseManagementDemoProps) {
                 <div className="space-y-3">
                   <h4 className="font-medium">Compact Variant</h4>
                   <PhaseTimer
-                    currentPhase={currentPhase}
-                    timeRemaining={timeRemaining}
-                    totalPhaseTime={totalPhaseTime}
-                    variant="compact"
-                    isActive={isTimerActive}
-                    canPause={false}
+                    phase={currentPhase}
+                    phaseStartTime={new Date(Date.now() - (totalPhaseTime - timeRemaining))}
+                    phaseDurationMs={totalPhaseTime}
+                    isPaused={!isTimerActive}
                   />
                 </div>
               </div>
@@ -295,11 +291,10 @@ export function PhaseManagementDemo({ className }: PhaseManagementDemoProps) {
               <div className="space-y-3">
                 <h4 className="font-medium">Minimal Variant</h4>
                 <PhaseTimer
-                  currentPhase={currentPhase}
-                  timeRemaining={timeRemaining}
-                  totalPhaseTime={totalPhaseTime}
-                  variant="minimal"
-                  isActive={isTimerActive}
+                  phase={currentPhase}
+                  phaseStartTime={new Date(Date.now() - (totalPhaseTime - timeRemaining))}
+                  phaseDurationMs={totalPhaseTime}
+                  isPaused={!isTimerActive}
                 />
               </div>
             </CardContent>

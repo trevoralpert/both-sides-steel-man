@@ -8,9 +8,8 @@
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
+
 import { cn } from '@/lib/utils';
-import { CoachingSuggestion, CoachingPriority } from './CoachingSidebar';
-import { SuggestionCard } from './SuggestionCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -34,6 +33,9 @@ import {
   Timer,
   BarChart3
 } from 'lucide-react';
+
+import { SuggestionCard } from './SuggestionCard';
+import { CoachingSuggestion, CoachingPriority } from './CoachingSidebar';
 
 export interface SuggestionDisplayProps {
   suggestions: CoachingSuggestion[];
@@ -110,7 +112,7 @@ export function SuggestionDisplay({
 
   // Filtered and sorted suggestions
   const filteredSuggestions = useMemo(() => {
-    let filtered = enhancedSuggestions.filter(suggestion => {
+    const filtered = enhancedSuggestions.filter(suggestion => {
       // Filter by dismissed status
       if (!showDismissed && dismissedSuggestions.has(suggestion.id)) return false;
       

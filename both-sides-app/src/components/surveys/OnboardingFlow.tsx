@@ -6,7 +6,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@clerk/nextjs';
+
+import { useAuth, useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -48,7 +49,8 @@ export function OnboardingFlow({
   onStartSurvey,
   className = '' 
 }: OnboardingFlowProps) {
-  const { user } = useAuth();
+  const { isLoaded } = useAuth();
+  const { user } = useUser();
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
 

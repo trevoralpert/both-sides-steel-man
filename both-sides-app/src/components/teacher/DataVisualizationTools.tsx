@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -891,7 +892,8 @@ export function DataVisualizationTools({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to create visualizations.'
+        message: 'You do not have permission to create visualizations.',
+        read: false
       });
       return;
     }
@@ -979,7 +981,8 @@ export function DataVisualizationTools({
     addNotification({
       type: 'success',
       title: 'Visualization Created',
-      message: `"${newViz.name}" has been created successfully.`
+      message: `"${newViz.name}" has been created successfully.`,
+      read: false
     });
   };
 
@@ -1003,7 +1006,8 @@ export function DataVisualizationTools({
     addNotification({
       type: 'success',
       title: 'Visualization Duplicated',
-      message: `"${duplicate.name}" has been created.`
+      message: `"${duplicate.name}" has been created.`,
+      read: false
     });
   };
 
@@ -1013,7 +1017,8 @@ export function DataVisualizationTools({
     addNotification({
       type: 'success',
       title: 'Visualization Deleted',
-      message: 'The visualization has been deleted.'
+      message: 'The visualization has been deleted.',
+      read: false
     });
   };
 
@@ -1021,7 +1026,8 @@ export function DataVisualizationTools({
     addNotification({
       type: 'info',
       title: 'Export Started',
-      message: `Exporting "${viz.name}" as ${format.toUpperCase()}...`
+      message: `Exporting "${viz.name}" as ${format.toUpperCase()}...`,
+      read: false
     });
 
     // Simulate export
@@ -1029,7 +1035,8 @@ export function DataVisualizationTools({
       addNotification({
         type: 'success',
         title: 'Export Complete',
-        message: `"${viz.name}" has been exported successfully.`
+        message: `"${viz.name}" has been exported successfully.`,
+        read: false
       });
     }, 1500);
   };
@@ -1079,7 +1086,7 @@ export function DataVisualizationTools({
                 outerRadius={100}
                 dataKey="value"
                 nameKey="name"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
               >
                 {SAMPLE_DATA.categories.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -1471,7 +1478,7 @@ export function DataVisualizationTools({
                         outerRadius={80}
                         dataKey="value"
                         nameKey="name"
-                        label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) => `${((percent || 0) * 100).toFixed(0)}%`}
                       >
                         {SAMPLE_DATA.categories.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />

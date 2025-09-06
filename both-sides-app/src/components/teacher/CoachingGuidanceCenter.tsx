@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -57,7 +58,7 @@ import {
   Smile,
   MessageCircle,
   Sparkles,
-  Magic,
+  Wand2,
   Compass,
   Map,
   Flag,
@@ -600,7 +601,7 @@ export function CoachingGuidanceCenter({
       type: 'info',
       title: 'Coaching Opportunity',
       message: `Consider sending "${prompt.name}" to ${participant.name}`,
-      action: () => sendCoachingMessage(participant, prompt)
+      read: false
     });
   };
 
@@ -609,7 +610,7 @@ export function CoachingGuidanceCenter({
       type: 'info',
       title: 'Strategy Suggestion',
       message: `"${strategy.name}" could help ${participant.name} develop ${competency.name}`,
-      action: () => setShowStrategyDialog(true)
+      read: false
     });
   };
 
@@ -657,7 +658,8 @@ export function CoachingGuidanceCenter({
     addNotification({
       type: 'success',
       title: 'Coaching Message Sent',
-      message: `Guidance sent to ${participant.name}`
+      message: `Guidance sent to ${participant.name}`,
+      read: false
     });
   };
 
@@ -666,7 +668,8 @@ export function CoachingGuidanceCenter({
       addNotification({
         type: 'error',
         title: 'Missing Information',
-        message: 'Please provide both title and description for the educational moment.'
+        message: 'Please provide both title and description for the educational moment.',
+        read: false
       });
       return;
     }
@@ -701,7 +704,8 @@ export function CoachingGuidanceCenter({
     addNotification({
       type: 'success',
       title: 'Educational Moment Created',
-      message: `"${moment.title}" has been shared with participants`
+      message: `"${moment.title}" has been shared with participants`,
+      read: false
     });
   };
 
@@ -1193,7 +1197,8 @@ export function CoachingGuidanceCenter({
                           addNotification({
                             type: 'success',
                             title: 'Strategy Applied',
-                            message: `"${strategy.name}" initiated for ${selectedParticipant.name}`
+                            message: `"${strategy.name}" initiated for ${selectedParticipant.name}`,
+                            read: false
                           });
                         }
                       }}

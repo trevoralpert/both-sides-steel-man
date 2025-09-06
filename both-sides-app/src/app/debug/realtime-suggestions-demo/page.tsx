@@ -5,6 +5,7 @@
  */
 
 import React, { useState } from 'react';
+
 import { DebatePhase, Message } from '@/types/debate';
 import { SuggestionDisplay } from '@/components/debate-room/SuggestionDisplay';
 import { useAICoaching } from '@/lib/hooks/useAICoaching';

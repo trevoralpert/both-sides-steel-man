@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BeliefProfileVisualization } from './BeliefProfileVisualization';
+
 import { IdeologyScores } from '@/types/profile';
 import {
   Card,
@@ -35,6 +35,8 @@ import {
   ChevronRight,
   HelpCircle
 } from 'lucide-react';
+
+import { BeliefProfileVisualization } from './BeliefProfileVisualization';
 
 interface BeliefAnalysisResult {
   profileId: string;
@@ -121,7 +123,7 @@ export function ProfileConfirmation({
         response: typeof response.responseValue === 'string' ? response.responseValue : String(response.responseValue),
         contributesToDimensions: dimensions,
         impact: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low'
-      };
+      } as ResponseContribution;
     }).filter(contrib => contrib.contributesToDimensions.length > 0);
   };
 

@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+
 import { useAuth } from '@clerk/nextjs';
 
 // Connection states

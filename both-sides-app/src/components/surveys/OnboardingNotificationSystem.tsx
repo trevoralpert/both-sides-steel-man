@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+
 import { useAuth } from '@clerk/nextjs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,7 +35,8 @@ import {
   Edit,
   Trash2,
   Play,
-  Pause
+  Pause,
+  Eye
 } from 'lucide-react';
 
 // Notification System Types
@@ -518,7 +520,7 @@ Keep up the great work! You're making excellent progress on your Both Sides jour
                       <div className="flex flex-wrap gap-1 mt-1">
                         {template.variables.map(variable => (
                           <Badge key={variable} variant="outline" className="text-xs">
-                            {{{variable}}}
+                            {variable}
                           </Badge>
                         ))}
                       </div>
@@ -558,7 +560,7 @@ Keep up the great work! You're making excellent progress on your Both Sides jour
                       <h5 className="font-medium text-sm mb-2">Target Criteria:</h5>
                       <div className="text-sm text-muted-foreground space-y-1">
                         <p>• {campaign.targetCriteria.daysInactive}+ days inactive</p>
-                        <p>• <{campaign.targetCriteria.progressThreshold}% progress</p>
+                        <p>• &lt;{campaign.targetCriteria.progressThreshold}% progress</p>
                         <p>• {campaign.targetCriteria.engagementLevel} engagement level</p>
                       </div>
                     </div>

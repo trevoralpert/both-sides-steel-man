@@ -7,6 +7,7 @@
  */
 
 import React, { useState } from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -222,7 +223,7 @@ export default function TopicDisplayDemo() {
                 <label className="text-sm font-medium">Your Position:</label>
                 <PositionSelector
                   selectedPosition={selectedPosition}
-                  onSelectPosition={setSelectedPosition}
+                  onPositionChange={setSelectedPosition}
                 />
               </div>
 

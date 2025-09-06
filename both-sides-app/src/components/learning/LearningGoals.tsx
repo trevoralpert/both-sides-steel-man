@@ -8,6 +8,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { format } from 'date-fns';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,7 +42,6 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
 
 interface LearningGoal {
   id: string;
@@ -575,7 +576,7 @@ function CreateGoalDialog({ recommendations, onCreateGoal, open, onOpenChange }:
           <div className="space-y-2">
             <Label>Target Date</Label>
             <Popover>
-              <PopoverTrigger asChild>
+              <PopoverTrigger>
                 <Button
                   variant="outline"
                   className={cn(
@@ -591,7 +592,11 @@ function CreateGoalDialog({ recommendations, onCreateGoal, open, onOpenChange }:
                 <Calendar
                   mode="single"
                   selected={formData.targetDate}
-                  onSelect={(date) => date && setFormData(prev => ({ ...prev, targetDate: date }))}
+                  onSelect={(date) => {
+                    if (date instanceof Date) {
+                      setFormData(prev => ({ ...prev, targetDate: date }));
+                    }
+                  }}
                   initialFocus
                 />
               </PopoverContent>
@@ -720,7 +725,7 @@ function EditGoalDialog({ goal, open, onOpenChange, onUpdateGoal }: EditGoalDial
           <div className="space-y-2">
             <Label>Target Date</Label>
             <Popover>
-              <PopoverTrigger asChild>
+              <PopoverTrigger>
                 <Button
                   variant="outline"
                   className="w-full justify-start text-left font-normal"
@@ -733,7 +738,11 @@ function EditGoalDialog({ goal, open, onOpenChange, onUpdateGoal }: EditGoalDial
                 <Calendar
                   mode="single"
                   selected={formData.targetDate}
-                  onSelect={(date) => date && setFormData(prev => ({ ...prev, targetDate: date }))}
+                  onSelect={(date) => {
+                    if (date instanceof Date) {
+                      setFormData(prev => ({ ...prev, targetDate: date }));
+                    }
+                  }}
                   initialFocus
                 />
               </PopoverContent>

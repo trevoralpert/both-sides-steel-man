@@ -7,6 +7,7 @@
  */
 
 import React, { useMemo } from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebatePhase } from '@/types/debate';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -87,6 +88,14 @@ const PHASE_CONFIG = {
     color: 'amber',
     estimatedDuration: 5,
     order: 5
+  },
+  COMPLETED: {
+    name: 'Completed',
+    description: 'Debate finished',
+    icon: CheckCircle2,
+    color: 'green',
+    estimatedDuration: 0,
+    order: 6
   }
 } as const;
 

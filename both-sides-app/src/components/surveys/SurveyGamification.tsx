@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import { SurveyProgress, SurveyResults } from '@/types/survey';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -366,8 +367,8 @@ function calculateAchievements(
       icon: <Brain className="h-4 w-4" />,
       rarity: 'rare',
       points: 40,
-      unlocked: results?.quality_metrics.average_confidence >= 4,
-      progress: results ? Math.min((results.quality_metrics.average_confidence / 4) * 100, 100) : 0,
+      unlocked: (results?.quality_metrics?.average_confidence || 0) >= 4,
+      progress: results ? Math.min(((results.quality_metrics?.average_confidence || 0) / 4) * 100, 100) : 0,
     },
     {
       id: 'survey_champion',
@@ -386,8 +387,8 @@ function calculateAchievements(
       icon: <Sparkles className="h-4 w-4" />,
       rarity: 'rare',
       points: 60,
-      unlocked: results?.responses_by_category && 
-                Object.keys(results.responses_by_category).length >= 4,
+      unlocked: !!(results?.responses_by_category && 
+                Object.keys(results.responses_by_category).length >= 4),
       progress: results?.responses_by_category ? 
                 (Object.keys(results.responses_by_category).length / 4) * 100 : 0,
     },
@@ -398,8 +399,8 @@ function calculateAchievements(
       icon: <Medal className="h-4 w-4" />,
       rarity: 'epic',
       points: 75,
-      unlocked: results?.quality_metrics.response_quality_score >= 85,
-      progress: results ? Math.min((results.quality_metrics.response_quality_score / 85) * 100, 100) : 0,
+      unlocked: (results?.quality_metrics?.response_quality_score || 0) >= 85,
+      progress: results ? Math.min(((results.quality_metrics?.response_quality_score || 0) / 85) * 100, 100) : 0,
     },
   ];
 }

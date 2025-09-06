@@ -9,13 +9,15 @@
  */
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebateHeaderProps } from '@/types/debate';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ParticipantOverview } from './ParticipantList';
 import { ConnectionStatusIndicator } from '@/components/connection';
+
+import { ParticipantOverview } from './ParticipantList';
 import { PhaseIndicator } from './PhaseIndicator';
 
 export function DebateHeader({

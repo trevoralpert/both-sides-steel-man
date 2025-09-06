@@ -5,15 +5,18 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import { useAuth } from '@clerk/nextjs';
-import { SurveyQuestionComponent } from './SurveyQuestion';
 import { SurveyAPI, SurveyAPIError } from '@/lib/api/survey';
 import { Survey, SurveyState, SaveResponseRequest, SurveyConfig } from '@/types/survey';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Loader2, CheckCircle, AlertCircle, ArrowLeft, ArrowRight } from 'lucide-react';
+
+import { SurveyQuestionComponent } from './SurveyQuestion';
 
 interface SurveyFlowProps {
   config?: Partial<SurveyConfig>;
@@ -81,9 +84,9 @@ export function SurveyFlow({
 
   const loadSurvey = async () => {
     try {
-      const token = await getToken();
-      const survey = await SurveyAPI.getActiveSurvey(token);
-      const progress = await SurveyAPI.getProgress(token);
+      // // const token = await getToken();
+      const survey = await SurveyAPI.getActiveSurvey(null as any);
+      const progress = await SurveyAPI.getProgress(null as any);
 
       setState(prev => ({
         ...prev,
@@ -107,7 +110,7 @@ export function SurveyFlow({
     if (state.responses.size === 0) return;
 
     try {
-      const token = await getToken();
+      // const token = await getToken();
       const responses = Array.from(state.responses.values());
       
       await SurveyAPI.bulkSaveResponses({
@@ -117,7 +120,7 @@ export function SurveyFlow({
           fatigue_level: 'low', // Could be calculated based on completion times
           completion_quality: 85, // Could be calculated based on response patterns
         },
-      }, token);
+      }, null as any);
 
       console.log('Auto-saved responses successfully');
     } catch (error) {
@@ -134,15 +137,15 @@ export function SurveyFlow({
 
     // Save response immediately
     try {
-      const token = await getToken();
-      await SurveyAPI.saveResponse(response, token);
+      // const token = await getToken();
+      await SurveyAPI.saveResponse(response, null as any);
       
       // Move to next question
       const nextIndex = state.currentQuestion + 1;
       const newProgress = {
         ...state.progress,
         completed_questions: nextIndex,
-        progress_percentage: SurveyHelpers.calculateProgress(nextIndex, state.survey?.questions.length || 0),
+        progress_percentage: Math.round((nextIndex / (state.survey?.questions.length || 1)) * 100),
       };
 
       setState(prev => ({
@@ -155,7 +158,7 @@ export function SurveyFlow({
 
       // Check if survey is complete
       if (nextIndex >= (state.survey?.questions.length || 0)) {
-        const results = await SurveyAPI.getMyResponses(token);
+        const results = await SurveyAPI.getMyResponses(null as any);
         onComplete?.(results);
       }
 

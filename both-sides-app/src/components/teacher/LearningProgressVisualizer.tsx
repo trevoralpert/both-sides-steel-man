@@ -7,6 +7,7 @@
 'use client';
 
 import React, { useState } from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -348,7 +349,7 @@ export function LearningProgressVisualizer({ students }: LearningProgressVisuali
                     <span className="font-medium">{students.filter(s => s.currentScore >= 85).length}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>At Risk (< 70%):</span>
+                    <span>At Risk (&lt; 70%):</span>
                     <span className="font-medium text-red-600">{students.filter(s => s.currentScore < 70).length}</span>
                   </div>
                 </div>

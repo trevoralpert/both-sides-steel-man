@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { Survey, SurveyProgress, SurveyQuestion } from '@/types/survey';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,7 @@ import {
   AlertTriangle,
   Clock,
   Target,
-  Skip,
+  SkipForward as Skip,
   Home,
   BookOpen
 } from 'lucide-react';
@@ -64,36 +65,37 @@ export function SmartSurveyNavigation({
 
   useEffect(() => {
     // Group questions into sections
-    const sectionMap = new Map<string, SurveyQuestion[]>();
+    const sectionMap: any = {};
     
     survey.questions.forEach((question, index) => {
       const section = question.section || 'general';
-      if (!sectionMap.has(section)) {
-        sectionMap.set(section, []);
+      if (!sectionMap[section]) {
+        sectionMap[section] = [];
       }
-      sectionMap.get(section)?.push({ ...question, originalIndex: index });
+      sectionMap[section].push({ ...question, originalIndex: index });
     });
 
     const sectionData: SurveySection[] = [];
     let currentStartIndex = 0;
 
-    Array.from(sectionMap.entries()).forEach(([sectionName, questions]) => {
-      const completed = questions.filter(q => responses.has(q.id)).length;
-      const estimatedMinutes = Math.ceil(questions.length * 1.5); // 1.5 min per question average
+    Object.entries(sectionMap).forEach(([sectionName, questions]) => {
+      const questionsArray = questions as any[];
+      const completed = questionsArray.filter(q => responses.has(q.id)).length;
+      const estimatedMinutes = Math.ceil(questionsArray.length * 1.5); // 1.5 min per question average
       
       sectionData.push({
         name: sectionName,
         displayName: getSectionDisplayName(sectionName),
         startIndex: currentStartIndex,
-        endIndex: currentStartIndex + questions.length - 1,
-        questions,
+        endIndex: currentStartIndex + questionsArray.length - 1,
+        questions: questionsArray,
         completed,
-        total: questions.length,
+        total: questionsArray.length,
         estimatedMinutes,
         isOptional: sectionName.includes('optional') || sectionName.includes('reflection')
       });
       
-      currentStartIndex += questions.length;
+      currentStartIndex += questionsArray.length;
     });
 
     setSections(sectionData);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import { 
   BeliefProfileVisualization,
   ProfileConfirmation,
@@ -276,7 +277,7 @@ export default function ProfileDemoPage() {
                 <CardDescription>
                   Complete profile review, editing, and confirmation workflow
                 </CardDescription>
-              </CardContent>
+              </CardHeader>
               <CardContent>
                 <ProfileConfirmation
                   beliefProfile={MOCK_BELIEF_PROFILE}

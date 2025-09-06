@@ -8,6 +8,7 @@
  */
 
 import React, { useState } from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -432,7 +433,7 @@ export default function MessageInputDemo() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Quote:</span>
-                    <code className="text-xs">Ctrl+></code>
+                    <code className="text-xs">Ctrl+&gt;</code>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">List:</span>

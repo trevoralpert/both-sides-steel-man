@@ -8,6 +8,7 @@
  */
 
 import React, { useState } from 'react';
+
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -154,7 +155,7 @@ export function ConnectionStatusIndicator({
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger asChild>
+          <TooltipTrigger>
             <div className={cn("flex items-center", className)}>
               <IconComponent 
                 className={cn(
@@ -483,7 +484,7 @@ export function ConnectionQualityIndicator({
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
+        <TooltipTrigger>
           <div className={cn("flex items-center space-x-1", className)}>
             {Array.from({ length: 4 }, (_, i) => (
               <div

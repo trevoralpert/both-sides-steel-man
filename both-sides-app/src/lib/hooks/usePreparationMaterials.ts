@@ -7,6 +7,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+
 import { EvidenceSource, EvidenceSuggestion } from '@/components/debate-room/EvidencePanel';
 
 export interface PreparationMaterial {

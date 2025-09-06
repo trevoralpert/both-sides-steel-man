@@ -8,6 +8,7 @@
  */
 
 import React, { useState } from 'react';
+
 import { cn } from '@/lib/utils';
 import { Message } from '@/types/debate';
 import { Button } from '@/components/ui/button';
@@ -71,7 +72,7 @@ function MessagePreviewCard({ message, participantName, position, onClick }: {
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center space-x-2">
             <span className="font-medium">{participantName}</span>
-            <Badge variant={position === 'PRO' ? 'default' : 'destructive'} size="sm">
+            <Badge variant={position === 'PRO' ? 'default' : 'destructive'}>
               {position}
             </Badge>
           </div>
@@ -276,7 +277,7 @@ export function JumpToMessage({
             <div className="flex items-center space-x-2">
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger>
                     <Button
                       variant="outline"
                       size="sm"
@@ -294,7 +295,7 @@ export function JumpToMessage({
               
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger>
                     <Button
                       variant="outline"
                       size="sm"
@@ -312,7 +313,7 @@ export function JumpToMessage({
               
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger>
                     <Button
                       variant="outline"
                       size="sm"
@@ -330,7 +331,7 @@ export function JumpToMessage({
               
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger>
                     <Button
                       variant="outline"
                       size="sm"

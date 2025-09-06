@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import { TeacherDashboardLayout } from '@/components/teacher/TeacherDashboardLayout';
@@ -14,7 +15,7 @@ export default function TeacherLayout({ children }: TeacherLayoutProps) {
   const { user, isLoaded } = useUser();
 
   if (!isLoaded) {
-    return <LoadingState message="Loading teacher dashboard..." />;
+    return <LoadingState text="Loading teacher dashboard..." />;
   }
 
   if (!user) {

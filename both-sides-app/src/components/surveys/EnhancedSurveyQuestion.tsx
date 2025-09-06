@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+
 import { SurveyQuestion, SurveyQuestionType, SaveResponseRequest } from '@/types/survey';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { SurveyHelpers } from '@/lib/api/survey';
+
 import { EducationalTooltip, useAccessibleContent } from './';
 
 interface EnhancedSurveyQuestionProps {
@@ -69,7 +71,7 @@ export function EnhancedSurveyQuestion({
   const [showHint, setShowHint] = useState(false);
   const [responseChanged, setResponseChanged] = useState(false);
 
-  const timerRef = useRef<NodeJS.Timeout>();
+  const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const { getAccessibleText, getMotivationalText, shouldShowProgressReminders } = useAccessibleContent();
 
   // Track engagement time

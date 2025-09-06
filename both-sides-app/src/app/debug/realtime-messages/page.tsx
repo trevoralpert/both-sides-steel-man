@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -289,13 +290,13 @@ export default function RealtimeMessagesDemo() {
                     participantMap={participantMap}
                     initialMessages={[]} // Let hook manage messages
                     currentPhase={currentPhase}
-                    onMessageSent={(message) => {
+                    onMessageSent={(message: any) => {
                       console.log('Message sent:', message);
                     }}
-                    onMessageReceived={(message) => {
+                    onMessageReceived={(message: any) => {
                       console.log('Message received:', message);
                     }}
-                    onReactionAdded={(messageId, emoji, userId) => {
+                    onReactionAdded={(messageId: string, emoji: string, userId: string) => {
                       console.log('Reaction added:', { messageId, emoji, userId });
                     }}
                   />

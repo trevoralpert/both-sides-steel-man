@@ -8,6 +8,7 @@
 'use client';
 
 import React from 'react';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
@@ -24,8 +25,9 @@ import {
   ChevronRight,
   Home
 } from 'lucide-react';
-import { useLearningNavigation } from './LearningNavigationProvider';
 import { cn } from '@/lib/utils';
+
+import { useLearningNavigation } from './LearningNavigationProvider';
 
 interface NavItem {
   label: string;

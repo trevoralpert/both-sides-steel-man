@@ -384,7 +384,7 @@ export const formatAnalysisDate = (date: Date | string): string => {
 
 export const calculateProfileCompleteness = (analysis: BeliefAnalysisResult): number => {
   let completeness = 0;
-  let totalFactors = 5;
+  const totalFactors = 5;
 
   if (analysis.beliefSummary && analysis.beliefSummary.length > 100) completeness++;
   if (analysis.ideologyScores && Object.keys(analysis.ideologyScores).length >= 3) completeness++;

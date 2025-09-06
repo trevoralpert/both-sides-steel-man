@@ -8,8 +8,9 @@
  */
 
 import React from 'react';
+
 import { useParams, useSearchParams } from 'next/navigation';
-import { useAuth } from '@clerk/nextjs';
+import { useAuth, useUser } from '@clerk/nextjs';
 import { DebateRoomLayout } from '@/components/debate-room';
 import { RouteGuard, useDebateUrlState, DebateBreadcrumb } from '@/components/navigation';
 import { deepLinking } from '@/lib/utils/deepLinking';
@@ -19,13 +20,14 @@ import { ArrowLeft, Info } from 'lucide-react';
 import Link from 'next/link';
 
 interface DebateRoomPageProps {
-  params: { conversationId: string };
+  params: Promise<{ conversationId: string }>;
 }
 
-function DebateRoomPageContent({ params }: DebateRoomPageProps) {
+function DebateRoomPageContent({ params }: { params: { conversationId: string } }) {
   const { conversationId } = params;
   const searchParams = useSearchParams();
-  const { user, isLoaded } = useAuth();
+  const { isLoaded: authLoaded } = useAuth();
+  const { user, isLoaded } = useUser();
   
   const matchId = searchParams.get('matchId') || 'demo-match';
   
@@ -269,24 +271,21 @@ Proponents of regulation argue that government oversight is necessary to prevent
 }
 
 // Export protected page with route guard
-export default function DebateRoomPage(props: DebateRoomPageProps) {
+export default async function DebateRoomPage(props: DebateRoomPageProps) {
+  const params = await props.params;
   return (
     <RouteGuard
       requireAuth={true}
       requireProfile={true}
       debateAccess={{
-        conversationId: props.params.conversationId,
+        conversationId: params.conversationId,
         requireParticipant: true
       }}
       fallbackPath="/dashboard"
     >
-      <DebateRoomPageContent {...props} />
+      <DebateRoomPageContent params={params} />
     </RouteGuard>
   );
 }
 
-// Export metadata for Next.js
-export const metadata = {
-  title: 'Debate Room - Both Sides',
-  description: 'Engage in structured AI-moderated debates'
-};
+// Note: Metadata is handled by the layout.tsx file for client components

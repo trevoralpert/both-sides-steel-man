@@ -8,14 +8,12 @@
  */
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 import { ParticipantInfo } from '@/types/debate';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { ParticipantAvatar } from './ParticipantAvatar';
-import { PositionBadge } from './PositionBadge';
-import { PresenceIndicator, TypingIndicator } from './PresenceIndicator';
 import { 
   Users, 
   Crown, 
@@ -24,6 +22,10 @@ import {
   MicOff,
   MoreHorizontal
 } from 'lucide-react';
+
+import { ParticipantAvatar } from './ParticipantAvatar';
+import { PositionBadge } from './PositionBadge';
+import { PresenceIndicator, TypingIndicator } from './PresenceIndicator';
 
 export interface ParticipantListProps {
   participants: ParticipantInfo[];
@@ -210,7 +212,7 @@ function ParticipantItem({
               </p>
               
               {isCurrentUser && (
-                <Crown className="h-3 w-3 text-primary" title="You" />
+                <Crown className="h-3 w-3 text-primary" />
               )}
             </div>
             
@@ -367,7 +369,6 @@ export function ParticipantOverview({
               "border-2 border-background",
               index > 0 && "z-10"
             )}
-            style={{ zIndex: participants.length - index }}
           />
         ))}
         {participants.length > 3 && (

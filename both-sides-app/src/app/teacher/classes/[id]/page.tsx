@@ -7,18 +7,20 @@
 'use client';
 
 import React from 'react';
+
 import { ClassDetailView } from '@/components/teacher/ClassDetailView';
 
 interface ClassDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function ClassDetailPage({ params }: ClassDetailPageProps) {
+export default async function ClassDetailPage({ params }: ClassDetailPageProps) {
+  const resolvedParams = await params;
   return (
     <div className="container mx-auto p-6">
-      <ClassDetailView classId={params.id} />
+      <ClassDetailView classId={resolvedParams.id} />
     </div>
   );
 }

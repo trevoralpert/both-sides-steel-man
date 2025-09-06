@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
+
 import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,10 +28,12 @@ import {
   Sparkles,
   Calendar,
   Bell,
-  BookOpen
+  BookOpen,
+  TrendingUp
 } from 'lucide-react';
-import { useLearningNavigation } from './LearningNavigationProvider';
 import { toast } from '@/components/ui/use-toast';
+
+import { useLearningNavigation } from './LearningNavigationProvider';
 
 interface WorkflowState {
   currentStep: string;

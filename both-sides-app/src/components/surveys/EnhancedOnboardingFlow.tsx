@@ -6,7 +6,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@clerk/nextjs';
+
+import { useAuth, useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -84,7 +85,8 @@ export function EnhancedOnboardingFlow({
   enableCrossDeviceSync = true,
   className = '' 
 }: OnboardingFlowProps) {
-  const { user, getToken } = useAuth();
+  const { isLoaded } = useAuth();
+  const { user } = useUser();
   
   const [state, setState] = useState<OnboardingState>({
     currentStep: initialStep,
@@ -264,8 +266,8 @@ export function EnhancedOnboardingFlow({
 
   const syncOnboardingFromAPI = async () => {
     try {
-      const token = await getToken();
-      if (!token) return;
+      // const token = await getToken();
+      // if (!token) return;
 
       // In real implementation, this would call an API endpoint
       // For now, we'll just log the attempt
@@ -278,8 +280,8 @@ export function EnhancedOnboardingFlow({
 
   const syncOnboardingToAPI = async (stateToSync: OnboardingState) => {
     try {
-      const token = await getToken();
-      if (!token) return;
+      // const token = await getToken();
+      // if (!token) return;
 
       // In real implementation, this would save to API endpoint
       // For now, we'll just log the data

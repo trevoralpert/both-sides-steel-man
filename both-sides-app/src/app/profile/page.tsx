@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { redirect, useRouter } from 'next/navigation';
 import { ProfileView, ProfileEditForm, ProfilePageHeader, useProfileNavigation } from '@/components/profiles';

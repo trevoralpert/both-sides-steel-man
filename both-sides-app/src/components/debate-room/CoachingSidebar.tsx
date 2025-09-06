@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebatePhase, Message } from '@/types/debate';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,6 +36,7 @@ import {
   Star,
   BookOpen
 } from 'lucide-react';
+
 import { SuggestionCard } from './SuggestionCard';
 import { SuggestionDisplay } from './SuggestionDisplay';
 

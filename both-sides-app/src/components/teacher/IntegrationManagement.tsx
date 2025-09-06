@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,16 +31,6 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -96,6 +87,17 @@ import {
 } from 'lucide-react';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
+
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 // Types
 interface Integration {
@@ -762,7 +764,8 @@ export function IntegrationManagement({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to test integrations.'
+        message: 'You do not have permission to test integrations.',
+        read: false
       });
       return;
     }
@@ -773,7 +776,8 @@ export function IntegrationManagement({
     addNotification({
       type: 'info',
       title: 'Testing Integration',
-      message: `Testing connection to ${integration.name}...`
+      message: `Testing connection to ${integration.name}...`,
+      read: false
     });
 
     // Simulate test
@@ -795,7 +799,8 @@ export function IntegrationManagement({
         title: success ? 'Test Successful' : 'Test Failed',
         message: success 
           ? `${integration.name} is responding correctly (${testResult.response_time}ms)`
-          : `${integration.name} test failed: ${testResult.error_message}`
+          : `${integration.name} test failed: ${testResult.error_message}`,
+        read: false
       });
     }, 2000);
   };
@@ -805,7 +810,8 @@ export function IntegrationManagement({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to modify integrations.'
+        message: 'You do not have permission to modify integrations.',
+        read: false
       });
       return;
     }
@@ -824,7 +830,8 @@ export function IntegrationManagement({
     addNotification({
       type: 'success',
       title: 'Integration Updated',
-      message: `Integration has been ${enabled ? 'enabled' : 'disabled'}.`
+      message: `Integration has been ${enabled ? 'enabled' : 'disabled'}.`,
+      read: false
     });
   };
 
@@ -833,7 +840,8 @@ export function IntegrationManagement({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to delete integrations.'
+        message: 'You do not have permission to delete integrations.',
+        read: false
       });
       return;
     }
@@ -845,7 +853,8 @@ export function IntegrationManagement({
     addNotification({
       type: 'success',
       title: 'Integration Deleted',
-      message: 'Integration has been removed successfully.'
+      message: 'Integration has been removed successfully.',
+      read: false
     });
   };
 
@@ -1119,7 +1128,7 @@ export function IntegrationManagement({
                       <div className="text-xs text-muted-foreground">Total Requests</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold">{integration.usage.success_rate?.toFixed(1) || integration.health.success_rate.toFixed(1)}%</div>
+                      <div className="text-lg font-bold">{(integration.usage as any).success_rate?.toFixed(1) || integration.health.success_rate.toFixed(1)}%</div>
                       <div className="text-xs text-muted-foreground">Success Rate</div>
                     </div>
                     <div className="text-center">
@@ -1319,7 +1328,8 @@ export function IntegrationManagement({
                             addNotification({
                               type: 'success',
                               title: 'Copied',
-                              message: 'Credential copied to clipboard'
+                              message: 'Credential copied to clipboard',
+                              read: false
                             });
                           }}
                         >

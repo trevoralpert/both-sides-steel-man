@@ -8,20 +8,22 @@
  */
 
 import React, { useState } from 'react';
+
 import { cn } from '@/lib/utils';
 import { TopicDisplayProps } from '@/types/debate';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { TopicHeader } from './TopicHeader';
-import { ContextPanel } from './ContextPanel';
-import { PreparationAccess } from './PreparationAccess';
-import { PositionBadge } from './PositionBadge';
 import { 
   Info,
   BookOpen
 } from 'lucide-react';
+
+import { TopicHeader } from './TopicHeader';
+import { ContextPanel } from './ContextPanel';
+import { PreparationAccess } from './PreparationAccess';
+import { PositionBadge } from './PositionBadge';
 
 export function TopicDisplay({
   topic,

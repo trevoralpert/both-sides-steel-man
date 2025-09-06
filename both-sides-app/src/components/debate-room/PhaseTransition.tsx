@@ -7,6 +7,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebatePhase } from '@/types/debate';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -84,6 +85,13 @@ const PHASE_CONFIG = {
     icon: Lightbulb,
     color: 'bg-amber-500',
     nextInstruction: 'Debate complete!'
+  },
+  COMPLETED: {
+    name: 'Completed',
+    description: 'Debate finished',
+    icon: CheckCircle2,
+    color: 'bg-green-500',
+    nextInstruction: 'All done!'
   }
 } as const;
 

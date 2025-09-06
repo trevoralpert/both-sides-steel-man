@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 import { PreparationMaterials, DebatePosition } from '@/types/debate';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,7 +17,6 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { PositionBadge } from './PositionBadge';
 import { 
   BookOpen,
   ChevronDown,
@@ -32,6 +32,8 @@ import {
   Zap,
   Users
 } from 'lucide-react';
+
+import { PositionBadge } from './PositionBadge';
 
 export interface PreparationAccessProps {
   preparationMaterials?: PreparationMaterials;
@@ -268,7 +270,7 @@ export function PreparationAccess({
           <CardContent className="pt-0 pb-4">
             {hasMaterials && showPreview ? (
               <div className="space-y-4">
-                <PreparationPreview materials={preparationMaterials} />
+                <PreparationPreview materials={preparationMaterials!} />
                 
                 <div className="flex items-center justify-between pt-4 border-t">
                   <div className="flex items-center space-x-2 text-xs text-muted-foreground">

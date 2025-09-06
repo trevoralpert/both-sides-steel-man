@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -225,7 +226,7 @@ export function ActivityIndicator({
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger asChild>
+          <TooltipTrigger>
             <div className={cn(
               "flex items-center space-x-1 cursor-help",
               className

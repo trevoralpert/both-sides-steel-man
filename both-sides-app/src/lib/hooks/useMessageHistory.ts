@@ -9,8 +9,10 @@
  */
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useRealtimeMessages } from './useRealtimeMessages';
+
 import { Message, DebatePhase } from '@/types/debate';
+
+import { useRealtimeMessages } from './useRealtimeMessages';
 
 export interface MessageHistoryConfig {
   conversationId: string;

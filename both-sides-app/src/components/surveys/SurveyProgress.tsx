@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import { SurveyProgress, SurveySession } from '@/types/survey';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';

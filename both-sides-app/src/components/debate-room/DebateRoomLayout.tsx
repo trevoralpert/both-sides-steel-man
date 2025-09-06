@@ -8,14 +8,9 @@
  */
 
 import React, { useState } from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebateRoomLayoutProps } from '@/types/debate';
-import { DebateHeader } from './DebateHeader';
-import { DebateFooter } from './DebateFooter';
-import { ResponsiveLayout } from './ResponsiveLayout';
-import { TopicDisplay } from './TopicDisplay';
-import { MessageContainer } from './MessageContainer';
-import { SystemMessageTemplates } from './SystemMessage';
 import { Message } from '@/types/debate';
 import { Card } from '@/components/ui/card';
 import { ErrorBoundary, DebateErrorFallback } from '@/components/error';
@@ -23,11 +18,21 @@ import { DebateRoomLoading, SkeletonDebateRoom } from '@/components/loading';
 import { DebateNotFound } from '@/components/fallback';
 import { useConversationConnection, ConnectionErrorAlert } from '@/components/connection';
 import { useMessageInput } from '@/lib/hooks/useMessageInput';
-import { TypingIndicator } from './PresenceIndicator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DebateHeader } from './DebateHeader';
+import { DebateFooter } from './DebateFooter';
+import { ResponsiveLayout } from './ResponsiveLayout';
+import { TopicDisplay } from './TopicDisplay';
+import { MessageContainer } from './MessageContainer';
+import { SystemMessageTemplates } from './SystemMessage';
+
+import { TypingIndicator } from './PresenceIndicator';
+
 import { Sidebar, MessageSquare, Users, Info, BookOpen, Target, Scale, HelpCircle, FileText, UserCheck } from 'lucide-react';
+
 import { RulesPanel } from './RulesPanel';
 import { BestPracticesTips } from './BestPracticesTips';
 import { HelpTooltip, PhaseHelpTooltip, TimeHelpTooltip } from './HelpTooltips';
@@ -36,6 +41,7 @@ import { CoachingToggle } from './CoachingToggle';
 import { EvidencePanel } from './EvidencePanel';
 import { FactCheck } from './FactCheck';
 import { TurnManager } from './TurnManager';
+
 import { useAICoaching } from '@/lib/hooks/useAICoaching';
 
 interface DebateRoomContainerProps extends DebateRoomLayoutProps {
@@ -56,6 +62,14 @@ export function DebateRoomContainer({
   className
 }: DebateRoomContainerProps) {
   const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [connectionError, setConnectionError] = useState<string | undefined>();
+
+  // Sample participants for testing
+  const mockParticipants = [
+    { id: 'participant-1', name: 'Alex Chen', avatar: '/avatars/alex.png', position: 'PRO' as const, isOnline: true, isTyping: false },
+    { id: 'participant-2', name: 'Jordan Smith', avatar: '/avatars/jordan.png', position: 'CON' as const, isOnline: true, isTyping: false },
+    { id: 'moderator-1', name: 'AI Moderator', avatar: '/avatars/moderator.png', position: undefined, isOnline: true, isTyping: false }
+  ];
 
   // Enhanced message input management with real-time features
   const messageInput = useMessageInput({
@@ -66,10 +80,10 @@ export function DebateRoomContainer({
       mockParticipants.map(p => [p.id, {
         name: p.name,
         avatar: p.avatar,
-        position: p.position
+        position: p.position as 'PRO' | 'CON' | undefined
       }])
     ),
-    participants: mockParticipants,
+    participants: mockParticipants as any,
     currentPhase,
     enableTypingIndicators: true
   });
@@ -121,7 +135,7 @@ export function DebateRoomContainer({
     backgroundInfo: 'In an increasingly digital world, programming skills are becoming more valuable across many industries.'
   };
 
-  const mockParticipants = participants.length > 0 ? participants : [
+  const effectiveParticipants = participants.length > 0 ? participants : [
     {
       id: userId,
       name: 'You',
@@ -149,7 +163,7 @@ export function DebateRoomContainer({
               variant="outline" 
               size="sm" 
               className="ml-2"
-              onClick={() => setError(undefined)}
+              onClick={() => setConnectionError(undefined)}
             >
               Retry
             </Button>
@@ -172,7 +186,7 @@ export function DebateRoomContainer({
       {/* Header */}
       <DebateHeader 
         topic={mockTopic}
-        participants={mockParticipants}
+        participants={effectiveParticipants}
         currentPhase={currentPhase}
         timeRemaining={300000} // 5 minutes for demo
         connection={{
@@ -218,13 +232,13 @@ export function DebateRoomContainer({
               )}
               initialMessages={[]} // Using real-time messages from hook
               currentPhase={currentPhase}
-              onMessageSent={(message) => {
+              onMessageSent={(message: any) => {
                 console.log('Message sent:', message);
               }}
-              onMessageReceived={(message) => {
+              onMessageReceived={(message: any) => {
                 console.log('Message received:', message);
               }}
-              onReactionAdded={(messageId, emoji, userId) => {
+              onReactionAdded={(messageId: string, emoji: string, userId: string) => {
                 console.log('Reaction added:', messageId, emoji, userId);
               }}
               onReply={handleReplyToMessage}
@@ -246,7 +260,7 @@ export function DebateRoomContainer({
       <DebateFooter 
         onSendMessage={handleSendMessage}
         placeholder={`Share your ${mockParticipants.find(p => p.id === userId)?.position} perspective...`}
-        connectionState={connection.connectionState}
+        connectionState={connection.connectionState as any}
         replyToMessage={replyToMessage}
         onCancelReply={cancelReply}
         onTypingStart={handleTypingStart}

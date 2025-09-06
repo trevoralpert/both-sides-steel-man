@@ -7,6 +7,7 @@
 'use client';
 
 import React from 'react';
+
 import { TeacherAnalyticsDashboard } from '@/components/teacher/TeacherAnalyticsDashboard';
 
 export default function TeacherAnalyticsPage() {

@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebatePhase } from '@/types/debate';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ import {
   BookOpen,
   HelpCircle
 } from 'lucide-react';
+
 import { HelpTooltip, PhaseHelpTooltip } from './HelpTooltips';
 import { PhaseTimer } from './PhaseTimer';
 import { PhaseProgress } from './PhaseProgress';

@@ -5,6 +5,7 @@
  */
 
 import React, { useState } from 'react';
+
 import { DebatePhase } from '@/types/debate';
 import { PhaseTimer } from '@/components/debate-room/PhaseTimer';
 import { PhaseProgress } from '@/components/debate-room/PhaseProgress';
@@ -113,7 +114,8 @@ export default function PhaseTimerDemoPage() {
       DISCUSSION: 15 * 60 * 1000,
       REBUTTAL: 5 * 60 * 1000,
       CLOSING: 3 * 60 * 1000,
-      REFLECTION: 5 * 60 * 1000
+      REFLECTION: 5 * 60 * 1000,
+      COMPLETED: 0
     };
     return durations[phase];
   };

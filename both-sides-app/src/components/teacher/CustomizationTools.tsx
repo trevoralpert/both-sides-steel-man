@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -81,7 +82,12 @@ import {
   Moon,
   Contrast,
   Accessibility,
-  Languages
+  Languages,
+  Bell,
+  Clock,
+  Shield,
+  Megaphone,
+  Lock
 } from 'lucide-react';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
@@ -910,7 +916,8 @@ export function CustomizationTools({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to customize branding.'
+        message: 'You do not have permission to customize branding.',
+        read: false
       });
       return;
     }
@@ -935,7 +942,8 @@ export function CustomizationTools({
     addNotification({
       type: 'success',
       title: 'Settings Saved',
-      message: 'Branding settings have been updated successfully.'
+      message: 'Branding settings have been updated successfully.',
+      read: false
     });
   };
 
@@ -1420,7 +1428,8 @@ export function CustomizationTools({
                         addNotification({
                           type: 'success',
                           title: 'Theme Applied',
-                          message: `${theme.name} has been applied to your organization.`
+                          message: `${theme.name} has been applied to your organization.`,
+                          read: false
                         });
                       }}
                     >
@@ -1546,7 +1555,8 @@ export function CustomizationTools({
                           addNotification({
                             type: 'success',
                             title: 'Template Duplicated',
-                            message: `${template.name} has been duplicated.`
+                            message: `${template.name} has been duplicated.`,
+                            read: false
                           });
                         }}>
                           <Copy className="h-4 w-4 mr-2" />

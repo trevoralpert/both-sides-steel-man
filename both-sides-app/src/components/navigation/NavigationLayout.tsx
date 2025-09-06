@@ -8,8 +8,8 @@
  */
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
-import { Breadcrumb, BreadcrumbItem } from './Breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +28,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
+import { Breadcrumb, BreadcrumbItem } from './Breadcrumb';
 
 export interface NavigationAction {
   label: string;
@@ -117,7 +119,7 @@ function ShareMenu({ url, title, className }: ShareMenuProps) {
           <Copy className="h-4 w-4 mr-2" />
           Copy Link
         </DropdownMenuItem>
-        {navigator.share && (
+        {typeof navigator !== 'undefined' && 'share' in navigator && (
           <DropdownMenuItem onClick={shareNatively}>
             <ExternalLink className="h-4 w-4 mr-2" />
             Share...

@@ -5,6 +5,7 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import { SurveyQuestion, SurveyQuestionType, SaveResponseRequest } from '@/types/survey';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -152,7 +153,7 @@ export function SurveyQuestionComponent({
 }
 
 // Individual question type components
-function LikertScaleInput({ question, value, onChange }) {
+function LikertScaleInput({ question, value, onChange }: { question: any; value: any; onChange: any }) {
   const labels = ['Strongly Disagree', 'Disagree', 'Somewhat Disagree', 'Neutral', 'Somewhat Agree', 'Agree', 'Strongly Agree'];
   
   return (
@@ -176,7 +177,7 @@ function LikertScaleInput({ question, value, onChange }) {
   );
 }
 
-function BinaryChoiceInput({ question, value, onChange }) {
+function BinaryChoiceInput({ question, value, onChange }: { question: any; value: any; onChange: any }) {
   return (
     <div className="flex gap-4">
       <Button
@@ -197,10 +198,10 @@ function BinaryChoiceInput({ question, value, onChange }) {
   );
 }
 
-function MultipleChoiceInput({ question, value, onChange }) {
+function MultipleChoiceInput({ question, value, onChange }: { question: any; value: any; onChange: any }) {
   return (
     <div className="space-y-2">
-      {question.options?.map((option, index) => (
+      {question.options?.map((option: any, index: number) => (
         <Button
           key={index}
           variant={value === option ? 'default' : 'outline'}
@@ -214,7 +215,7 @@ function MultipleChoiceInput({ question, value, onChange }) {
   );
 }
 
-function RankingInput({ question, value = [], onChange }) {
+function RankingInput({ question, value = [], onChange }: { question: any; value?: any[]; onChange: any }) {
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
   const handleDragStart = (item: string) => setDraggedItem(item);
@@ -240,7 +241,7 @@ function RankingInput({ question, value = [], onChange }) {
   return (
     <div className="space-y-2">
       <p className="text-sm text-muted-foreground">Drag and drop to rank in order of preference:</p>
-      {items.map((item, index) => (
+      {items.map((item: any, index: number) => (
         <div
           key={item}
           draggable
@@ -257,7 +258,7 @@ function RankingInput({ question, value = [], onChange }) {
   );
 }
 
-function SliderInput({ question, value, onChange }) {
+function SliderInput({ question, value, onChange }: { question: any; value: any; onChange: any }) {
   const scale = question.scale || { min: 0, max: 100, labels: ['Low', 'High'] };
   
   return (
@@ -281,7 +282,7 @@ function SliderInput({ question, value, onChange }) {
   );
 }
 
-function TextResponseInput({ question, value, onChange }) {
+function TextResponseInput({ question, value, onChange }: { question: any; value: any; onChange: any }) {
   return (
     <div className="space-y-2">
       <Textarea

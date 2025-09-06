@@ -8,9 +8,8 @@
  */
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+
 import { cn } from '@/lib/utils';
-import { RichTextEditor } from './RichTextEditor';
-import { EmojiPicker, EmojiItem } from './EmojiPicker';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -32,8 +31,12 @@ import {
   CheckCircle,
   Clock,
   Eye,
-  EyeOff
+  EyeOff,
+  Smile
 } from 'lucide-react';
+
+import { EmojiPicker, EmojiItem } from './EmojiPicker';
+import { RichTextEditor } from './RichTextEditor';
 
 export interface MessageInputProps {
   value: string;
@@ -269,7 +272,7 @@ function MessagePreview({ content, className }: { content: string; className?: s
     rendered = rendered.replace(/`(.*?)`/g, '<code class="bg-accent px-1 py-0.5 rounded text-sm">$1</code>');
     rendered = rendered.replace(/^> (.+)$/gm, '<blockquote class="border-l-4 border-accent pl-3 text-muted-foreground italic">$1</blockquote>');
     rendered = rendered.replace(/^- (.+)$/gm, '<li class="list-disc ml-4">$1</li>');
-    rendered = rendered.replace(/(<li.*<\/li>)/gs, '<ul>$1</ul>');
+    rendered = rendered.replace(/(<li.*<\/li>)/gm, '<ul>$1</ul>');
     
     return rendered;
   }, [content]);
@@ -312,7 +315,7 @@ export function MessageInput({
 }: MessageInputProps) {
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   
   const [isSending, setIsSending] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -486,7 +489,7 @@ export function MessageInput({
               <div className="flex items-center space-x-1">
                 {formattingActions.map((action) => (
                   <Tooltip key={action.key}>
-                    <TooltipTrigger asChild>
+                    <TooltipTrigger>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -509,7 +512,7 @@ export function MessageInput({
               
               <div className="flex items-center space-x-1">
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -528,7 +531,7 @@ export function MessageInput({
                 </Tooltip>
                 
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger>
                     <Button
                       variant="ghost"
                       size="sm"

@@ -8,6 +8,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+
 import { useRouter, usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { Card } from '@/components/ui/card';

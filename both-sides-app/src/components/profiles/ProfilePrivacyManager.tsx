@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import { ProfilePrivacySettings } from '@/types/profile';
 import {
   Card,

@@ -8,6 +8,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+
 import { cn } from '@/lib/utils';
 import { ResponsiveLayoutProps } from '@/types/debate';
 import { Button } from '@/components/ui/button';

@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebateTopic } from '@/types/debate';
 import { Card, CardContent } from '@/components/ui/card';

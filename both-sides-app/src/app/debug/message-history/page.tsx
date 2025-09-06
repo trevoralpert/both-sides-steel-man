@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -287,13 +288,13 @@ export default function MessageHistoryDemo() {
                         highlightMessageId={highlightMessageId}
                         pageSize={50}
                         searchDebounceMs={300}
-                        onMessageSent={(message) => {
+                        onMessageSent={(message: Message) => {
                           console.log('Message sent:', message);
                         }}
-                        onMessageReceived={(message) => {
+                        onMessageReceived={(message: Message) => {
                           console.log('Message received:', message);
                         }}
-                        onReply={(messageId, content) => {
+                        onReply={(messageId: string, content?: string) => {
                           console.log('Reply to:', messageId, content);
                         }}
                       />
@@ -330,13 +331,13 @@ export default function MessageHistoryDemo() {
                         participantMap={participantMap}
                         initialMessages={messages}
                         currentPhase="DISCUSSION"
-                        onMessageSent={(message) => {
+                        onMessageSent={(message: Message) => {
                           console.log('Message sent:', message);
                         }}
-                        onMessageReceived={(message) => {
+                        onMessageReceived={(message: Message) => {
                           console.log('Message received:', message);
                         }}
-                        onReply={(messageId, content) => {
+                        onReply={(messageId: string, content?: string) => {
                           console.log('Reply to:', messageId, content);
                         }}
                       />

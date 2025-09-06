@@ -8,12 +8,12 @@
  */
 
 import React, { useState } from 'react';
+
 import { cn } from '@/lib/utils';
 import { DebateFooterProps, ConnectionState } from '@/types/debate';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MessageInput } from './MessageInput';
 import { 
   Wifi, 
   WifiOff, 
@@ -21,6 +21,8 @@ import {
   RotateCcw,
   Loader2
 } from 'lucide-react';
+
+import { MessageInput } from './MessageInput';
 
 interface ConnectionStatusProps {
   state: ConnectionState;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useRouter, usePathname } from 'next/navigation';
 import { Profile } from '@/types/profile';
 import {
@@ -412,32 +413,32 @@ export function useProfileNavigation() {
     
     switch (section) {
       case 'dashboard':
-        items.push({ label: 'Dashboard', isActive: true });
+        items.push({ label: 'Dashboard', href: '#', onClick: () => {} });
         break;
       case 'my-profile':
         items.push(
           { label: 'Dashboard', href: '/dashboard', onClick: () => navigateTo('/dashboard') },
-          { label: 'My Profile', isActive: true }
+          { label: 'My Profile', href: '#', onClick: () => {} }
         );
         break;
       case 'list':
         items.push(
           { label: 'Dashboard', href: '/dashboard', onClick: () => navigateTo('/dashboard') },
-          { label: 'Profiles', isActive: true }
+          { label: 'Profiles', href: '#', onClick: () => {} }
         );
         break;
       case 'search':
         items.push(
           { label: 'Dashboard', href: '/dashboard', onClick: () => navigateTo('/dashboard') },
           { label: 'Profiles', href: '/profiles', onClick: () => navigateTo('/profiles') },
-          { label: 'Search', isActive: true }
+          { label: 'Search', href: '#', onClick: () => {} }
         );
         break;
       case 'view':
         items.push(
           { label: 'Dashboard', href: '/dashboard', onClick: () => navigateTo('/dashboard') },
           { label: 'Profiles', href: '/profiles', onClick: () => navigateTo('/profiles') },
-          { label: profile?.user?.username || 'Profile', isActive: true }
+          { label: profile?.user?.username || 'Profile', href: '#', onClick: () => {} }
         );
         break;
       case 'edit':
@@ -445,7 +446,7 @@ export function useProfileNavigation() {
           { label: 'Dashboard', href: '/dashboard', onClick: () => navigateTo('/dashboard') },
           { label: 'Profiles', href: '/profiles', onClick: () => navigateTo('/profiles') },
           { label: profile?.user?.username || 'Profile', href: ProfileRoutes.profile(profile?.id), onClick: () => navigateTo(ProfileRoutes.profile(profile?.id)) },
-          { label: 'Edit', isActive: true }
+          { label: 'Edit', href: '#', onClick: () => {} }
         );
         break;
     }
