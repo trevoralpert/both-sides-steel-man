@@ -77,6 +77,7 @@ export function PlasticityMap({
 }: PlasticityMapProps) {
   const [selectedTopic, setSelectedTopic] = useState<string>('all');
   const [selectedAxis, setSelectedAxis] = useState<string>('all');
+  const [currentShowHeatMap, setShowHeatMap] = useState(showHeatMap);
   const [timeFilter, setTimeFilter] = useState(timeRange);
   const [showConfidence, setShowConfidence] = useState(true);
   const [plasticityThreshold, setPlasticityThreshold] = useState([0.1]);
@@ -251,7 +252,7 @@ export function PlasticityMap({
 
             <div className="flex items-center space-x-2">
               <Switch 
-                checked={showHeatMap} 
+                checked={currentShowHeatMap} 
                 onCheckedChange={setShowHeatMap}
                 id="heatmap"
               />

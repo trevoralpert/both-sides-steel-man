@@ -307,9 +307,9 @@ export function useRealtimeConnection(config: ConnectionConfig): RealtimeConnect
   const [latency, setLatency] = useState<number>();
   const [connectionId, setConnectionId] = useState<string>();
 
-  const realtimeRef = useRef<MockRealtime>();
-  const channelRef = useRef<MockChannel>();
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const realtimeRef = useRef<MockRealtime | null>(null);
+  const channelRef = useRef<MockChannel | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Connection establishment
   const connect = useCallback(async () => {

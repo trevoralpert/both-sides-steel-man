@@ -102,6 +102,8 @@ export function EngagementTimeline({
   className
 }: EngagementTimelineProps) {
   const [selectedDebate, setSelectedDebate] = useState<string | null>(null);
+  const [currentTimeRange, setTimeRange] = useState(timeRange);
+  const [currentShowDebates, setShowDebates] = useState(showDebates);
   const [viewMode, setViewMode] = useState<'timeline' | 'heatmap' | 'correlation'>('timeline');
   const [metricFilter, setMetricFilter] = useState('engagement');
   const [isAnimating, setIsAnimating] = useState(false);
@@ -224,7 +226,7 @@ export function EngagementTimeline({
               </SelectContent>
             </Select>
 
-            <Select value={timeRange} onValueChange={(value) => setTimeRange(value as any)}>
+            <Select value={currentTimeRange} onValueChange={(value) => setTimeRange(value as any)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -238,7 +240,7 @@ export function EngagementTimeline({
 
             <div className="flex items-center space-x-2">
               <Switch 
-                checked={showDebates} 
+                checked={currentShowDebates}
                 onCheckedChange={setShowDebates}
                 id="show-debates"
               />

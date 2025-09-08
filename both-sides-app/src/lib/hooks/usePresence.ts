@@ -61,8 +61,8 @@ export function usePresence({
   
   // Current user's typing state
   const [isCurrentUserTyping, setIsCurrentUserTyping] = useState(false);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
-  const presenceHeartbeatRef = useRef<NodeJS.Timeout>();
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const presenceHeartbeatRef = useRef<NodeJS.Timeout | null>(null);
   
   // Initialize presence state for all participants
   useEffect(() => {

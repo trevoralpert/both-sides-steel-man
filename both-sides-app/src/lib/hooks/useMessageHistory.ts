@@ -98,7 +98,7 @@ export function useMessageHistory({
   const [jumpTargetId, setJumpTargetId] = useState<string>();
   
   // Refs for debouncing and cleanup
-  const searchTimeoutRef = useRef<NodeJS.Timeout>();
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const loadingRef = useRef(false);
   
   // Create search index from messages
