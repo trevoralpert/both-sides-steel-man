@@ -1049,7 +1049,8 @@ export function ReportGenerationDashboard({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to create reports.'
+        message: 'You do not have permission to create reports.',
+        read: false
       });
       return;
     }
@@ -1098,7 +1099,8 @@ export function ReportGenerationDashboard({
     addNotification({
       type: 'info',
       title: 'Report Generation Started',
-      message: `Generating "${report.name}" report...`
+      message: `Generating "${report.name}" report...`,
+      read: false
     });
 
     // Simulate report generation
@@ -1118,7 +1120,8 @@ export function ReportGenerationDashboard({
       addNotification({
         type: 'success',
         title: 'Report Generated',
-        message: `"${report.name}" has been generated successfully.`
+        message: `"${report.name}" has been generated successfully.`,
+        read: false
       });
     }, 3000 + Math.random() * 2000);
   };
@@ -1127,7 +1130,8 @@ export function ReportGenerationDashboard({
     addNotification({
       type: 'info',
       title: 'Export Started',
-      message: `Exporting "${report.name}" as ${report.format.toUpperCase()}...`
+      message: `Exporting "${report.name}" as ${report.format.toUpperCase()}...`,
+      read: false
     });
 
     // Simulate export
@@ -1135,7 +1139,8 @@ export function ReportGenerationDashboard({
       addNotification({
         type: 'success',
         title: 'Export Complete',
-        message: `"${report.name}" has been exported successfully.`
+        message: `"${report.name}" has been exported successfully.`,
+        read: false
       });
     }, 1500);
   };
@@ -1145,7 +1150,8 @@ export function ReportGenerationDashboard({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to schedule reports.'
+        message: 'You do not have permission to schedule reports.',
+        read: false
       });
       return;
     }
@@ -1159,7 +1165,8 @@ export function ReportGenerationDashboard({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to share reports.'
+        message: 'You do not have permission to share reports.',
+        read: false
       });
       return;
     }
@@ -1167,7 +1174,8 @@ export function ReportGenerationDashboard({
     addNotification({
       type: 'info',
       title: 'Share Report',
-      message: 'Report sharing functionality would be implemented here.'
+      message: 'Report sharing functionality would be implemented here.',
+      read: false
     });
   };
 

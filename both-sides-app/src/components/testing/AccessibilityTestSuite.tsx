@@ -113,7 +113,7 @@ export function AccessibilityTestSuite({
     return {
       ...updatedTest,
       ...results,
-      status: results.score >= 80 ? 'passed' : 'failed'
+      status: (results.score ?? 0) >= 80 ? 'passed' : 'failed'
     };
   };
 

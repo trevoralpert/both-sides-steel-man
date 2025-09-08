@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -61,7 +61,7 @@ import {
   Star,
   Activity
 } from 'lucide-react';
-import { LoadingState } from '@/components/ui/loading-state';
+import { LoadingState } from '@/components/loading/LoadingState';
 
 import { SkillDevelopmentTracker } from './SkillDevelopmentTracker';
 import { LearningProgressVisualizer } from './LearningProgressVisualizer';
@@ -118,7 +118,7 @@ interface CompetencyData {
 }
 
 export function PerformanceMonitoringDashboard() {
-  const { user } = useUser();
+  const { getToken, userId } = useAuth();
   const { addNotification } = useTeacherDashboard();
   
   const [selectedClass, setSelectedClass] = useState<string>('all');
@@ -131,15 +131,15 @@ export function PerformanceMonitoringDashboard() {
 
   useEffect(() => {
     loadPerformanceData();
-  }, [user?.id, selectedClass, selectedTimeRange]);
+  }, [userId, selectedClass, selectedTimeRange]);
 
   const loadPerformanceData = async () => {
-    if (!user?.id) return;
+    if (!userId) return;
 
     try {
       setLoading(true);
       
-      const token = await user.getToken();
+      const token = await getToken({ template: 'default' });
       const response = await fetch(`/api/performance/class-analytics?classId=${selectedClass}&range=${selectedTimeRange}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -237,7 +237,8 @@ export function PerformanceMonitoringDashboard() {
       addNotification({
         type: 'error',
         title: 'Loading Error',
-        message: 'Failed to load performance data. Please try again.'
+        message: 'Failed to load performance data. Please try again.',
+        read: false
       });
     } finally {
       setLoading(false);
@@ -281,7 +282,8 @@ export function PerformanceMonitoringDashboard() {
     addNotification({
       type: 'info',
       title: 'Report Generation',
-      message: 'Performance report generation will be implemented in this task.'
+      message: 'Performance report generation will be implemented in this task.',
+      read: false
     });
   };
 

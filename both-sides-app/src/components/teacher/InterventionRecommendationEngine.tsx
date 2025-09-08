@@ -355,7 +355,8 @@ export function InterventionRecommendationEngine({
       addNotification({
         type: 'error',
         title: 'Load Failed',
-        message: 'Failed to load recommendation data. Please try again.'
+        message: 'Failed to load recommendation data. Please try again.',
+        read: false
       });
     } finally {
       setLoading(false);
@@ -381,7 +382,8 @@ export function InterventionRecommendationEngine({
     addNotification({
       type: 'success',
       title: 'Recommendation Updated',
-      message: `Recommendation for ${recommendation.studentName} marked as ${action}.`
+      message: `Recommendation for ${recommendation.studentName} marked as ${action}.`,
+      read: false
     });
   };
 
@@ -399,7 +401,8 @@ export function InterventionRecommendationEngine({
     addNotification({
       type: 'info',
       title: 'Warning Dismissed',
-      message: `Early warning for ${warning.studentName} has been dismissed.`
+      message: `Early warning for ${warning.studentName} has been dismissed.`,
+      read: false
     });
   };
 
@@ -412,7 +415,8 @@ export function InterventionRecommendationEngine({
       addNotification({
         type: 'success',
         title: 'Recommendations Generated',
-        message: 'New AI-powered recommendations have been generated based on current student data.'
+        message: 'New AI-powered recommendations have been generated based on current student data.',
+        read: false
       });
       
       // In real implementation, this would call the AI service
@@ -422,7 +426,8 @@ export function InterventionRecommendationEngine({
       addNotification({
         type: 'error',
         title: 'Generation Failed',
-        message: 'Failed to generate new recommendations. Please try again.'
+        message: 'Failed to generate new recommendations. Please try again.',
+        read: false
       });
     } finally {
       setLoading(false);

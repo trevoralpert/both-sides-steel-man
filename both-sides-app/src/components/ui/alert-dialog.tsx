@@ -45,13 +45,13 @@ const AlertDialog: React.FC<AlertDialogProps> = ({ children, open: externalOpen,
     <div className="relative">
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child) && child.type === AlertDialogTrigger) {
-          return React.cloneElement(child, { onClick: () => handleOpenChange(true) })
+          return React.cloneElement(child, { onClick: () => handleOpenChange(true) } as any)
         }
         if (React.isValidElement(child) && child.type === AlertDialogContent && isOpen) {
           return (
             <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
               <div onClick={(e) => e.stopPropagation()}>
-                {React.cloneElement(child, { onClose: () => handleOpenChange(false) })}
+                {React.cloneElement(child, { onClose: () => handleOpenChange(false) } as any)}
               </div>
             </div>
           )

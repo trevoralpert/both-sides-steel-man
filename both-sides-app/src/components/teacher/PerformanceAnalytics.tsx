@@ -487,7 +487,7 @@ export function PerformanceAnalytics({
             target: 200,
             threshold: { excellent: 200, good: 150, fair: 100, poor: 50 },
             trend: generateTrendData(range.start, now, 150, 30),
-            status: 'good',
+            status: 'optimal',
             impact: 'high'
           },
           {
@@ -509,7 +509,7 @@ export function PerformanceAnalytics({
             target: 70,
             threshold: { excellent: 50, good: 70, fair: 85, poor: 95 },
             trend: generateTrendData(range.start, now, 65, 15),
-            status: 'good',
+            status: 'optimal',
             impact: 'medium'
           }
         ],
@@ -1405,7 +1405,7 @@ export function PerformanceAnalytics({
           )}
 
           {/* Anomalies */}
-          {performanceMetrics?.trends.anomalies.length > 0 && (
+          {(performanceMetrics?.trends?.anomalies?.length ?? 0) > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>Performance Anomalies</CardTitle>
@@ -1415,7 +1415,7 @@ export function PerformanceAnalytics({
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {performanceMetrics.trends.anomalies.map((anomaly) => (
+                  {performanceMetrics?.trends?.anomalies?.map((anomaly) => (
                     <div key={anomaly.id} className="p-3 border rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-2">

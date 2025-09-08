@@ -242,14 +242,16 @@ export function StudentDataManagement({
       addNotification({
         type: 'success',
         title: 'Student Updated',
-        message: `${updatedStudent.firstName} ${updatedStudent.lastName}'s profile has been updated.`
+        message: `${updatedStudent.firstName} ${updatedStudent.lastName}'s profile has been updated.`,
+        read: false
       });
 
     } catch (error) {
       addNotification({
         type: 'error',
         title: 'Update Failed',
-        message: 'Failed to update student profile. Please try again.'
+        message: 'Failed to update student profile. Please try again.',
+        read: false
       });
     } finally {
       setLoading(false);
@@ -271,14 +273,16 @@ export function StudentDataManagement({
       addNotification({
         type: 'success',
         title: 'Status Updated',
-        message: `${student.firstName} ${student.lastName}'s account status changed to ${newStatus}.`
+        message: `${student.firstName} ${student.lastName}'s account status changed to ${newStatus}.`,
+        read: false
       });
 
     } catch (error) {
       addNotification({
         type: 'error',
         title: 'Status Change Failed',
-        message: 'Failed to update account status. Please try again.'
+        message: 'Failed to update account status. Please try again.',
+        read: false
       });
     }
   };
@@ -308,7 +312,8 @@ export function StudentDataManagement({
       addNotification({
         type: 'error',
         title: 'No Selection',
-        message: 'Please select students for the bulk operation.'
+        message: 'Please select students for the bulk operation.',
+        read: false
       });
       return;
     }
@@ -369,7 +374,8 @@ export function StudentDataManagement({
           addNotification({
             type: 'success',
             title: 'Bulk Operation Complete',
-            message: `Successfully processed ${selectedStudents.size} students.`
+            message: `Successfully processed ${selectedStudents.size} students.`,
+            read: false
           });
         }
       }, 500);
@@ -382,7 +388,8 @@ export function StudentDataManagement({
       addNotification({
         type: 'error',
         title: 'Bulk Operation Failed',
-        message: 'Failed to complete bulk operation. Please try again.'
+        message: 'Failed to complete bulk operation. Please try again.',
+        read: false
       });
     }
   };

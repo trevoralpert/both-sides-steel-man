@@ -96,7 +96,7 @@ import {
   Target,
   Zap,
   Wrench,
-  Tool,
+  Settings as Tool,
   Bug,
   TestTube,
   Gauge,
@@ -1475,7 +1475,8 @@ If rollback is necessary:
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to generate documentation.'
+        message: 'You do not have permission to generate documentation.',
+        read: false
       });
       return;
     }
@@ -1483,7 +1484,8 @@ If rollback is necessary:
     addNotification({
       type: 'info',
       title: 'Documentation Generation Started',
-      message: 'Auto-generating documentation based on current system configuration...'
+      message: 'Auto-generating documentation based on current system configuration...',
+      read: false
     });
 
     // Simulate generation process
@@ -1491,7 +1493,8 @@ If rollback is necessary:
       addNotification({
         type: 'success',
         title: 'Documentation Generated',
-        message: 'System documentation has been successfully updated with latest configuration.'
+        message: 'System documentation has been successfully updated with latest configuration.',
+        read: false
       });
 
       // Update stats

@@ -661,7 +661,8 @@ export function SessionRecordingInfrastructure({
       addNotification({
         type: 'success',
         title: 'Recording Started',
-        message: `Session recording has begun with ${recordingType.replace('_', ' ')} settings.`
+        message: `Session recording has begun with ${recordingType.replace('_', ' ')} settings.`,
+        read: false
       });
 
       // Simulate real-time recording updates
@@ -684,7 +685,8 @@ export function SessionRecordingInfrastructure({
       addNotification({
         type: 'error',
         title: 'Consent Required',
-        message: 'All participants must consent before recording can begin.'
+        message: 'All participants must consent before recording can begin.',
+        read: false
       });
     }
   };
@@ -711,7 +713,8 @@ export function SessionRecordingInfrastructure({
       addNotification({
         type: 'info',
         title: 'Recording Stopped',
-        message: 'Session recording has ended and is being processed.'
+        message: 'Session recording has ended and is being processed.',
+        read: false
       });
 
       // Simulate processing completion
@@ -729,7 +732,8 @@ export function SessionRecordingInfrastructure({
         addNotification({
           type: 'success',
           title: 'Recording Processed',
-          message: 'Session recording and transcript are ready for review.'
+          message: 'Session recording and transcript are ready for review.',
+          read: false
         });
       }, 5000);
     }
@@ -742,7 +746,8 @@ export function SessionRecordingInfrastructure({
       addNotification({
         type: 'info',
         title: 'Recording Paused',
-        message: 'Session recording has been paused.'
+        message: 'Session recording has been paused.',
+        read: false
       });
     }
   };
@@ -753,7 +758,8 @@ export function SessionRecordingInfrastructure({
       addNotification({
         type: 'success',
         title: 'Recording Resumed',
-        message: 'Session recording has resumed.'
+        message: 'Session recording has resumed.',
+        read: false
       });
     }
   };
@@ -770,7 +776,8 @@ export function SessionRecordingInfrastructure({
       addNotification({
         type: 'success',
         title: 'Template Applied',
-        message: `Recording settings updated from template: ${template.name}`
+        message: `Recording settings updated from template: ${template.name}`,
+        read: false
       });
     }
   };
@@ -782,7 +789,8 @@ export function SessionRecordingInfrastructure({
       addNotification({
         type: 'success',
         title: 'Consent Granted',
-        message: `Participant consent has been granted.`
+        message: `Participant consent has been granted.`,
+        read: false
       });
     }, 2000);
   };

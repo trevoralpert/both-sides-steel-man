@@ -72,12 +72,13 @@ import {
   Play,
   AlertCircle,
   Info,
-  Warning,
+  AlertTriangle as Warning,
   XCircle,
   ThumbsUp,
   ThumbsDown,
   Star,
-  Award
+  Award,
+  Users
 } from 'lucide-react';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
@@ -273,7 +274,8 @@ export function ParticipantMonitoringTools({
     addNotification({
       type: 'info',
       title: 'Intervention Triggered',
-      message: `${getInterventionAction(type)} sent to ${participant.name}`
+      message: `${getInterventionAction(type)} sent to ${participant.name}`,
+      read: false
     });
   };
 
@@ -300,7 +302,8 @@ export function ParticipantMonitoringTools({
     addNotification({
       type: 'success',
       title: 'Alert Acknowledged',
-      message: 'Alert has been marked as acknowledged.'
+      message: 'Alert has been marked as acknowledged.',
+      read: false
     });
   };
 

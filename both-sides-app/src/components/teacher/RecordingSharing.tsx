@@ -288,7 +288,8 @@ export function RecordingSharing({
       addNotification({
         type: 'error',
         title: 'Missing Information',
-        message: 'Please add at least one recipient.'
+        message: 'Please add at least one recipient.',
+        read: false
       });
       return;
     }
@@ -331,7 +332,8 @@ export function RecordingSharing({
     addNotification({
       type: 'success',
       title: 'Share Created',
-      message: `Recording shared with ${shareRecipients.length} recipients.`
+      message: `Recording shared with ${shareRecipients.length} recipients.`,
+      read: false
     });
   };
 
@@ -340,7 +342,8 @@ export function RecordingSharing({
       addNotification({
         type: 'error',
         title: 'Missing Information',
-        message: 'Please provide a title for the excerpt.'
+        message: 'Please provide a title for the excerpt.',
+        read: false
       });
       return;
     }
@@ -376,7 +379,8 @@ export function RecordingSharing({
     addNotification({
       type: 'success',
       title: 'Excerpt Created',
-      message: `"${excerptTitle}" excerpt has been created.`
+      message: `"${excerptTitle}" excerpt has been created.`,
+      read: false
     });
   };
 
@@ -397,7 +401,8 @@ export function RecordingSharing({
     addNotification({
       type: 'success',
       title: 'Access Revoked',
-      message: 'Share access has been revoked.'
+      message: 'Share access has been revoked.',
+      read: false
     });
   };
 
@@ -406,7 +411,8 @@ export function RecordingSharing({
     addNotification({
       type: 'success',
       title: 'Copied to Clipboard',
-      message: `${label} copied successfully.`
+      message: `${label} copied successfully.`,
+      read: false
     });
   };
 

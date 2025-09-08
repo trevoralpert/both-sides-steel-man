@@ -639,7 +639,8 @@ export function RoleManagementSystem({
       addNotification({
         type: 'error',
         title: 'Missing Information',
-        message: 'Please provide role name and display name.'
+        message: 'Please provide role name and display name.',
+        read: false
       });
       return;
     }
@@ -693,7 +694,8 @@ export function RoleManagementSystem({
     addNotification({
       type: 'success',
       title: 'Role Created',
-      message: `Role "${roleDisplayName}" has been created with ${rolePermissions.size} permissions.`
+      message: `Role "${roleDisplayName}" has been created with ${rolePermissions.size} permissions.`,
+      read: false
     });
   };
 
@@ -731,7 +733,8 @@ export function RoleManagementSystem({
     addNotification({
       type: 'success',
       title: 'Role Updated',
-      message: `Role "${roleDisplayName}" has been updated.`
+      message: `Role "${roleDisplayName}" has been updated.`,
+      read: false
     });
   };
 
@@ -744,7 +747,8 @@ export function RoleManagementSystem({
       addNotification({
         type: 'error',
         title: 'Cannot Delete Role',
-        message: `Role "${role.displayName}" has ${role.analytics.totalUsers} assigned users. Reassign users before deleting.`
+        message: `Role "${role.displayName}" has ${role.analytics.totalUsers} assigned users. Reassign users before deleting.`,
+        read: false
       });
       return;
     }
@@ -757,7 +761,8 @@ export function RoleManagementSystem({
     addNotification({
       type: 'success',
       title: 'Role Deleted',
-      message: `Role "${role.displayName}" has been deleted.`
+      message: `Role "${role.displayName}" has been deleted.`,
+      read: false
     });
   };
 
@@ -795,7 +800,8 @@ export function RoleManagementSystem({
     addNotification({
       type: 'success',
       title: 'Role Duplicated',
-      message: `Created copy of "${sourceRole.displayName}".`
+      message: `Created copy of "${sourceRole.displayName}".`,
+      read: false
     });
   };
 

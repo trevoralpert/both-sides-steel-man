@@ -69,7 +69,8 @@ import {
   Download,
   Upload,
   Copy,
-  Share2
+  Share2,
+  Circle
 } from 'lucide-react';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
@@ -503,7 +504,8 @@ export function MonitoringNotificationSystem({
                   notification.priority === 'high' ? 'error' :
                   notification.priority === 'medium' ? 'warning' : 'info',
             title: notification.title,
-            message: notification.message
+            message: notification.message,
+            read: false
           });
           break;
         

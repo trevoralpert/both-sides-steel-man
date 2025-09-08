@@ -102,7 +102,8 @@ import {
   Highlighter,
   Type,
   Shapes,
-  Palette
+  Palette,
+  Lock
 } from 'lucide-react';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
@@ -581,7 +582,8 @@ export function SessionPlaybackViewer({
       addNotification({
         type: 'error',
         title: 'Content Required',
-        message: 'Please enter annotation content.'
+        message: 'Please enter annotation content.',
+        read: false
       });
       return;
     }
@@ -615,7 +617,8 @@ export function SessionPlaybackViewer({
     addNotification({
       type: 'success',
       title: 'Annotation Created',
-      message: `${newAnnotationType} annotation added at ${formatTime(currentTime)}.`
+      message: `${newAnnotationType} annotation added at ${formatTime(currentTime)}.`,
+      read: false
     });
   };
 
@@ -624,7 +627,8 @@ export function SessionPlaybackViewer({
       addNotification({
         type: 'error',
         title: 'Title Required',
-        message: 'Please enter a bookmark title.'
+        message: 'Please enter a bookmark title.',
+        read: false
       });
       return;
     }
@@ -657,7 +661,8 @@ export function SessionPlaybackViewer({
     addNotification({
       type: 'success',
       title: 'Bookmark Created',
-      message: `Bookmark "${newBookmarkTitle}" created at ${formatTime(currentTime)}.`
+      message: `Bookmark "${newBookmarkTitle}" created at ${formatTime(currentTime)}.`,
+      read: false
     });
   };
 

@@ -702,7 +702,8 @@ export function ResearchEvaluationTools({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to create research studies.'
+        message: 'You do not have permission to create research studies.',
+        read: false
       });
       return;
     }
@@ -714,7 +715,8 @@ export function ResearchEvaluationTools({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to create A/B tests.'
+        message: 'You do not have permission to create A/B tests.',
+        read: false
       });
       return;
     }
@@ -959,7 +961,7 @@ export function ResearchEvaluationTools({
                         <Badge className={getStatusColor(test.status)}>
                           {test.status}
                         </Badge>
-                        {test.results.overall_results.statistical_significance && (
+                        {test.results.overall_results.practical_significance && (
                           <Badge variant="outline" className="text-green-600">
                             Significant
                           </Badge>

@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,7 +46,7 @@ import {
   Lightbulb,
   Users
 } from 'lucide-react';
-import { LoadingState } from '@/components/ui/loading-state';
+import { LoadingState } from '@/components/loading/LoadingState';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
 
@@ -105,7 +105,7 @@ interface ReflectionGradingInterfaceProps {
 }
 
 export function ReflectionGradingInterface({ classId }: ReflectionGradingInterfaceProps) {
-  const { user } = useUser();
+  const { getToken, userId } = useAuth();
   const { addNotification } = useTeacherDashboard();
   
   const [reflections, setReflections] = useState<Reflection[]>([]);
@@ -169,15 +169,15 @@ export function ReflectionGradingInterface({ classId }: ReflectionGradingInterfa
 
   useEffect(() => {
     loadReflections();
-  }, [classId, user?.id]);
+  }, [classId, userId]);
 
   const loadReflections = async () => {
-    if (!user?.id || !classId) return;
+    if (!userId || !classId) return;
 
     try {
       setLoading(true);
       
-      const token = await user.getToken();
+      const token = await getToken({ template: 'default' });
       const response = await fetch(`/api/reflections/class/${classId}/pending`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -266,7 +266,8 @@ Overall it was a good learning experience and I understand the topic better now.
       addNotification({
         type: 'error',
         title: 'Loading Error',
-        message: 'Failed to load reflections. Please try again.'
+        message: 'Failed to load reflections. Please try again.',
+        read: false
       });
     } finally {
       setLoading(false);
@@ -274,7 +275,7 @@ Overall it was a good learning experience and I understand the topic better now.
   };
 
   const handleGradeReflection = async () => {
-    if (!selectedReflection || !user?.id) return;
+    if (!selectedReflection || !userId) return;
 
     try {
       setGrading(true);
@@ -294,7 +295,7 @@ Overall it was a good learning experience and I understand the topic better now.
         })),
         teacherFeedback,
         gradedAt: new Date(),
-        gradedBy: user.id
+        gradedBy: userId
       };
 
       // In a real implementation, this would call the API
@@ -317,7 +318,8 @@ Overall it was a good learning experience and I understand the topic better now.
       addNotification({
         type: 'success',
         title: 'Reflection Graded',
-        message: `Successfully graded ${selectedReflection.student.firstName}'s reflection.`
+        message: `Successfully graded ${selectedReflection.student.firstName}'s reflection.`,
+        read: false
       });
 
       // Reset grading state
@@ -330,7 +332,8 @@ Overall it was a good learning experience and I understand the topic better now.
       addNotification({
         type: 'error',
         title: 'Grading Failed',
-        message: 'Failed to save grade. Please try again.'
+        message: 'Failed to save grade. Please try again.',
+        read: false
       });
     } finally {
       setGrading(false);

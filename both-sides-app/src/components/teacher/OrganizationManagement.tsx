@@ -1050,7 +1050,8 @@ export function OrganizationManagement({
       addNotification({
         type: 'error',
         title: 'Missing Information',
-        message: 'Please provide organization name and display name.'
+        message: 'Please provide organization name and display name.',
+        read: false
       });
       return;
     }
@@ -1091,7 +1092,8 @@ export function OrganizationManagement({
     addNotification({
       type: 'success',
       title: 'Organization Created',
-      message: `Organization "${orgDisplayName}" has been created successfully.`
+      message: `Organization "${orgDisplayName}" has been created successfully.`,
+      read: false
     });
   };
 
@@ -1446,7 +1448,8 @@ export function OrganizationManagement({
       addNotification({
         type: 'error',
         title: 'Cannot Delete Organization',
-        message: `Organization "${org.displayName}" has ${org.childOrganizations.length} child organizations. Remove them first.`
+        message: `Organization "${org.displayName}" has ${org.childOrganizations.length} child organizations. Remove them first.`,
+        read: false
       });
       return;
     }
@@ -1455,7 +1458,8 @@ export function OrganizationManagement({
       addNotification({
         type: 'error',
         title: 'Cannot Delete Organization',
-        message: `Organization "${org.displayName}" has ${org.analytics.users.active} active users. Transfer or deactivate users first.`
+        message: `Organization "${org.displayName}" has ${org.analytics.users.active} active users. Transfer or deactivate users first.`,
+        read: false
       });
       return;
     }
@@ -1468,7 +1472,8 @@ export function OrganizationManagement({
     addNotification({
       type: 'success',
       title: 'Organization Deleted',
-      message: `Organization "${org.displayName}" has been deleted.`
+      message: `Organization "${org.displayName}" has been deleted.`,
+      read: false
     });
   };
 

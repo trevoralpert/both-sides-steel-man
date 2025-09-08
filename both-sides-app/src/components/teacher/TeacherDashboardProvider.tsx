@@ -204,7 +204,8 @@ export function TeacherDashboardProvider({ children }: TeacherDashboardProviderP
           type: 'info',
           title: 'Welcome to the Teacher Dashboard!',
           message: 'Explore your new dashboard features and manage your classes effectively.',
-          persistent: false
+          persistent: false,
+          read: false
         }
       });
       localStorage.setItem(`last-login-${user?.id}`, new Date().toISOString());

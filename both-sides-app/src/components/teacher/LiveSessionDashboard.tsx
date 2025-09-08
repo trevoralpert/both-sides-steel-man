@@ -495,7 +495,8 @@ export function LiveSessionDashboard({
       addNotification({
         type: 'error',
         title: 'Load Failed',
-        message: 'Failed to load live session data. Please try again.'
+        message: 'Failed to load live session data. Please try again.',
+        read: false
       });
     }
   };
@@ -546,7 +547,8 @@ export function LiveSessionDashboard({
     addNotification({
       type: 'success',
       title: 'Session Control',
-      message: `Session ${action} command executed successfully.`
+      message: `Session ${action} command executed successfully.`,
+      read: false
     });
   };
 
@@ -556,7 +558,8 @@ export function LiveSessionDashboard({
     addNotification({
       type: 'info',
       title: 'Participant Action',
-      message: `${action} action applied to participant.`
+      message: `${action} action applied to participant.`,
+      read: false
     });
   };
 

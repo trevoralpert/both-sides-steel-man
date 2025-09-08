@@ -221,7 +221,7 @@ interface ConfigurationGroup {
   id: string;
   name: string;
   description: string;
-  icon: React.ComponentType;
+  icon: React.ComponentType<{ className?: string }>;
   settings: SystemSetting[];
   access_level: AccessLevel;
   requires_restart: boolean;
@@ -592,7 +592,8 @@ export function SystemSettingsPanel({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to modify system settings.'
+        message: 'You do not have permission to modify system settings.',
+        read: false
       });
       return;
     }
@@ -613,7 +614,8 @@ export function SystemSettingsPanel({
       addNotification({
         type: 'info',
         title: 'No Changes',
-        message: 'No settings have been modified.'
+        message: 'No settings have been modified.',
+        read: false
       });
       return;
     }
@@ -656,7 +658,8 @@ export function SystemSettingsPanel({
     addNotification({
       type: 'success',
       title: 'Settings Saved',
-      message: `${Object.keys(unsavedChanges).length} settings have been updated successfully.`
+      message: `${Object.keys(unsavedChanges).length} settings have been updated successfully.`,
+      read: false
     });
   };
 
@@ -671,7 +674,8 @@ export function SystemSettingsPanel({
     addNotification({
       type: 'info',
       title: 'Settings Reset',
-      message: 'All settings have been reset to their default values.'
+      message: 'All settings have been reset to their default values.',
+      read: false
     });
   };
 
@@ -680,7 +684,8 @@ export function SystemSettingsPanel({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to manage feature flags.'
+        message: 'You do not have permission to manage feature flags.',
+        read: false
       });
       return;
     }
@@ -692,7 +697,8 @@ export function SystemSettingsPanel({
     addNotification({
       type: 'success',
       title: 'Feature Flag Updated',
-      message: `Feature flag has been ${enabled ? 'enabled' : 'disabled'}.`
+      message: `Feature flag has been ${enabled ? 'enabled' : 'disabled'}.`,
+      read: false
     });
   };
 
@@ -1272,7 +1278,8 @@ export function SystemSettingsPanel({
               addNotification({
                 type: 'info',
                 title: 'Restart Scheduled',
-                message: 'System restart has been scheduled for the next maintenance window.'
+                message: 'System restart has been scheduled for the next maintenance window.',
+                read: false
               });
             }}>
               Save & Schedule Restart

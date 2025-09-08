@@ -66,7 +66,7 @@ import {
   Target,
   Flag,
   Info,
-  Warning,
+  AlertTriangle as Warning,
   Shield,
   Lock,
   Unlock,
@@ -1021,7 +1021,7 @@ export function SystemMonitoringInterface({
       </Card>
 
       {/* Main Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as typeof activeTab)} className="space-y-4">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">System Overview</TabsTrigger>
           <TabsTrigger value="infrastructure">Infrastructure</TabsTrigger>

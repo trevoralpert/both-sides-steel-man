@@ -258,7 +258,7 @@ export function ReportGenerator({ classData, students }: ReportGeneratorProps) {
                     <label className="text-sm font-medium">Date Range</label>
                     <div className="flex space-x-2">
                       <Popover>
-                        <PopoverTrigger asChild>
+                        <PopoverTrigger>
                           <Button variant="outline" className="flex-1 justify-start">
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {format(reportConfig.dateRange.start, "PPP")}
@@ -268,16 +268,20 @@ export function ReportGenerator({ classData, students }: ReportGeneratorProps) {
                           <Calendar
                             mode="single"
                             selected={reportConfig.dateRange.start}
-                            onSelect={(date) => date && setReportConfig({
-                              ...reportConfig, 
-                              dateRange: {...reportConfig.dateRange, start: date}
-                            })}
+                            onSelect={(date) => {
+                              if (date && date instanceof Date) {
+                                setReportConfig({
+                                  ...reportConfig, 
+                                  dateRange: {...reportConfig.dateRange, start: date}
+                                });
+                              }
+                            }}
                             initialFocus
                           />
                         </PopoverContent>
                       </Popover>
                       <Popover>
-                        <PopoverTrigger asChild>
+                        <PopoverTrigger>
                           <Button variant="outline" className="flex-1 justify-start">
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {format(reportConfig.dateRange.end, "PPP")}
@@ -287,10 +291,14 @@ export function ReportGenerator({ classData, students }: ReportGeneratorProps) {
                           <Calendar
                             mode="single"
                             selected={reportConfig.dateRange.end}
-                            onSelect={(date) => date && setReportConfig({
-                              ...reportConfig, 
-                              dateRange: {...reportConfig.dateRange, end: date}
-                            })}
+                            onSelect={(date) => {
+                              if (date && date instanceof Date) {
+                                setReportConfig({
+                                  ...reportConfig, 
+                                  dateRange: {...reportConfig.dateRange, end: date}
+                                });
+                              }
+                            }}
                             initialFocus
                           />
                         </PopoverContent>

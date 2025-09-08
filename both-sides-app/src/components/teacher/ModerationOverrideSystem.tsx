@@ -69,7 +69,7 @@ import {
   ThumbsUp,
   ThumbsDown,
   Info,
-  Warning,
+  AlertTriangle as Warning,
   Slash,
   RotateCcw,
   PlayCircle,
@@ -507,7 +507,8 @@ export function ModerationOverrideSystem({
       addNotification({
         type: 'warning',
         title: 'New Moderation Alert',
-        message: `Content from ${newDecision.participantName} flagged for review`
+        message: `Content from ${newDecision.participantName} flagged for review`,
+        read: false
       });
     }
   };
@@ -548,7 +549,8 @@ export function ModerationOverrideSystem({
     addNotification({
       type: 'success',
       title: 'Moderation Decision Applied',
-      message: `${action.charAt(0).toUpperCase() + action.slice(1)} action for ${decision.participantName}`
+      message: `${action.charAt(0).toUpperCase() + action.slice(1)} action for ${decision.participantName}`,
+      read: false
     });
 
     setShowOverrideDialog(false);
@@ -613,7 +615,8 @@ export function ModerationOverrideSystem({
     addNotification({
       type: 'success',
       title: 'Bulk Action Applied',
-      message: `${action} applied to ${affectedDecisions.length} items`
+      message: `${action} applied to ${affectedDecisions.length} items`,
+      read: false
     });
   };
 

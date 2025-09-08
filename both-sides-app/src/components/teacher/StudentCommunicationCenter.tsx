@@ -276,7 +276,8 @@ export function StudentCommunicationCenter({
       addNotification({
         type: 'error',
         title: 'Validation Error',
-        message: 'Please fill in all required fields.'
+        message: 'Please fill in all required fields.',
+        read: false
       });
       return;
     }
@@ -311,14 +312,16 @@ export function StudentCommunicationCenter({
       addNotification({
         type: 'success',
         title: 'Message Sent',
-        message: `Message sent to ${newMessage.recipientName}`
+        message: `Message sent to ${newMessage.recipientName}`,
+        read: false
       });
       
     } catch (error) {
       addNotification({
         type: 'error',
         title: 'Send Failed',
-        message: 'Failed to send message. Please try again.'
+        message: 'Failed to send message. Please try again.',
+        read: false
       });
     }
   };
@@ -328,7 +331,8 @@ export function StudentCommunicationCenter({
       addNotification({
         type: 'error',
         title: 'Validation Error',
-        message: 'Please fill in all required fields.'
+        message: 'Please fill in all required fields.',
+        read: false
       });
       return;
     }
@@ -368,14 +372,16 @@ export function StudentCommunicationCenter({
       addNotification({
         type: 'success',
         title: 'Achievement Awarded',
-        message: `Achievement "${newAchievement.title}" awarded to ${newAchievement.studentName}`
+        message: `Achievement "${newAchievement.title}" awarded to ${newAchievement.studentName}`,
+        read: false
       });
       
     } catch (error) {
       addNotification({
         type: 'error',
         title: 'Award Failed',
-        message: 'Failed to award achievement. Please try again.'
+        message: 'Failed to award achievement. Please try again.',
+        read: false
       });
     }
   };
@@ -385,7 +391,8 @@ export function StudentCommunicationCenter({
       addNotification({
         type: 'error',
         title: 'Validation Error',
-        message: 'Please fill in all required fields.'
+        message: 'Please fill in all required fields.',
+        read: false
       });
       return;
     }
@@ -424,14 +431,16 @@ export function StudentCommunicationCenter({
       addNotification({
         type: 'success',
         title: 'Communication Logged',
-        message: 'Communication has been logged successfully.'
+        message: 'Communication has been logged successfully.',
+        read: false
       });
       
     } catch (error) {
       addNotification({
         type: 'error',
         title: 'Log Failed',
-        message: 'Failed to log communication. Please try again.'
+        message: 'Failed to log communication. Please try again.',
+        read: false
       });
     }
   };

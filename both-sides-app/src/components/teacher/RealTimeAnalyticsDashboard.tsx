@@ -68,7 +68,8 @@ import {
   Settings,
   Filter,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Shield
 } from 'lucide-react';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
@@ -652,7 +653,7 @@ export function RealTimeAnalyticsDashboard({
                           outerRadius={80}
                           paddingAngle={5}
                           dataKey="value"
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          label={({ name, percent }) => `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`}
                         />
                         <Tooltip formatter={(value: number) => [`${value}%`, 'Percentage']} />
                       </PieChart>

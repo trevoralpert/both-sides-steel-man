@@ -513,7 +513,7 @@ export function SkillDevelopmentTracker({ skillData }: SkillDevelopmentTrackerPr
                         cy="50%"
                         outerRadius={80}
                         dataKey="value"
-                        label={({ name, value }) => `${name}: ${value.toFixed(1)}%`}
+                        label={({ name, value }) => `${name}: ${(value ?? 0).toFixed(1)}%`}
                       >
                         {skillData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

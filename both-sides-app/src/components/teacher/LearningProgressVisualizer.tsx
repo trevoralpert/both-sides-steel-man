@@ -666,8 +666,8 @@ export function LearningProgressVisualizer({ students }: LearningProgressVisuali
           {/* Individual Student Stats */}
           <div className="grid gap-4 md:grid-cols-3">
             {['performance', 'engagement', 'completion'].map((metric) => {
-              const latestValue = selectedStudentProgress[selectedStudentProgress.length - 1]?.[metric as keyof typeof selectedStudentProgress[0]] || 0;
-              const previousValue = selectedStudentProgress[selectedStudentProgress.length - 2]?.[metric as keyof typeof selectedStudentProgress[0]] || 0;
+              const latestValue = Number(selectedStudentProgress[selectedStudentProgress.length - 1]?.[metric as keyof typeof selectedStudentProgress[0]]) || 0;
+              const previousValue = Number(selectedStudentProgress[selectedStudentProgress.length - 2]?.[metric as keyof typeof selectedStudentProgress[0]]) || 0;
               const change = latestValue - previousValue;
               
               return (

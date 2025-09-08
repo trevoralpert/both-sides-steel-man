@@ -74,7 +74,8 @@ import {
   Activity,
   BarChart3,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
+  Circle
 } from 'lucide-react';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
@@ -321,7 +322,8 @@ export function SessionControlPanel({
     addNotification({
       type: 'success',
       title: 'Session Control',
-      message: `Session ${action} executed successfully.`
+      message: `Session ${action} executed successfully.`,
+      read: false
     });
   };
 
@@ -335,7 +337,8 @@ export function SessionControlPanel({
       addNotification({
         type: 'warning',
         title: 'Phase Navigation',
-        message: `Already at the ${direction === 'next' ? 'last' : 'first'} phase.`
+        message: `Already at the ${direction === 'next' ? 'last' : 'first'} phase.`,
+        read: false
       });
       return;
     }
@@ -357,7 +360,8 @@ export function SessionControlPanel({
     addNotification({
       type: 'success',
       title: 'Phase Advanced',
-      message: `Moved to "${newPhase.name}" phase.`
+      message: `Moved to "${newPhase.name}" phase.`,
+      read: false
     });
   };
 
@@ -366,7 +370,8 @@ export function SessionControlPanel({
       addNotification({
         type: 'error',
         title: 'Timer Adjustment',
-        message: 'Please provide a reason for the timer adjustment.'
+        message: 'Please provide a reason for the timer adjustment.',
+        read: false
       });
       return;
     }
@@ -403,7 +408,8 @@ export function SessionControlPanel({
     addNotification({
       type: 'success',
       title: 'Timer Adjusted',
-      message: `Phase timer ${timerAdjustment.type === 'add' ? 'increased' : timerAdjustment.type === 'subtract' ? 'decreased' : 'set'} by ${timerAdjustment.amount} minutes.`
+      message: `Phase timer ${timerAdjustment.type === 'add' ? 'increased' : timerAdjustment.type === 'subtract' ? 'decreased' : 'set'} by ${timerAdjustment.amount} minutes.`,
+      read: false
     });
   };
 
@@ -431,7 +437,8 @@ export function SessionControlPanel({
     addNotification({
       type: 'warning',
       title: 'Emergency Action',
-      message: `Emergency action "${emergencyAction.type.replace('_', ' ')}" executed.`
+      message: `Emergency action "${emergencyAction.type.replace('_', ' ')}" executed.`,
+      read: false
     });
   };
 
@@ -1007,7 +1014,6 @@ export function SessionControlPanel({
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleEmergencyAction}
-              disabled={!emergencyAction?.reason.trim()}
               className="bg-red-600 hover:bg-red-700"
             >
               <Shield className="h-4 w-4 mr-2" />

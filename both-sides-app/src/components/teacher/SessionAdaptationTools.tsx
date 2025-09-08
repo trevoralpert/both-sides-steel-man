@@ -597,7 +597,8 @@ export function SessionAdaptationTools({
       addNotification({
         type: 'warning',
         title: 'Session Adaptation Suggested',
-        message: `${highPriority.length} high-priority adaptation(s) recommended`
+        message: `${highPriority.length} high-priority adaptation(s) recommended`,
+        read: false
       });
     }
   };
@@ -641,7 +642,8 @@ export function SessionAdaptationTools({
     addNotification({
       type: 'success',
       title: 'Difficulty Adjusted',
-      message: `Phase difficulty changed to ${newDifficulty}`
+      message: `Phase difficulty changed to ${newDifficulty}`,
+      read: false
     });
   };
 
@@ -680,7 +682,8 @@ export function SessionAdaptationTools({
     addNotification({
       type: 'success',
       title: 'Time Adjusted',
-      message: `Phase duration ${percentage > 0 ? 'increased' : 'decreased'} to ${newDuration} minutes`
+      message: `Phase duration ${percentage > 0 ? 'increased' : 'decreased'} to ${newDuration} minutes`,
+      read: false
     });
   };
 
@@ -708,7 +711,8 @@ export function SessionAdaptationTools({
     addNotification({
       type: 'success',
       title: 'Activity Substituted',
-      message: `Switched to "${alternative.name}" (${alternative.duration} min)`
+      message: `Switched to "${alternative.name}" (${alternative.duration} min)`,
+      read: false
     });
 
     setShowAlternativeDialog(false);

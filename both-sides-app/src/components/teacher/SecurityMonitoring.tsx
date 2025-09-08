@@ -59,7 +59,7 @@ import {
   PieChart,
   Target,
   Flag,
-  Warning,
+  AlertTriangle as Warning,
   CheckCircle2,
   XCircle,
   Info,
@@ -535,7 +535,10 @@ export function SecurityMonitoring({
         description: 'Login from new location',
         details: {
           affectedResources: ['user_session'],
-          riskScore: 35
+          riskScore: 35,
+          errorCodes: [],
+          signatures: [],
+          mitigationActions: []
         },
         user: {
           id: 'user_456',

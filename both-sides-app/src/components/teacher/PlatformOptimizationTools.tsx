@@ -111,7 +111,7 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
-  TreeMap
+  Treemap
 } from 'recharts';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
@@ -544,7 +544,8 @@ export function PlatformOptimizationTools({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to implement optimization changes.'
+        message: 'You do not have permission to implement optimization changes.',
+        read: false
       });
       return;
     }
@@ -562,7 +563,8 @@ export function PlatformOptimizationTools({
     addNotification({
       type: 'success',
       title: 'Implementation Started',
-      message: `${recommendation.title} has been scheduled for implementation.`
+      message: `${recommendation.title} has been scheduled for implementation.`,
+      read: false
     });
   };
 
@@ -800,7 +802,7 @@ export function PlatformOptimizationTools({
                       cy="50%"
                       outerRadius={100}
                       dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                     >
                       {[
                         { name: 'JavaScript Loading', value: 35, color: '#ef4444' },

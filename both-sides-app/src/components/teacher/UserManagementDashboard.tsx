@@ -869,7 +869,8 @@ export function UserManagementDashboard({
       addNotification({
         type: 'error',
         title: 'Missing Information',
-        message: 'Please fill in all required fields.'
+        message: 'Please fill in all required fields.',
+        read: false
       });
       return;
     }
@@ -985,7 +986,8 @@ export function UserManagementDashboard({
     addNotification({
       type: 'success',
       title: 'User Created',
-      message: `User ${newUser.displayName} has been created${sendWelcomeEmail ? ' and invited via email' : ''}.`
+      message: `User ${newUser.displayName} has been created${sendWelcomeEmail ? ' and invited via email' : ''}.`,
+      read: false
     });
   };
 
@@ -1003,7 +1005,8 @@ export function UserManagementDashboard({
     addNotification({
       type: 'warning',
       title: 'User Suspended',
-      message: 'User account has been suspended and access revoked.'
+      message: 'User account has been suspended and access revoked.',
+      read: false
     });
   };
 
@@ -1016,7 +1019,8 @@ export function UserManagementDashboard({
     addNotification({
       type: 'success',
       title: 'User Deleted',
-      message: 'User account has been permanently deleted.'
+      message: 'User account has been permanently deleted.',
+      read: false
     });
   };
 
@@ -1054,7 +1058,8 @@ export function UserManagementDashboard({
     addNotification({
       type: 'success',
       title: 'Bulk Action Completed',
-      message: `${bulkActionType} applied to ${selectedUsersList.length} users.`
+      message: `${bulkActionType} applied to ${selectedUsersList.length} users.`,
+      read: false
     });
   };
 

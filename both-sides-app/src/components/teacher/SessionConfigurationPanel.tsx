@@ -37,7 +37,8 @@ import {
   Zap,
   Info,
   AlertTriangle,
-  CheckCircle2
+  CheckCircle2,
+  Users
 } from 'lucide-react';
 
 // Types

@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -71,7 +71,7 @@ import {
   Archive,
   ExternalLink
 } from 'lucide-react';
-import { LoadingState } from '@/components/ui/loading-state';
+import { LoadingState } from '@/components/loading/LoadingState';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
 
@@ -205,7 +205,7 @@ export function SessionResourceLibrary({
   onResourceAdd,
   showOnlyShared = false
 }: SessionResourceLibraryProps) {
-  const { user } = useUser();
+  const { getToken, userId } = useAuth();
   const { addNotification } = useTeacherDashboard();
   
   const [resources, setResources] = useState<ResourceFile[]>([]);
@@ -253,15 +253,15 @@ export function SessionResourceLibrary({
   useEffect(() => {
     loadResources();
     loadFolders();
-  }, [user?.id, sessionId, classId]);
+  }, [userId, sessionId, classId]);
 
   const loadResources = async () => {
-    if (!user?.id) return;
+    if (!userId) return;
 
     try {
       setLoading(true);
       
-      const token = await user.getToken();
+      const token = await getToken({ template: 'default' });
       const params = new URLSearchParams();
       if (sessionId) params.append('sessionId', sessionId);
       if (classId) params.append('classId', classId);
@@ -287,8 +287,8 @@ export function SessionResourceLibrary({
             version: '1.2',
             isLatest: true,
             uploadedBy: {
-              id: user.id,
-              name: user.firstName + ' ' + user.lastName
+              id: userId || '',
+              name: 'Teacher'
             },
             uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
             lastModified: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
@@ -301,8 +301,8 @@ export function SessionResourceLibrary({
             sharedWith: [],
             permissions: {
               canView: [],
-              canEdit: [user.id],
-              canShare: [user.id]
+              canEdit: [userId || ''],
+              canShare: [userId || '']
             },
             usage: {
               totalViews: 143,
@@ -337,8 +337,8 @@ export function SessionResourceLibrary({
             version: '1.0',
             isLatest: true,
             uploadedBy: {
-              id: user.id,
-              name: user.firstName + ' ' + user.lastName
+              id: userId || '',
+              name: 'Teacher'
             },
             uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
             lastModified: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
@@ -351,8 +351,8 @@ export function SessionResourceLibrary({
             sharedWith: [],
             permissions: {
               canView: [],
-              canEdit: [user.id],
-              canShare: [user.id]
+              canEdit: [userId || ''],
+              canShare: [userId || '']
             },
             usage: {
               totalViews: 89,
@@ -381,8 +381,8 @@ export function SessionResourceLibrary({
             version: '2.1',
             isLatest: true,
             uploadedBy: {
-              id: user.id,
-              name: user.firstName + ' ' + user.lastName
+              id: userId || '',
+              name: 'Teacher'
             },
             uploadedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
             lastModified: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
@@ -395,8 +395,8 @@ export function SessionResourceLibrary({
             sharedWith: [],
             permissions: {
               canView: [],
-              canEdit: [user.id],
-              canShare: [user.id]
+              canEdit: [userId || ''],
+              canShare: [userId || '']
             },
             usage: {
               totalViews: 267,
@@ -432,7 +432,8 @@ export function SessionResourceLibrary({
       addNotification({
         type: 'error',
         title: 'Loading Error',
-        message: 'Failed to load resources. Please try again.'
+        message: 'Failed to load resources. Please try again.',
+        read: false
       });
     } finally {
       setLoading(false);
@@ -440,10 +441,10 @@ export function SessionResourceLibrary({
   };
 
   const loadFolders = async () => {
-    if (!user?.id) return;
+    if (!userId) return;
 
     try {
-      const token = await user.getToken();
+      const token = await getToken({ template: 'default' });
       const response = await fetch('/api/resources/folders', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -463,7 +464,7 @@ export function SessionResourceLibrary({
             isShared: true,
             resourceCount: 12,
             createdAt: new Date(),
-            createdBy: user.id
+            createdBy: userId || ''
           },
           {
             id: '2',
@@ -474,7 +475,7 @@ export function SessionResourceLibrary({
             isShared: true,
             resourceCount: 8,
             createdAt: new Date(),
-            createdBy: user.id
+            createdBy: userId || ''
           },
           {
             id: '3',
@@ -485,7 +486,7 @@ export function SessionResourceLibrary({
             isShared: false,
             resourceCount: 5,
             createdAt: new Date(),
-            createdBy: user.id
+            createdBy: userId || ''
           }
         ];
         setFolders(mockFolders);
@@ -500,7 +501,8 @@ export function SessionResourceLibrary({
       addNotification({
         type: 'error',
         title: 'Validation Error',
-        message: 'Please select files and provide a name.'
+        message: 'Please select files and provide a name.',
+        read: false
       });
       return;
     }
@@ -522,8 +524,8 @@ export function SessionResourceLibrary({
         version: '1.0',
         isLatest: true,
         uploadedBy: {
-          id: user?.id || '',
-          name: user?.firstName + ' ' + user?.lastName || ''
+          id: userId || '',
+          name: 'Teacher'
         },
         uploadedAt: new Date(),
         lastModified: new Date(),
@@ -536,8 +538,8 @@ export function SessionResourceLibrary({
         sharedWith: [],
         permissions: {
           canView: [],
-          canEdit: [user?.id || ''],
-          canShare: [user?.id || '']
+          canEdit: [userId || ''],
+          canShare: [userId || '']
         },
         usage: {
           totalViews: 0,
@@ -560,7 +562,8 @@ export function SessionResourceLibrary({
       addNotification({
         type: 'success',
         title: 'Upload Successful',
-        message: `"${uploadForm.name}" has been uploaded successfully.`
+        message: `"${uploadForm.name}" has been uploaded successfully.`,
+        read: false
       });
       
       setShowUploadDialog(false);
@@ -569,7 +572,8 @@ export function SessionResourceLibrary({
       addNotification({
         type: 'error',
         title: 'Upload Failed',
-        message: 'Failed to upload the file. Please try again.'
+        message: 'Failed to upload the file. Please try again.',
+        read: false
       });
     } finally {
       setUploading(false);

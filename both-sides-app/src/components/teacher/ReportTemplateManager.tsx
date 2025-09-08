@@ -559,7 +559,6 @@ interface ReportTemplateManagerProps {
   canEditTemplates?: boolean;
   canPublishTemplates?: boolean;
   canDeleteTemplates?: boolean;
-  showCommunityTemplates?: boolean;
 }
 
 export function ReportTemplateManager({
@@ -567,8 +566,7 @@ export function ReportTemplateManager({
   canCreateTemplates = true,
   canEditTemplates = true,
   canPublishTemplates = false,
-  canDeleteTemplates = false,
-  showCommunityTemplates = true
+  canDeleteTemplates = false
 }: ReportTemplateManagerProps) {
   const { user } = useUser();
   const { addNotification } = useTeacherDashboard();
@@ -581,6 +579,7 @@ export function ReportTemplateManager({
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<TemplateCategory | 'all'>('all');
+  const [showCommunityTemplates, setShowCommunityTemplates] = useState(true);
   const [typeFilter, setTypeFilter] = useState<TemplateType | 'all'>('all');
   const [sortBy, setSortBy] = useState<'name' | 'rating' | 'usage' | 'created' | 'updated'>('rating');
   
@@ -1019,7 +1018,8 @@ export function ReportTemplateManager({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to create templates.'
+        message: 'You do not have permission to create templates.',
+        read: false
       });
       return;
     }
@@ -1175,7 +1175,8 @@ export function ReportTemplateManager({
     addNotification({
       type: 'success',
       title: 'Template Created',
-      message: `Template "${template.name}" has been created successfully.`
+      message: `Template "${template.name}" has been created successfully.`,
+      read: false
     });
   };
 
@@ -1218,7 +1219,8 @@ export function ReportTemplateManager({
     addNotification({
       type: 'success',
       title: 'Template Duplicated',
-      message: `Template "${duplicated.name}" has been created as a copy.`
+      message: `Template "${duplicated.name}" has been created as a copy.`,
+      read: false
     });
   };
 
@@ -1227,7 +1229,8 @@ export function ReportTemplateManager({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to share this template.'
+        message: 'You do not have permission to share this template.',
+        read: false
       });
       return;
     }
@@ -1244,7 +1247,8 @@ export function ReportTemplateManager({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to delete this template.'
+        message: 'You do not have permission to delete this template.',
+        read: false
       });
       return;
     }
@@ -1256,7 +1260,8 @@ export function ReportTemplateManager({
     addNotification({
       type: 'success',
       title: 'Template Deleted',
-      message: `Template "${template.name}" has been deleted.`
+      message: `Template "${template.name}" has been deleted.`,
+      read: false
     });
   };
 
@@ -1277,7 +1282,8 @@ export function ReportTemplateManager({
     addNotification({
       type: 'success',
       title: 'Thank you!',
-      message: 'Your rating has been submitted.'
+      message: 'Your rating has been submitted.',
+      read: false
     });
   };
 
@@ -1878,7 +1884,7 @@ export function ReportTemplateManager({
                       ...prev?.permissions,
                       is_public: !!checked
                     }
-                  }))
+                  } as Partial<ReportTemplate>))
                 }
               />
               <Label htmlFor="public" className="text-sm">

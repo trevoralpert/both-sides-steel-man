@@ -34,7 +34,8 @@ import {
   BookOpen,
   Shield,
   FileText,
-  Activity
+  Activity,
+  Target
 } from 'lucide-react';
 
 import { TeacherDashboardProvider } from './TeacherDashboardProvider';
@@ -381,7 +382,7 @@ export function TeacherDashboardLayout({ children }: TeacherDashboardLayoutProps
 
         {/* Mobile Sidebar */}
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetTrigger asChild className="md:hidden">
+          <SheetTrigger className="md:hidden">
             <Button variant="ghost" size="sm" className="fixed top-4 left-4 z-50">
               <Menu className="h-5 w-5" />
             </Button>

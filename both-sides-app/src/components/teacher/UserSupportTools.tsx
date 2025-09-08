@@ -466,7 +466,8 @@ export function UserSupportTools({
       addNotification({
         type: 'error',
         title: 'Access Denied',
-        message: 'You do not have permission to impersonate users.'
+        message: 'You do not have permission to impersonate users.',
+        read: false
       });
       return;
     }
@@ -493,7 +494,8 @@ export function UserSupportTools({
     addNotification({
       type: 'success',
       title: 'Impersonation Started',
-      message: `Now impersonating user. Remember to end the session when done.`
+      message: `Now impersonating user. Remember to end the session when done.`,
+      read: false
     });
   };
 
@@ -507,7 +509,8 @@ export function UserSupportTools({
     addNotification({
       type: 'info',
       title: 'Impersonation Ended',
-      message: 'You have successfully ended the impersonation session.'
+      message: 'You have successfully ended the impersonation session.',
+      read: false
     });
   };
 
@@ -541,7 +544,8 @@ export function UserSupportTools({
     addNotification({
       type: 'success',
       title: 'Response Sent',
-      message: 'Your response has been sent to the user.'
+      message: 'Your response has been sent to the user.',
+      read: false
     });
   };
 
@@ -561,7 +565,8 @@ export function UserSupportTools({
     addNotification({
       type: 'success',
       title: 'Ticket Resolved',
-      message: 'The support ticket has been marked as resolved.'
+      message: 'The support ticket has been marked as resolved.',
+      read: false
     });
   };
 

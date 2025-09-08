@@ -857,7 +857,8 @@ export function ReportingAnalytics({
     addNotification({
       type: 'info',
       title: 'Export Started',
-      message: 'Analytics data export has been started. You will receive a download link shortly.'
+      message: 'Analytics data export has been started. You will receive a download link shortly.',
+      read: false
     });
   };
 
@@ -865,7 +866,8 @@ export function ReportingAnalytics({
     addNotification({
       type: 'info',
       title: 'Insights Shared',
-      message: 'Analytics insights have been shared with the team.'
+      message: 'Analytics insights have been shared with the team.',
+      read: false
     });
   };
 

@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -68,7 +68,7 @@ import {
   Group,
   BarChart3
 } from 'lucide-react';
-import { LoadingState } from '@/components/ui/loading-state';
+import { LoadingState } from '@/components/loading/LoadingState';
 
 import { StudentDetailPanel } from './StudentDetailPanel';
 import { StudentProgressTracker } from './StudentProgressTracker';
@@ -151,7 +151,7 @@ interface StudentSort {
 }
 
 export function StudentManagementDashboard() {
-  const { user } = useUser();
+  const { getToken, userId } = useAuth();
   const router = useRouter();
   const { state, addNotification } = useTeacherDashboard();
   
@@ -187,20 +187,20 @@ export function StudentManagementDashboard() {
 
   useEffect(() => {
     loadStudentData();
-  }, [user?.id, state.lastRefresh]);
+  }, [userId, state.lastRefresh]);
 
   useEffect(() => {
     applyFiltersAndSort();
   }, [students, filters, sort]);
 
   const loadStudentData = async () => {
-    if (!user?.id) return;
+    if (!userId) return;
 
     try {
       setLoading(true);
       setError(null);
 
-      const token = await user.getToken();
+      const token = await getToken({ template: 'default' });
       const response = await fetch('/api/students/teacher-students', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -486,7 +486,8 @@ export function StudentManagementDashboard() {
         addNotification({
           type: 'info',
           title: 'Messaging',
-          message: 'Student messaging feature will be implemented in this task.'
+          message: 'Student messaging feature will be implemented in this task.',
+          read: false
         });
         break;
       case 'add-to-group':
@@ -494,7 +495,8 @@ export function StudentManagementDashboard() {
         addNotification({
           type: 'info',
           title: 'Grouping',
-          message: 'Student grouping feature will be implemented in this task.'
+          message: 'Student grouping feature will be implemented in this task.',
+          read: false
         });
         break;
       default:
@@ -511,21 +513,24 @@ export function StudentManagementDashboard() {
           addNotification({
             type: 'info',
             title: 'Bulk Grouping',
-            message: 'Bulk student grouping will be implemented in this task.'
+            message: 'Bulk student grouping will be implemented in this task.',
+            read: false
           });
           break;
         case 'send-message':
           addNotification({
             type: 'info',
             title: 'Bulk Messaging',
-            message: 'Bulk messaging will be implemented in this task.'
+            message: 'Bulk messaging will be implemented in this task.',
+            read: false
           });
           break;
         case 'export':
           addNotification({
             type: 'info',
             title: 'Export Started',
-            message: 'Student data export will be implemented in this task.'
+            message: 'Student data export will be implemented in this task.',
+            read: false
           });
           break;
         default:
@@ -537,7 +542,8 @@ export function StudentManagementDashboard() {
       addNotification({
         type: 'error',
         title: 'Bulk Action Failed',
-        message: `Failed to ${action} selected students. Please try again.`
+        message: `Failed to ${action} selected students. Please try again.`,
+        read: false
       });
     }
   };

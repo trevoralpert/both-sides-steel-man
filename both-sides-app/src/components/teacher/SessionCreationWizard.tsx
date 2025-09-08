@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -58,9 +58,10 @@ import {
   Zap,
   Award,
   Eye,
-  RefreshCw
+  RefreshCw,
+  Plus
 } from 'lucide-react';
-import { LoadingState } from '@/components/ui/loading-state';
+import { LoadingState } from '@/components/loading/LoadingState';
 
 import { useTeacherDashboard } from './TeacherDashboardProvider';
 
@@ -254,7 +255,7 @@ export function SessionCreationWizard({
   classId,
   templateId 
 }: SessionCreationWizardProps) {
-  const { user } = useUser();
+  const { getToken, userId } = useAuth();
   const router = useRouter();
   const { addNotification } = useTeacherDashboard();
   
@@ -326,15 +327,15 @@ export function SessionCreationWizard({
     if (isOpen) {
       loadWizardData();
     }
-  }, [isOpen, user?.id]);
+  }, [isOpen, userId]);
 
   const loadWizardData = async () => {
-    if (!user?.id) return;
+    if (!userId) return;
 
     try {
       setLoading(true);
       
-      const token = await user.getToken();
+      const token = await getToken({ template: 'default' });
       
       // Load topics and students in parallel
       const [topicsResponse, studentsResponse] = await Promise.all([
@@ -608,7 +609,8 @@ export function SessionCreationWizard({
       addNotification({
         type: 'warning',
         title: 'Maximum Participants Reached',
-        message: `This debate format supports maximum ${maxParticipants} participants.`
+        message: `This debate format supports maximum ${maxParticipants} participants.`,
+        read: false
       });
     }
   };
@@ -617,7 +619,7 @@ export function SessionCreationWizard({
     try {
       setLoading(true);
       
-      const token = await user?.getToken();
+      const token = await getToken({ template: 'default' });
       const response = await fetch('/api/sessions/create', {
         method: 'POST',
         headers: {
@@ -626,7 +628,7 @@ export function SessionCreationWizard({
         },
         body: JSON.stringify({
           ...sessionData,
-          teacherId: user?.id
+          teacherId: userId
         })
       });
 
@@ -636,7 +638,8 @@ export function SessionCreationWizard({
         addNotification({
           type: 'success',
           title: 'Session Created Successfully',
-          message: `Debate session "${sessionData.title}" has been scheduled.`
+          message: `Debate session "${sessionData.title}" has been scheduled.`,
+          read: false
         });
         
         onClose();
@@ -649,7 +652,8 @@ export function SessionCreationWizard({
       addNotification({
         type: 'error',
         title: 'Session Creation Failed',
-        message: 'Unable to create the debate session. Please try again.'
+        message: 'Unable to create the debate session. Please try again.',
+        read: false
       });
     } finally {
       setLoading(false);

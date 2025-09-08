@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -113,7 +113,7 @@ interface TeacherDashboardData {
 }
 
 export function TeacherAnalyticsDashboard() {
-  const { user } = useUser();
+  const { getToken, userId } = useAuth();
   const [dashboardData, setDashboardData] = useState<TeacherDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -122,13 +122,13 @@ export function TeacherAnalyticsDashboard() {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    if (user?.id) {
+    if (userId) {
       fetchDashboardData();
     }
-  }, [user?.id, selectedClassId]);
+  }, [userId, selectedClassId]);
 
   const fetchDashboardData = async () => {
-    if (!user?.id) return;
+    if (!userId) return;
 
     try {
       setLoading(true);
@@ -137,13 +137,13 @@ export function TeacherAnalyticsDashboard() {
       // Fetch teacher's classes and analytics data
       const [classesResponse, studentsResponse, reflectionsResponse] = await Promise.all([
         fetch('/api/classes/teacher-classes', {
-          headers: { 'Authorization': `Bearer ${await user.getToken()}` }
+          headers: { 'Authorization': `Bearer ${await getToken({ template: 'default' })}` }
         }),
         selectedClassId ? fetch(`/api/performance-analytics/class/${selectedClassId}`, {
-          headers: { 'Authorization': `Bearer ${await user.getToken()}` }
+          headers: { 'Authorization': `Bearer ${await getToken({ template: 'default' })}` }
         }) : Promise.resolve({ ok: true, json: () => ({ students: [] }) }),
         fetch('/api/reflections/teacher/pending', {
-          headers: { 'Authorization': `Bearer ${await user.getToken()}` }
+          headers: { 'Authorization': `Bearer ${await getToken({ template: 'default' })}` }
         })
       ]);
 
@@ -248,7 +248,7 @@ export function TeacherAnalyticsDashboard() {
       description: `Student activity ${i + 1}`,
       timestamp: new Date(Date.now() - i * 2 * 60 * 60 * 1000),
       studentId: `student-${Math.floor(Math.random() * 5) + 1}`,
-      priority: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low'
+      priority: (Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low') as 'high' | 'medium' | 'low'
     }));
   };
 

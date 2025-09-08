@@ -647,7 +647,8 @@ export function RecordingAnalytics({
       addNotification({
         type: 'success',
         title: 'Analytics Updated',
-        message: `Generated ${mockInsights.length} insights from session data.`
+        message: `Generated ${mockInsights.length} insights from session data.`,
+        read: false
       });
     }, 2000);
   };
@@ -656,7 +657,8 @@ export function RecordingAnalytics({
     addNotification({
       type: 'info',
       title: 'Export Started',
-      message: `Analytics export in ${format.toUpperCase()} format is being prepared.`
+      message: `Analytics export in ${format.toUpperCase()} format is being prepared.`,
+      read: false
     });
   };
 
@@ -795,7 +797,7 @@ export function RecordingAnalytics({
       </div>
 
       {/* Main Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as typeof activeTab)} className="space-y-4">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">
             Analytics Overview

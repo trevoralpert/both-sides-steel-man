@@ -119,6 +119,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // Types
 interface StorageRecording {
@@ -675,7 +676,8 @@ export function RecordingStorageManagement({
       addNotification({
         type: 'error',
         title: 'Missing Information',
-        message: 'Please provide a policy name.'
+        message: 'Please provide a policy name.',
+        read: false
       });
       return;
     }
@@ -705,7 +707,8 @@ export function RecordingStorageManagement({
     addNotification({
       type: 'success',
       title: 'Policy Created',
-      message: `Retention policy "${policyName}" has been created.`
+      message: `Retention policy "${policyName}" has been created.`,
+      read: false
     });
   };
 
@@ -714,7 +717,8 @@ export function RecordingStorageManagement({
       addNotification({
         type: 'error',
         title: 'Missing Information',
-        message: 'Please select an operation type.'
+        message: 'Please select an operation type.',
+        read: false
       });
       return;
     }
@@ -747,7 +751,8 @@ export function RecordingStorageManagement({
     addNotification({
       type: 'success',
       title: 'Operation Started',
-      message: `Bulk ${bulkOperationType} operation started for ${affectedCount} recordings.`
+      message: `Bulk ${bulkOperationType} operation started for ${affectedCount} recordings.`,
+      read: false
     });
   };
 
@@ -829,7 +834,8 @@ export function RecordingStorageManagement({
     addNotification({
       type: 'success',
       title: 'Recording Deleted',
-      message: 'Recording has been permanently deleted.'
+      message: 'Recording has been permanently deleted.',
+      read: false
     });
   };
 
@@ -930,7 +936,7 @@ export function RecordingStorageManagement({
       </div>
 
       {/* Main Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as typeof activeTab)} className="space-y-4">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">
             Storage Overview
