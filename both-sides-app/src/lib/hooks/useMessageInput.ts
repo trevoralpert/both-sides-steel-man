@@ -133,7 +133,7 @@ export function useMessageInput({
       console.error('Failed to send message:', error);
       throw error; // Re-throw to let UI handle the error
     }
-  }, [realtimeMessages, replyToMessage, currentPhase, isTyping, handleTypingStop, cancelReply]);
+  }, [realtimeMessages, replyToMessage, currentPhase, handleTypingStop, cancelReply]);
   
   // Direct reply sending (for programmatic use)
   const sendReply = useCallback(async (
@@ -151,7 +151,7 @@ export function useMessageInput({
       console.error('Failed to send reply:', error);
       throw error;
     }
-  }, [realtimeMessages, isTyping, handleTypingStop]);
+  }, [realtimeMessages, handleTypingStop]);
   
   // Helper to create reply context from message
   const createReplyContext = useCallback((message: Message): ReplyContext => {

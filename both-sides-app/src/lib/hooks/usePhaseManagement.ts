@@ -41,7 +41,8 @@ const DEFAULT_PHASE_DURATIONS = {
   DISCUSSION: 15,
   REBUTTAL: 5,
   CLOSING: 3,
-  REFLECTION: 5
+  REFLECTION: 5,
+  COMPLETED: 0
 } as const;
 
 // Phase order

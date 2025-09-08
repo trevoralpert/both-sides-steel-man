@@ -379,11 +379,11 @@ export function useRealtimeConnection(config: ConnectionConfig): RealtimeConnect
   const disconnect = useCallback(() => {
     if (realtimeRef.current) {
       realtimeRef.current.close();
-      realtimeRef.current = undefined;
+      realtimeRef.current = null;
     }
     
     if (channelRef.current) {
-      channelRef.current = undefined;
+      channelRef.current = null;
     }
     
     if (reconnectTimeoutRef.current) {

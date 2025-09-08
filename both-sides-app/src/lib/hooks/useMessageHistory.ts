@@ -250,18 +250,19 @@ export function useMessageHistory({
     // Find the closest message to the timestamp
     const targetTime = timestamp.getTime();
     
-    let closestMessage: Message | null = null;
+    let closestMessage: Message | undefined;
     let closestTimeDiff = Infinity;
     let closestIndex = -1;
     
-    realtimeMessages.messages.forEach((message, index) => {
+    for (let index = 0; index < realtimeMessages.messages.length; index++) {
+      const message = realtimeMessages.messages[index];
       const timeDiff = Math.abs(message.timestamp.getTime() - targetTime);
       if (timeDiff < closestTimeDiff) {
         closestTimeDiff = timeDiff;
         closestMessage = message;
         closestIndex = index;
       }
-    });
+    }
     
     if (closestMessage) {
       setCurrentMessageIndex(closestIndex);

@@ -194,7 +194,7 @@ export function PlasticityMap({
                 <Download className="h-4 w-4" />
               </Button>
               <Tooltip>
-                <TooltipTrigger asChild>
+                <TooltipTrigger>
                   <Button variant="outline" size="sm">
                     <Info className="h-4 w-4" />
                   </Button>
@@ -402,7 +402,7 @@ function PlasticityTrajectory({
               {/* Belief points */}
               {points.map((point, i) => (
                 <Tooltip key={i}>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger>
                     <circle
                       cx={`${point.x}%`}
                       cy={`${point.y}%`}
@@ -434,7 +434,7 @@ function PlasticityTrajectory({
           
           return (
             <Tooltip key={event.id}>
-              <TooltipTrigger asChild>
+              <TooltipTrigger>
                 <g>
                   <circle
                     cx={`${x}%`}

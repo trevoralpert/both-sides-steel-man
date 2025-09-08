@@ -412,7 +412,7 @@ function TimelineView({
         {/* Engagement points */}
         {data.map((point, index) => (
           <Tooltip key={index}>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <circle
                 cx={normalizeX(point.timestamp, window.innerWidth * 0.8)}
                 cy={normalizeY(getMetricValue(point), 384)}
@@ -437,7 +437,7 @@ function TimelineView({
         {/* Debate markers */}
         {showDebates && debates.map((debate, index) => (
           <Tooltip key={debate.id}>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <g
                 className="cursor-pointer"
                 onClick={() => onDebateSelect(debate.id)}
@@ -483,7 +483,7 @@ function TimelineView({
             
             return (
               <Tooltip key={`${point.timestamp.getTime()}-${eventIndex}`}>
-                <TooltipTrigger asChild>
+                <TooltipTrigger>
                   <circle
                     cx={x}
                     cy={y}

@@ -8,14 +8,14 @@ export interface Toast {
   description?: string;
   action?: React.ReactNode;
   variant?: 'default' | 'destructive';
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1000000;
 
-type ToasterToast = Toast & {
-  id: string;
-};
+type ToasterToast = Toast;
 
 const _actionTypes = {
   ADD_TOAST: 'ADD_TOAST',
@@ -137,9 +137,9 @@ function dispatch(action: Action) {
   });
 }
 
-type Toast = Omit<ToasterToast, 'id'>;
+type ToastInput = Omit<ToasterToast, 'id'>;
 
-function toast({ ...props }: Toast) {
+function toast({ ...props }: ToastInput) {
   const id = genId();
 
   const update = (props: ToasterToast) =>

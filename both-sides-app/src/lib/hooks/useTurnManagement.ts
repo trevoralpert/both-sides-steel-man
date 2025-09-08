@@ -52,7 +52,8 @@ const DEFAULT_TURN_DURATIONS = {
   DISCUSSION: 120, // 2 minutes (suggested)
   REBUTTAL: 90, // 1.5 minutes
   CLOSING: 180, // 3 minutes
-  REFLECTION: 0
+  REFLECTION: 0,
+  COMPLETED: 0
 } as const;
 
 // Generate default turn state
@@ -393,7 +394,7 @@ export function useTurnManagement({
     false;
 
   const currentSpeaker = state.turnState?.currentSpeakerId ? 
-    participants.find(p => p.id === state.turnState.currentSpeakerId) : null;
+    participants.find(p => p.id === state.turnState!.currentSpeakerId) : null;
 
   const isCurrentUserTurn = state.turnState?.currentSpeakerId === userId;
 

@@ -280,7 +280,7 @@ export function useFilterState<T extends Record<string, any>>(
   }, [updateState]);
 
   const clearFilters = useCallback(() => {
-    const keys = Object.keys(defaultFilters) as (keyof T)[];
+    const keys = Object.keys(defaultFilters) as string[];
     clearState([...keys, 'page']);
   }, [clearState, defaultFilters]);
 

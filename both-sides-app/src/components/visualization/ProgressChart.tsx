@@ -331,7 +331,7 @@ function ChartCanvas({ series, viewType, height, onDataPointClick }: ChartCanvas
                 />
                 {points.map((p, i) => (
                   <Tooltip key={i}>
-                    <TooltipTrigger asChild>
+                    <TooltipTrigger>
                       <circle
                         cx={p.x}
                         cy={p.y}
@@ -360,7 +360,7 @@ function ChartCanvas({ series, viewType, height, onDataPointClick }: ChartCanvas
               <g key={s.id}>
                 {points.map((p, i) => (
                   <Tooltip key={i}>
-                    <TooltipTrigger asChild>
+                    <TooltipTrigger>
                       <rect
                         x={p.x - barWidth / 2}
                         y={p.y}

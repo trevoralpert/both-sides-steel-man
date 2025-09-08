@@ -243,7 +243,7 @@ export const SurveyHelpers = {
       case 'RANKING':
         if (!Array.isArray(responseValue) || 
             responseValue.length !== question.options?.length ||
-            !question.options?.every(opt => responseValue.includes(opt))) {
+            !question.options?.every((opt: string) => responseValue.includes(opt))) {
           return { isValid: false, error: 'Please rank all options' };
         }
         break;

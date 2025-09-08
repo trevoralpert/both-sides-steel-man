@@ -87,11 +87,11 @@ export function usePresence({
     
     try {
       await connection.sendMessage({
-        type: 'PRESENCE_UPDATE',
         userId,
         conversationId,
         timestamp: new Date().toISOString(),
-        ...update
+        ...update,
+        type: 'PRESENCE_UPDATE'
       });
     } catch (error) {
       console.error('Failed to send presence update:', error);
@@ -133,7 +133,7 @@ export function usePresence({
     } else {
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
-        typingTimeoutRef.current = undefined;
+        typingTimeoutRef.current = null;
       }
     }
   }, [userId, sendPresenceUpdate, typingTimeoutMs]);
