@@ -16,6 +16,32 @@ import {
   SurveyQuestionCategory
 } from '@/types/survey';
 
+// Additional types for our test functions
+export interface SurveyQuestion {
+  id: string;
+  text: string;
+  type: SurveyQuestionType;
+  category: SurveyQuestionCategory;
+  options?: string[];
+  scale?: { min: number; max: number };
+  required: boolean;
+}
+
+export interface SurveyResponse {
+  questionId: string;
+  value: any;
+  timestamp: Date;
+  userId: string;
+}
+
+export interface BeliefProfile {
+  political: number;
+  social: number;
+  economic: number;
+  environmental: number;
+  international: number;
+}
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export class SurveyAPIError extends Error {
@@ -313,3 +339,104 @@ export const SurveyHelpers = {
     return Math.max(minutes * 60 * 1000, 3000); // minimum 3 seconds
   },
 };
+
+// Additional functions for testing
+export function validateSurveyResponse(question: SurveyQuestion, value: any): { isValid: boolean; error?: string } {
+  if (question.required && (value === '' || value === null || value === undefined)) {
+    return { isValid: false, error: 'This question is required' };
+  }
+
+  switch (question.type) {
+    case 'MULTIPLE_CHOICE':
+      if (question.options && !question.options.includes(value)) {
+        return { isValid: false, error: 'Please select a valid option' };
+      }
+      break;
+    
+    case 'SCALE':
+      if (question.scale && (value < question.scale.min || value > question.scale.max)) {
+        return { isValid: false, error: `Please select a value between ${question.scale.min} and ${question.scale.max}` };
+      }
+      break;
+    
+    case 'RANKING':
+      if (question.options && Array.isArray(value)) {
+        if (value.length !== question.options.length || !question.options.every((opt: string) => value.includes(opt))) {
+          return { isValid: false, error: 'Please rank all options' };
+        }
+      }
+      break;
+    
+    case 'TEXT':
+      // Text responses are generally valid if not empty
+      break;
+  }
+
+  return { isValid: true };
+}
+
+export async function processSurveyResponse(userId: string, responses: SurveyResponse[]): Promise<{
+  success: boolean;
+  beliefProfile: BeliefProfile;
+  completionPercentage: number;
+}> {
+  // Calculate completion percentage
+  const completionPercentage = responses.length > 0 ? (responses.length / 20) * 100 : 0; // Assume 20 total questions
+
+  // Calculate belief profile
+  const beliefProfile = calculateBeliefProfile(responses);
+
+  return {
+    success: true,
+    beliefProfile,
+    completionPercentage: Math.min(completionPercentage, 100)
+  };
+}
+
+export function calculateBeliefProfile(responses: SurveyResponse[]): BeliefProfile {
+  if (responses.length === 0) {
+    return {
+      political: 0,
+      social: 0,
+      economic: 0,
+      environmental: 0,
+      international: 0
+    };
+  }
+
+  // Simple implementation - in reality this would use more sophisticated algorithms
+  const profile: BeliefProfile = {
+    political: 0,
+    social: 0,
+    economic: 0,
+    environmental: 0,
+    international: 0
+  };
+
+  responses.forEach(response => {
+    // Determine axis based on question ID or category
+    let axis: keyof BeliefProfile = 'political';
+    
+    if (response.questionId.includes('social')) axis = 'social';
+    else if (response.questionId.includes('economic')) axis = 'economic';
+    else if (response.questionId.includes('environmental')) axis = 'environmental';
+    else if (response.questionId.includes('international')) axis = 'international';
+
+    // Convert response to belief value (-1 to 1)
+    let value = 0;
+    if (typeof response.value === 'number') {
+      value = (response.value - 5) / 5; // Assuming 1-10 scale, convert to -1 to 1
+    } else if (typeof response.value === 'string') {
+      if (response.value.includes('Conservative')) value = 0.7;
+      else if (response.value.includes('Liberal')) value = -0.7;
+      else if (response.value.includes('Very Conservative')) value = 0.9;
+      else if (response.value.includes('Very Liberal')) value = -0.9;
+    }
+
+    profile[axis] = Math.max(-1, Math.min(1, profile[axis] + value / responses.length));
+  });
+
+  return profile;
+}
+
+export default SurveyAPI;

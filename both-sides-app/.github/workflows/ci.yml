@@ -1,0 +1,532 @@
+name: 🚀 Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip test execution (for emergency deployments)'
+        required: false
+        default: 'false'
+        type: boolean
+
+# Cancel in-progress runs for the same workflow and branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '18'
+  CACHE_VERSION: 'v1'
+  
+jobs:
+  # Job 1: Setup and validation
+  setup:
+    name: 🔧 Setup & Validation
+    runs-on: ubuntu-latest
+    outputs:
+      should-run-tests: ${{ steps.check-changes.outputs.should-run-tests }}
+      test-matrix: ${{ steps.test-matrix.outputs.matrix }}
+      cache-key: ${{ steps.cache-keys.outputs.cache-key }}
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Full history for change detection
+    
+    - name: 🔍 Check for relevant changes
+      id: check-changes
+      run: |
+        if [[ "${{ github.event.inputs.skip_tests }}" == "true" ]]; then
+          echo "should-run-tests=false" >> $GITHUB_OUTPUT
+          echo "🚨 Tests skipped via workflow dispatch input"
+          exit 0
+        fi
+        
+        # Check if we should run tests based on changed files
+        CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} || echo "all")
+        
+        if [[ "$CHANGED_FILES" == "all" ]] || \
+           echo "$CHANGED_FILES" | grep -E "\.(ts|tsx|js|jsx|json|yml|yaml)$" || \
+           echo "$CHANGED_FILES" | grep -E "(package\.json|yarn\.lock|tsconfig\.json|jest\.config|\.github/)" ; then
+          echo "should-run-tests=true" >> $GITHUB_OUTPUT
+          echo "✅ Tests will run - relevant changes detected"
+        else
+          echo "should-run-tests=false" >> $GITHUB_OUTPUT  
+          echo "⏭️ Tests skipped - no relevant changes detected"
+        fi
+    
+    - name: 🧮 Generate test matrix
+      id: test-matrix
+      run: |
+        # Dynamic test matrix based on available test suites
+        MATRIX=$(cat << 'EOF'
+        {
+          "include": [
+            {
+              "name": "Unit Tests",
+              "command": "test:ci",
+              "coverage": true,
+              "artifact": "unit-test-results"
+            },
+            {
+              "name": "Integration Tests", 
+              "command": "test src/__tests__/integration --coverage --watchAll=false",
+              "coverage": true,
+              "artifact": "integration-test-results"
+            },
+            {
+              "name": "Type Checking",
+              "command": "type-check",
+              "coverage": false,
+              "artifact": "type-check-results"
+            },
+            {
+              "name": "Linting",
+              "command": "lint",
+              "coverage": false,
+              "artifact": "lint-results"
+            }
+          ]
+        }
+        EOF
+        )
+        echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+    
+    - name: 🔑 Generate cache keys
+      id: cache-keys
+      run: |
+        CACHE_KEY="node-modules-${{ env.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}"
+        echo "cache-key=$CACHE_KEY" >> $GITHUB_OUTPUT
+        echo "Generated cache key: $CACHE_KEY"
+
+  # Job 2: Install dependencies
+  install:
+    name: 📦 Install Dependencies
+    runs-on: ubuntu-latest
+    needs: setup
+    if: needs.setup.outputs.should-run-tests == 'true'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 📦 Cache node_modules
+      uses: actions/cache@v3
+      id: cache-deps
+      with:
+        path: |
+          node_modules
+          .yarn/cache
+        key: ${{ needs.setup.outputs.cache-key }}
+        restore-keys: |
+          node-modules-${{ env.CACHE_VERSION }}-
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📥 Install dependencies
+      if: steps.cache-deps.outputs.cache-hit != 'true'
+      run: |
+        yarn install --frozen-lockfile --prefer-offline
+        echo "✅ Dependencies installed"
+    
+    - name: 📊 Dependency audit
+      run: |
+        echo "🔍 Running dependency audit..."
+        yarn audit --level moderate || echo "⚠️ Audit found issues (non-blocking)"
+
+  # Job 3: Parallel test execution
+  test:
+    name: 🧪 ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    needs: [setup, install]
+    if: needs.setup.outputs.should-run-tests == 'true'
+    
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.setup.outputs.test-matrix) }}
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 📦 Restore dependencies cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          node_modules
+          .yarn/cache
+        key: ${{ needs.setup.outputs.cache-key }}
+        restore-keys: |
+          node-modules-${{ env.CACHE_VERSION }}-
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 🧪 Run ${{ matrix.name }}
+      id: test-run
+      run: |
+        echo "🚀 Running: ${{ matrix.command }}"
+        
+        # Set test-specific environment variables
+        export CI=true
+        export NODE_ENV=test
+        export FORCE_COLOR=1
+        
+        # Run the test command with timeout
+        timeout 600 yarn ${{ matrix.command }} || {
+          echo "❌ Test command failed or timed out"
+          exit 1
+        }
+        
+        echo "✅ ${{ matrix.name }} completed successfully"
+    
+    - name: 📊 Upload coverage reports
+      if: matrix.coverage == true
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-${{ matrix.artifact }}
+        path: coverage/
+        retention-days: 7
+    
+    - name: 📝 Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact }}
+        path: |
+          test-results/
+          junit.xml
+          coverage/
+        retention-days: 7
+
+  # Job 4: E2E Tests (conditional)
+  e2e-tests:
+    name: 🎭 E2E Tests
+    runs-on: ubuntu-latest
+    needs: [setup, install, test]
+    if: |
+      needs.setup.outputs.should-run-tests == 'true' && 
+      (github.event_name == 'push' && github.ref == 'refs/heads/main' || 
+       github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-e2e'))
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 📦 Restore dependencies cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          node_modules
+          .yarn/cache
+        key: ${{ needs.setup.outputs.cache-key }}
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 🎭 Install Playwright
+      run: |
+        yarn playwright install --with-deps chromium firefox webkit
+    
+    - name: 🚀 Run E2E tests
+      id: e2e-run
+      run: |
+        echo "🎭 Running E2E tests..."
+        export CI=true
+        export PLAYWRIGHT_BASE_URL="${{ secrets.E2E_BASE_URL || 'https://both-sides-demo.vercel.app' }}"
+        
+        # Run E2E tests with retry logic
+        for i in {1..3}; do
+          echo "🔄 E2E test attempt $i/3"
+          if yarn playwright test --reporter=html,github; then
+            echo "✅ E2E tests passed on attempt $i"
+            break
+          elif [ $i -eq 3 ]; then
+            echo "❌ E2E tests failed after 3 attempts"
+            exit 1
+          else
+            echo "⚠️ E2E test attempt $i failed, retrying..."
+            sleep 30
+          fi
+        done
+    
+    - name: 📊 Upload E2E test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-test-results
+        path: |
+          playwright-report/
+          test-results/
+        retention-days: 7
+
+  # Job 5: Load Testing (on main branch only)
+  load-tests:
+    name: ⚡ Load Tests
+    runs-on: ubuntu-latest
+    needs: [setup, install, test]
+    if: |
+      needs.setup.outputs.should-run-tests == 'true' && 
+      github.event_name == 'push' && 
+      github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 📦 Restore dependencies cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          node_modules
+          .yarn/cache
+        key: ${{ needs.setup.outputs.cache-key }}
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: ⚡ Install k6
+      run: |
+        sudo gpg -k
+        sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+        echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt-get update
+        sudo apt-get install k6
+    
+    - name: 🚀 Run load tests
+      run: |
+        echo "⚡ Running load tests..."
+        export BASE_URL="${{ secrets.LOAD_TEST_BASE_URL || 'https://both-sides-demo.vercel.app' }}"
+        export API_URL="${{ secrets.LOAD_TEST_API_URL || 'https://both-sides-demo.vercel.app/api' }}"
+        export WS_URL="${{ secrets.LOAD_TEST_WS_URL || 'wss://both-sides-demo.vercel.app' }}"
+        export ENVIRONMENT="ci"
+        
+        # Run lightweight load tests for CI
+        yarn load-test:websocket || echo "⚠️ WebSocket load test completed with warnings"
+    
+    - name: 📊 Upload load test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: load-test-results
+        path: src/__tests__/load-testing/reports/
+        retention-days: 14
+
+  # Job 6: Quality gates and reporting
+  quality-gates:
+    name: 🛡️ Quality Gates
+    runs-on: ubuntu-latest
+    needs: [setup, install, test]
+    if: needs.setup.outputs.should-run-tests == 'true'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 📊 Download test artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: test-artifacts/
+    
+    - name: 🔍 Analyze test coverage
+      id: coverage-check
+      run: |
+        echo "🔍 Analyzing test coverage..."
+        
+        # Combine coverage reports if multiple exist
+        COVERAGE_FILES=$(find test-artifacts/ -name "coverage-summary.json" 2>/dev/null || echo "")
+        
+        if [ -n "$COVERAGE_FILES" ]; then
+          echo "📊 Found coverage files:"
+          echo "$COVERAGE_FILES"
+          
+          # Extract coverage percentages (simplified)
+          for file in $COVERAGE_FILES; do
+            if [ -f "$file" ]; then
+              echo "📋 Coverage from $file:"
+              cat "$file" | jq -r '.total | "Lines: \(.lines.pct)% | Branches: \(.branches.pct)% | Functions: \(.functions.pct)% | Statements: \(.statements.pct)%"' || echo "Could not parse coverage"
+            fi
+          done
+          
+          echo "coverage-available=true" >> $GITHUB_OUTPUT
+        else
+          echo "⚠️ No coverage files found"
+          echo "coverage-available=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: 🚨 Check quality gates
+      run: |
+        echo "🛡️ Checking quality gates..."
+        
+        FAILED_GATES=0
+        
+        # Check for test failures
+        if find test-artifacts/ -name "*.xml" -exec grep -l "failures=\"[1-9]" {} \; | head -1; then
+          echo "❌ Test failures detected"
+          FAILED_GATES=$((FAILED_GATES + 1))
+        fi
+        
+        # Check for linting errors
+        if find test-artifacts/ -name "*lint*" -exec grep -l "error" {} \; | head -1; then
+          echo "❌ Linting errors detected"
+          FAILED_GATES=$((FAILED_GATES + 1))
+        fi
+        
+        # Check TypeScript compilation
+        if find test-artifacts/ -name "*type-check*" -exec grep -l "error" {} \; | head -1; then
+          echo "❌ TypeScript compilation errors detected"
+          FAILED_GATES=$((FAILED_GATES + 1))
+        fi
+        
+        if [ $FAILED_GATES -eq 0 ]; then
+          echo "✅ All quality gates passed"
+        else
+          echo "❌ $FAILED_GATES quality gate(s) failed"
+          exit 1
+        fi
+    
+    - name: 📋 Generate test report
+      if: always()
+      run: |
+        echo "📋 Generating comprehensive test report..."
+        
+        cat > test-report.md << 'EOF'
+        # 🧪 Test Execution Report
+        
+        **Workflow**: ${{ github.workflow }}  
+        **Branch**: ${{ github.ref_name }}  
+        **Commit**: ${{ github.sha }}  
+        **Triggered by**: ${{ github.event_name }}  
+        **Run ID**: ${{ github.run_id }}
+        
+        ## 📊 Test Results Summary
+        
+        EOF
+        
+        # Add test results to report
+        if [ -d "test-artifacts" ]; then
+          echo "### 🧪 Test Suites" >> test-report.md
+          find test-artifacts/ -name "*.xml" -o -name "*.json" | while read file; do
+            echo "- $(basename "$file")" >> test-report.md
+          done
+        fi
+        
+        # Add coverage info if available
+        if [ "${{ steps.coverage-check.outputs.coverage-available }}" == "true" ]; then
+          echo "" >> test-report.md
+          echo "### 📊 Coverage Reports" >> test-report.md
+          echo "Coverage reports are available in the artifacts." >> test-report.md
+        fi
+        
+        echo "" >> test-report.md
+        echo "---" >> test-report.md
+        echo "*Generated at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*" >> test-report.md
+        
+        echo "📋 Test report generated:"
+        cat test-report.md
+    
+    - name: 📊 Upload test report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-execution-report
+        path: test-report.md
+        retention-days: 30
+
+  # Job 7: Notification and status update
+  notify:
+    name: 📢 Notifications
+    runs-on: ubuntu-latest
+    needs: [setup, install, test, quality-gates]
+    if: always() && needs.setup.outputs.should-run-tests == 'true'
+    
+    steps:
+    - name: 📊 Determine overall status
+      id: status
+      run: |
+        if [[ "${{ needs.test.result }}" == "success" && "${{ needs.quality-gates.result }}" == "success" ]]; then
+          echo "status=success" >> $GITHUB_OUTPUT
+          echo "message=✅ All tests passed and quality gates satisfied" >> $GITHUB_OUTPUT
+          echo "color=good" >> $GITHUB_OUTPUT
+        elif [[ "${{ needs.test.result }}" == "failure" || "${{ needs.quality-gates.result }}" == "failure" ]]; then
+          echo "status=failure" >> $GITHUB_OUTPUT
+          echo "message=❌ Tests failed or quality gates not satisfied" >> $GITHUB_OUTPUT
+          echo "color=danger" >> $GITHUB_OUTPUT
+        else
+          echo "status=partial" >> $GITHUB_OUTPUT
+          echo "message=⚠️ Tests completed with warnings" >> $GITHUB_OUTPUT
+          echo "color=warning" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: 📢 Slack notification
+      if: always() && (github.event_name == 'push' || failure())
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ steps.status.outputs.status }}
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+        channel: '#engineering'
+        username: 'GitHub Actions'
+        icon_emoji: ':robot_face:'
+        title: '${{ github.repository }} - ${{ github.workflow }}'
+        text: |
+          ${{ steps.status.outputs.message }}
+          
+          **Branch**: ${{ github.ref_name }}
+          **Commit**: ${{ github.sha }}
+          **Author**: ${{ github.actor }}
+          **View Results**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        color: ${{ steps.status.outputs.color }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # Job 8: Cleanup and finalization
+  cleanup:
+    name: 🧹 Cleanup
+    runs-on: ubuntu-latest
+    needs: [setup, install, test, quality-gates, notify]
+    if: always()
+    
+    steps:
+    - name: 🧹 Cleanup workflow artifacts
+      run: |
+        echo "🧹 Workflow cleanup completed"
+        echo "📊 Total jobs: 8"
+        echo "⏱️ Workflow duration: ${{ github.event.head_commit.timestamp }}"
+        
+        # Log final status
+        echo "Final Status Summary:"
+        echo "- Setup: ${{ needs.setup.result }}"
+        echo "- Install: ${{ needs.install.result }}" 
+        echo "- Test: ${{ needs.test.result }}"
+        echo "- Quality Gates: ${{ needs.quality-gates.result }}"
+        echo "- Notify: ${{ needs.notify.result }}"

@@ -1,0 +1,571 @@
+name: 🧪 Test Quality & Flaky Test Detection
+
+on:
+  schedule:
+    # Run every 6 hours to detect flaky tests
+    - cron: '0 */6 * * *'
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**/__tests__/**'
+      - 'src/**/*.test.*'
+      - 'src/**/*.spec.*'
+      - 'jest.config.js'
+      - 'playwright.config.ts'
+  workflow_dispatch:
+    inputs:
+      test_runs:
+        description: 'Number of test runs for flaky detection'
+        required: false
+        default: '5'
+        type: string
+      test_suite:
+        description: 'Test suite to analyze'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - unit
+          - integration
+          - e2e
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Job 1: Test suite analysis
+  test-analysis:
+    name: 📊 Test Suite Analysis
+    runs-on: ubuntu-latest
+    
+    outputs:
+      test-count: ${{ steps.analysis.outputs.test-count }}
+      coverage-threshold: ${{ steps.analysis.outputs.coverage-threshold }}
+      test-suites: ${{ steps.analysis.outputs.test-suites }}
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: 📊 Analyze test suite
+      id: analysis
+      run: |
+        echo "📊 Analyzing test suite structure..."
+        
+        # Count test files
+        UNIT_TESTS=$(find src -name "*.test.ts" -o -name "*.test.tsx" -o -name "*.spec.ts" -o -name "*.spec.tsx" | wc -l)
+        INTEGRATION_TESTS=$(find src/__tests__/integration -name "*.test.ts" 2>/dev/null | wc -l || echo "0")
+        E2E_TESTS=$(find src/__tests__/e2e -name "*.test.ts" 2>/dev/null | wc -l || echo "0")
+        TOTAL_TESTS=$((UNIT_TESTS + INTEGRATION_TESTS + E2E_TESTS))
+        
+        echo "📊 Test Suite Statistics:"
+        echo "  Unit Tests: $UNIT_TESTS"
+        echo "  Integration Tests: $INTEGRATION_TESTS"
+        echo "  E2E Tests: $E2E_TESTS"
+        echo "  Total: $TOTAL_TESTS"
+        
+        # Extract coverage thresholds from Jest config
+        COVERAGE_THRESHOLD=$(node -e "
+          try {
+            const config = require('./jest.config.js');
+            const threshold = config.coverageThreshold?.global?.lines || 80;
+            console.log(threshold);
+          } catch (e) {
+            console.log(80);
+          }
+        ")
+        
+        # Output for next jobs
+        echo "test-count=$TOTAL_TESTS" >> $GITHUB_OUTPUT
+        echo "coverage-threshold=$COVERAGE_THRESHOLD" >> $GITHUB_OUTPUT
+        
+        # Create test suite matrix
+        SUITES='["unit"]'
+        if [ $INTEGRATION_TESTS -gt 0 ]; then
+          SUITES='["unit", "integration"]'
+        fi
+        if [ $E2E_TESTS -gt 0 ]; then
+          SUITES='["unit", "integration", "e2e"]'
+        fi
+        
+        echo "test-suites=$SUITES" >> $GITHUB_OUTPUT
+        echo "📊 Test suites to analyze: $SUITES"
+    
+    - name: 📋 Generate test inventory
+      run: |
+        echo "📋 Generating test inventory..."
+        
+        cat > test-inventory.json << EOF
+        {
+          "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+          "commit": "${{ github.sha }}",
+          "stats": {
+            "unit_tests": ${{ steps.analysis.outputs.test-count }},
+            "integration_tests": 0,
+            "e2e_tests": 0,
+            "total_tests": ${{ steps.analysis.outputs.test-count }},
+            "coverage_threshold": ${{ steps.analysis.outputs.coverage-threshold }}
+          },
+          "test_files": []
+        }
+        EOF
+        
+        # Add test file paths
+        find src -name "*.test.*" -o -name "*.spec.*" | while read file; do
+          echo "  - $file"
+        done > test-files.txt
+        
+        echo "📋 Test inventory created"
+    
+    - name: 📊 Upload test inventory
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-inventory
+        path: |
+          test-inventory.json
+          test-files.txt
+        retention-days: 30
+
+  # Job 2: Flaky test detection
+  flaky-test-detection:
+    name: 🎲 Flaky Test Detection
+    runs-on: ubuntu-latest
+    needs: test-analysis
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        test-suite: ${{ fromJson(needs.test-analysis.outputs.test-suites) }}
+        run: [1, 2, 3, 4, 5]
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: 🎭 Setup Playwright (if needed)
+      if: matrix.test-suite == 'e2e'
+      run: |
+        yarn playwright install --with-deps chromium
+    
+    - name: 🧪 Run ${{ matrix.test-suite }} tests (Run ${{ matrix.run }})
+      id: test-run
+      continue-on-error: true
+      run: |
+        echo "🧪 Running ${{ matrix.test-suite }} tests - Run ${{ matrix.run }}"
+        
+        # Set unique output file for this run
+        export JEST_JUNIT_OUTPUT_FILE="test-results-${{ matrix.test-suite }}-run-${{ matrix.run }}.xml"
+        export JEST_JUNIT_OUTPUT_DIR="./test-results/"
+        
+        # Create results directory
+        mkdir -p test-results
+        
+        case "${{ matrix.test-suite }}" in
+          "unit")
+            yarn test:ci --testResultsProcessor=jest-junit > test-output-${{ matrix.run }}.log 2>&1
+            ;;
+          "integration")
+            yarn test src/__tests__/integration --coverage --watchAll=false --testResultsProcessor=jest-junit > test-output-${{ matrix.run }}.log 2>&1
+            ;;
+          "e2e")
+            yarn playwright test --reporter=junit > test-output-${{ matrix.run }}.log 2>&1
+            ;;
+        esac
+        
+        TEST_EXIT_CODE=$?
+        echo "test-exit-code=$TEST_EXIT_CODE" >> $GITHUB_OUTPUT
+        
+        if [ $TEST_EXIT_CODE -eq 0 ]; then
+          echo "✅ Tests passed on run ${{ matrix.run }}"
+          echo "test-result=passed" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Tests failed on run ${{ matrix.run }}"
+          echo "test-result=failed" >> $GITHUB_OUTPUT
+        fi
+        
+        # Extract failed test names
+        if [ -f "test-output-${{ matrix.run }}.log" ]; then
+          grep -E "(FAIL|✕)" test-output-${{ matrix.run }}.log | head -10 > failed-tests-${{ matrix.run }}.txt || touch failed-tests-${{ matrix.run }}.txt
+        fi
+    
+    - name: 📊 Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: flaky-test-results-${{ matrix.test-suite }}-run-${{ matrix.run }}
+        path: |
+          test-results/
+          test-output-${{ matrix.run }}.log
+          failed-tests-${{ matrix.run }}.txt
+        retention-days: 7
+
+  # Job 3: Flaky test analysis
+  flaky-analysis:
+    name: 📈 Flaky Test Analysis
+    runs-on: ubuntu-latest
+    needs: [test-analysis, flaky-test-detection]
+    if: always()
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 📊 Download all test results
+      uses: actions/download-artifact@v4
+      with:
+        path: flaky-test-artifacts/
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: 📈 Analyze flaky tests
+      id: analysis
+      run: |
+        echo "📈 Analyzing test results for flaky behavior..."
+        
+        # Initialize flaky test report
+        cat > flaky-test-report.json << EOF
+        {
+          "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+          "commit": "${{ github.sha }}",
+          "total_runs": 5,
+          "flaky_tests": [],
+          "consistently_failing": [],
+          "summary": {
+            "flaky_count": 0,
+            "consistently_failing_count": 0,
+            "success_rate": 0
+          }
+        }
+        EOF
+        
+        # Analyze results by test suite
+        for suite in unit integration e2e; do
+          echo "🔍 Analyzing $suite test results..."
+          
+          # Count successes and failures
+          SUCCESSES=0
+          FAILURES=0
+          
+          for run in {1..5}; do
+            ARTIFACT_DIR="flaky-test-artifacts/flaky-test-results-$suite-run-$run"
+            if [ -d "$ARTIFACT_DIR" ]; then
+              if find "$ARTIFACT_DIR" -name "failed-tests-*.txt" -size +0 | head -1; then
+                FAILURES=$((FAILURES + 1))
+                echo "  Run $run: FAILED"
+              else
+                SUCCESSES=$((SUCCESSES + 1))
+                echo "  Run $run: PASSED"
+              fi
+            fi
+          done
+          
+          # Calculate success rate
+          if [ $((SUCCESSES + FAILURES)) -gt 0 ]; then
+            SUCCESS_RATE=$(echo "scale=2; $SUCCESSES * 100 / ($SUCCESSES + $FAILURES)" | bc -l)
+            echo "  Success Rate: $SUCCESS_RATE%"
+            
+            # Determine flakiness
+            if [ $SUCCESSES -gt 0 ] && [ $FAILURES -gt 0 ]; then
+              echo "  🎲 FLAKY TEST SUITE DETECTED: $suite"
+              echo "flaky-detected=true" >> $GITHUB_OUTPUT
+              echo "flaky-suite-$suite=true" >> $GITHUB_OUTPUT
+            elif [ $FAILURES -eq 5 ]; then
+              echo "  ❌ CONSISTENTLY FAILING: $suite"
+              echo "consistently-failing-$suite=true" >> $GITHUB_OUTPUT
+            else
+              echo "  ✅ STABLE: $suite"
+            fi
+          fi
+        done
+        
+        # Set overall flaky status
+        if grep -q "flaky-detected=true" $GITHUB_OUTPUT; then
+          echo "overall-flaky-detected=true" >> $GITHUB_OUTPUT
+        else
+          echo "overall-flaky-detected=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: 📋 Generate detailed flaky test report
+      run: |
+        echo "📋 Generating detailed flaky test report..."
+        
+        cat > flaky-test-detailed-report.md << 'EOF'
+        # 🎲 Flaky Test Detection Report
+        
+        **Generated**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')  
+        **Commit**: ${{ github.sha }}  
+        **Total Test Runs**: 5 per test suite
+        
+        ## 📊 Summary
+        
+        EOF
+        
+        # Add summary based on analysis
+        if [ "${{ steps.analysis.outputs.overall-flaky-detected }}" == "true" ]; then
+          cat >> flaky-test-detailed-report.md << 'EOF'
+        🎲 **Flaky tests detected!** Some tests are showing inconsistent behavior.
+        
+        ### 🚨 Action Required
+        - Review the flaky tests identified below
+        - Investigate root causes (timing issues, external dependencies, etc.)
+        - Consider adding retry logic or fixing race conditions
+        - Update test isolation or mocking strategies
+        
+        EOF
+        else
+          cat >> flaky-test-detailed-report.md << 'EOF'
+        ✅ **No flaky tests detected.** All tests are showing consistent behavior.
+        
+        EOF
+        fi
+        
+        # Add test suite results
+        cat >> flaky-test-detailed-report.md << 'EOF'
+        ## 📋 Test Suite Results
+        
+        | Test Suite | Status | Success Rate | Notes |
+        |------------|--------|--------------|--------|
+        EOF
+        
+        for suite in unit integration e2e; do
+          if [ "${{ steps.analysis.outputs.flaky-suite-$suite }}" == "true" ]; then
+            echo "| $suite | 🎲 Flaky | Variable | Inconsistent results detected |" >> flaky-test-detailed-report.md
+          elif [ "${{ steps.analysis.outputs.consistently-failing-$suite }}" == "true" ]; then
+            echo "| $suite | ❌ Failing | 0% | Consistently failing across all runs |" >> flaky-test-detailed-report.md
+          else
+            echo "| $suite | ✅ Stable | 100% | All runs passed consistently |" >> flaky-test-detailed-report.md
+          fi
+        done
+        
+        cat >> flaky-test-detailed-report.md << 'EOF'
+        
+        ## 🔍 Investigation Guide
+        
+        ### Common Causes of Flaky Tests
+        1. **Timing Issues**: Race conditions, insufficient waits
+        2. **External Dependencies**: Network calls, database state
+        3. **Test Isolation**: Shared state between tests
+        4. **Environment Differences**: Different CI/local behavior
+        5. **Asynchronous Operations**: Promises, callbacks not properly awaited
+        
+        ### Recommended Actions
+        1. Add proper `await` statements for async operations
+        2. Use `waitFor` instead of fixed timeouts
+        3. Mock external dependencies consistently
+        4. Ensure proper test cleanup and isolation
+        5. Add retry logic for inherently flaky operations
+        
+        ---
+        *Report generated by GitHub Actions Test Quality workflow*
+        EOF
+        
+        echo "📋 Detailed report generated:"
+        head -20 flaky-test-detailed-report.md
+    
+    - name: 📊 Upload flaky test analysis
+      uses: actions/upload-artifact@v4
+      with:
+        name: flaky-test-analysis
+        path: |
+          flaky-test-report.json
+          flaky-test-detailed-report.md
+        retention-days: 30
+
+  # Job 4: Test performance analysis
+  test-performance:
+    name: ⚡ Test Performance Analysis
+    runs-on: ubuntu-latest
+    needs: test-analysis
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: ⚡ Measure test performance
+      id: performance
+      run: |
+        echo "⚡ Measuring test suite performance..."
+        
+        # Run tests with timing
+        echo "🧪 Running unit tests with performance measurement..."
+        START_TIME=$(date +%s)
+        yarn test:ci > test-performance.log 2>&1 || true
+        END_TIME=$(date +%s)
+        UNIT_TEST_DURATION=$((END_TIME - START_TIME))
+        
+        echo "📊 Test Performance Results:"
+        echo "  Unit Tests Duration: ${UNIT_TEST_DURATION}s"
+        
+        # Extract additional metrics from test output
+        if [ -f "test-performance.log" ]; then
+          TEST_SUITES=$(grep -o "Test Suites:.*" test-performance.log | head -1 || echo "Test Suites: unknown")
+          TESTS_COUNT=$(grep -o "Tests:.*" test-performance.log | head -1 || echo "Tests: unknown")
+          
+          echo "  $TEST_SUITES"
+          echo "  $TESTS_COUNT"
+        fi
+        
+        # Output metrics
+        echo "unit-test-duration=$UNIT_TEST_DURATION" >> $GITHUB_OUTPUT
+        
+        # Check if tests are too slow
+        if [ $UNIT_TEST_DURATION -gt 300 ]; then  # 5 minutes
+          echo "slow-tests=true" >> $GITHUB_OUTPUT
+          echo "⚠️ Tests are running slowly (>${UNIT_TEST_DURATION}s)"
+        else
+          echo "slow-tests=false" >> $GITHUB_OUTPUT
+          echo "✅ Test performance is acceptable"
+        fi
+    
+    - name: 📊 Generate performance report
+      run: |
+        echo "📊 Generating test performance report..."
+        
+        cat > test-performance-report.json << EOF
+        {
+          "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+          "commit": "${{ github.sha }}",
+          "performance": {
+            "unit_test_duration": ${{ steps.performance.outputs.unit-test-duration }},
+            "slow_tests_detected": ${{ steps.performance.outputs.slow-tests }},
+            "total_test_count": ${{ needs.test-analysis.outputs.test-count }}
+          },
+          "thresholds": {
+            "max_duration_seconds": 300,
+            "performance_acceptable": ${{ steps.performance.outputs.slow-tests == 'false' }}
+          }
+        }
+        EOF
+        
+        echo "📊 Performance report:"
+        cat test-performance-report.json | jq '.'
+    
+    - name: 📊 Upload performance report
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-performance-report
+        path: |
+          test-performance-report.json
+          test-performance.log
+        retention-days: 30
+
+  # Job 5: Test quality summary and notifications
+  quality-summary:
+    name: 📋 Quality Summary
+    runs-on: ubuntu-latest
+    needs: [test-analysis, flaky-analysis, test-performance]
+    if: always()
+    
+    steps:
+    - name: 📊 Calculate quality metrics
+      id: quality
+      run: |
+        echo "📊 Calculating overall test quality metrics..."
+        
+        FLAKY_DETECTED="${{ needs.flaky-analysis.outputs.overall-flaky-detected }}"
+        SLOW_TESTS="${{ needs.test-performance.outputs.slow-tests }}"
+        TOTAL_TESTS="${{ needs.test-analysis.outputs.test-count }}"
+        
+        # Calculate quality score
+        QUALITY_SCORE=100
+        
+        if [ "$FLAKY_DETECTED" == "true" ]; then
+          QUALITY_SCORE=$((QUALITY_SCORE - 30))
+          echo "quality-issues=flaky-tests" >> $GITHUB_OUTPUT
+        fi
+        
+        if [ "$SLOW_TESTS" == "true" ]; then
+          QUALITY_SCORE=$((QUALITY_SCORE - 20))
+          echo "quality-issues=slow-tests" >> $GITHUB_OUTPUT
+        fi
+        
+        echo "quality-score=$QUALITY_SCORE" >> $GITHUB_OUTPUT
+        
+        # Determine overall status
+        if [ $QUALITY_SCORE -ge 80 ]; then
+          echo "overall-status=good" >> $GITHUB_OUTPUT
+          echo "status-emoji=✅" >> $GITHUB_OUTPUT
+        elif [ $QUALITY_SCORE -ge 60 ]; then
+          echo "overall-status=warning" >> $GITHUB_OUTPUT
+          echo "status-emoji=⚠️" >> $GITHUB_OUTPUT
+        else
+          echo "overall-status=poor" >> $GITHUB_OUTPUT
+          echo "status-emoji=❌" >> $GITHUB_OUTPUT
+        fi
+        
+        echo "📊 Test Quality Summary:"
+        echo "  Total Tests: $TOTAL_TESTS"
+        echo "  Flaky Tests: $FLAKY_DETECTED"
+        echo "  Slow Tests: $SLOW_TESTS"
+        echo "  Quality Score: $QUALITY_SCORE/100"
+    
+    - name: 📢 Slack notification
+      if: |
+        always() && (
+          steps.quality.outputs.overall-status != 'good' ||
+          github.event_name == 'schedule'
+        )
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ steps.quality.outputs.overall-status }}
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+        channel: '#test-quality'
+        username: 'Test Quality Monitor'
+        icon_emoji: ':test_tube:'
+        title: 'Test Quality Report'
+        text: |
+          ${{ steps.quality.outputs.status-emoji }} **Quality Score**: ${{ steps.quality.outputs.quality-score }}/100
+          
+          **Total Tests**: ${{ needs.test-analysis.outputs.test-count }}
+          **Flaky Tests Detected**: ${{ needs.flaky-analysis.outputs.overall-flaky-detected }}
+          **Slow Tests Detected**: ${{ needs.test-performance.outputs.slow-tests }}
+          
+          **Commit**: ${{ github.sha }}
+          **View Details**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        color: ${{ steps.quality.outputs.overall-status == 'good' && 'good' || steps.quality.outputs.overall-status == 'warning' && 'warning' || 'danger' }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

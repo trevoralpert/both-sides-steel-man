@@ -394,3 +394,14 @@ export const calculateProfileCompleteness = (analysis: BeliefAnalysisResult): nu
 
   return (completeness / totalFactors) * 100;
 };
+
+// Export the functions our tests expect
+export {
+  calculateCompatibilityScore,
+  findOpposingViewpoints,
+  generateBeliefInsights,
+  type BeliefProfile,
+  type CompatibilityResult,
+  type MatchResult,
+  type BeliefInsights
+} from './belief-analysis-functions';

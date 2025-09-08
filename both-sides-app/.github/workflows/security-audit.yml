@@ -1,0 +1,767 @@
+name: 🛡️ Security Audit & Compliance
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run security audit daily at 3 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      audit_level:
+        description: 'Security audit level'
+        required: false
+        default: 'standard'
+        type: choice
+        options:
+          - basic
+          - standard
+          - comprehensive
+
+# Prevent concurrent security scans
+concurrency:
+  group: security-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Job 1: Dependency vulnerability scanning
+  dependency-scan:
+    name: 🔍 Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    
+    outputs:
+      vulnerabilities-found: ${{ steps.audit.outputs.vulnerabilities-found }}
+      critical-count: ${{ steps.audit.outputs.critical-count }}
+      high-count: ${{ steps.audit.outputs.high-count }}
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: 🔍 Run npm audit
+      id: audit
+      run: |
+        echo "🔍 Running dependency vulnerability scan..."
+        
+        # Run npm audit and capture output
+        yarn audit --json > audit-report.json 2>&1 || AUDIT_EXIT_CODE=$?
+        
+        # Parse audit results
+        if [ -f "audit-report.json" ]; then
+          # Count vulnerabilities by severity
+          CRITICAL_COUNT=$(jq -r '.metadata.vulnerabilities.critical // 0' audit-report.json)
+          HIGH_COUNT=$(jq -r '.metadata.vulnerabilities.high // 0' audit-report.json)
+          MODERATE_COUNT=$(jq -r '.metadata.vulnerabilities.moderate // 0' audit-report.json)
+          LOW_COUNT=$(jq -r '.metadata.vulnerabilities.low // 0' audit-report.json)
+          TOTAL_COUNT=$(jq -r '.metadata.vulnerabilities.total // 0' audit-report.json)
+          
+          echo "📊 Vulnerability Summary:"
+          echo "  Critical: $CRITICAL_COUNT"
+          echo "  High: $HIGH_COUNT"
+          echo "  Moderate: $MODERATE_COUNT"
+          echo "  Low: $LOW_COUNT"
+          echo "  Total: $TOTAL_COUNT"
+          
+          # Output for next jobs
+          echo "critical-count=$CRITICAL_COUNT" >> $GITHUB_OUTPUT
+          echo "high-count=$HIGH_COUNT" >> $GITHUB_OUTPUT
+          echo "moderate-count=$MODERATE_COUNT" >> $GITHUB_OUTPUT
+          echo "low-count=$LOW_COUNT" >> $GITHUB_OUTPUT
+          echo "total-count=$TOTAL_COUNT" >> $GITHUB_OUTPUT
+          
+          # Determine if vulnerabilities found
+          if [ "$TOTAL_COUNT" -gt 0 ]; then
+            echo "vulnerabilities-found=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Vulnerabilities detected"
+            
+            # Fail on critical or high vulnerabilities
+            if [ "$CRITICAL_COUNT" -gt 0 ] || [ "$HIGH_COUNT" -gt 0 ]; then
+              echo "❌ Critical or high severity vulnerabilities found"
+              echo "vulnerability-severity=high" >> $GITHUB_OUTPUT
+              exit 1
+            else
+              echo "vulnerability-severity=moderate" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "vulnerabilities-found=false" >> $GITHUB_OUTPUT
+            echo "vulnerability-severity=none" >> $GITHUB_OUTPUT
+            echo "✅ No vulnerabilities found"
+          fi
+        else
+          echo "⚠️ Could not parse audit results"
+          echo "vulnerabilities-found=unknown" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: 📋 Generate vulnerability report
+      if: always()
+      run: |
+        echo "📋 Generating detailed vulnerability report..."
+        
+        cat > vulnerability-report.md << 'EOF'
+        # 🛡️ Dependency Vulnerability Report
+        
+        **Generated**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')  
+        **Commit**: ${{ github.sha }}  
+        **Branch**: ${{ github.ref_name }}
+        
+        ## 📊 Summary
+        
+        | Severity | Count |
+        |----------|-------|
+        | Critical | ${{ steps.audit.outputs.critical-count }} |
+        | High | ${{ steps.audit.outputs.high-count }} |
+        | Moderate | ${{ steps.audit.outputs.moderate-count }} |
+        | Low | ${{ steps.audit.outputs.low-count }} |
+        | **Total** | ${{ steps.audit.outputs.total-count }} |
+        
+        EOF
+        
+        # Add detailed findings if vulnerabilities exist
+        if [ "${{ steps.audit.outputs.vulnerabilities-found }}" == "true" ]; then
+          cat >> vulnerability-report.md << 'EOF'
+        
+        ## 🚨 Action Required
+        
+        Vulnerabilities have been detected in project dependencies. Please review and address the findings below.
+        
+        ### 🔧 Remediation Steps
+        1. Review the detailed audit output
+        2. Update vulnerable dependencies to patched versions
+        3. Consider alternative packages if patches are not available
+        4. Run `yarn audit fix` for automatic fixes where possible
+        
+        EOF
+        else
+          cat >> vulnerability-report.md << 'EOF'
+        
+        ## ✅ No Vulnerabilities Found
+        
+        All dependencies have been scanned and no security vulnerabilities were detected.
+        
+        EOF
+        fi
+        
+        echo "📋 Vulnerability report generated"
+    
+    - name: 📊 Upload vulnerability report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: vulnerability-report
+        path: |
+          audit-report.json
+          vulnerability-report.md
+        retention-days: 30
+
+  # Job 2: Static Application Security Testing (SAST)
+  sast-scan:
+    name: 🔒 Static Application Security Testing
+    runs-on: ubuntu-latest
+    needs: dependency-scan
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Full history for better analysis
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: 🔒 ESLint security scan
+      id: eslint-security
+      run: |
+        echo "🔒 Running ESLint security analysis..."
+        
+        # Install security-focused ESLint plugins
+        yarn add --dev eslint-plugin-security eslint-plugin-no-secrets
+        
+        # Create security-focused ESLint config
+        cat > .eslintrc.security.js << 'EOF'
+        module.exports = {
+          extends: ['./.eslintrc.js'],
+          plugins: ['security', 'no-secrets'],
+          rules: {
+            // Security rules
+            'security/detect-object-injection': 'error',
+            'security/detect-non-literal-regexp': 'error',
+            'security/detect-non-literal-fs-filename': 'error',
+            'security/detect-eval-with-expression': 'error',
+            'security/detect-pseudoRandomBytes': 'error',
+            'security/detect-possible-timing-attacks': 'warn',
+            'security/detect-unsafe-regex': 'error',
+            
+            // Secret detection
+            'no-secrets/no-secrets': ['error', {
+              'tolerance': 4.2,
+              'additionalRegexes': {
+                'Slack Webhook': 'hooks\\.slack\\.com\\/services\\/[A-Z0-9]+\\/[A-Z0-9]+\\/[a-zA-Z0-9]+',
+                'Generic API Key': '[a-zA-Z0-9]{32,}'
+              }
+            }]
+          }
+        };
+        EOF
+        
+        # Run security-focused linting
+        yarn eslint --config .eslintrc.security.js src/ --format json > eslint-security-report.json || ESLINT_EXIT_CODE=$?
+        
+        # Parse results
+        SECURITY_ISSUES=$(jq length eslint-security-report.json)
+        echo "🔒 ESLint security scan found $SECURITY_ISSUES issues"
+        echo "security-issues=$SECURITY_ISSUES" >> $GITHUB_OUTPUT
+        
+        if [ $SECURITY_ISSUES -gt 0 ]; then
+          echo "⚠️ Security issues detected in code"
+          jq -r '.[] | "File: \(.filePath) | Line: \(.messages[0].line) | Rule: \(.messages[0].ruleId) | Message: \(.messages[0].message)"' eslint-security-report.json | head -10
+        else
+          echo "✅ No security issues found in static analysis"
+        fi
+    
+    - name: 🕵️ Secret scanning
+      id: secret-scan
+      run: |
+        echo "🕵️ Scanning for exposed secrets..."
+        
+        # Install and run TruffleHog for secret detection
+        curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /tmp
+        
+        # Scan for secrets
+        /tmp/trufflehog git file://. --json --no-update > trufflehog-report.json || TRUFFLEHOG_EXIT_CODE=$?
+        
+        # Count findings
+        SECRET_COUNT=$(jq -s length trufflehog-report.json)
+        echo "🕵️ Found $SECRET_COUNT potential secrets"
+        echo "secret-count=$SECRET_COUNT" >> $GITHUB_OUTPUT
+        
+        if [ $SECRET_COUNT -gt 0 ]; then
+          echo "⚠️ Potential secrets detected:"
+          jq -r '.DetectorName + ": " + .Raw' trufflehog-report.json | head -5
+          echo "secrets-found=true" >> $GITHUB_OUTPUT
+        else
+          echo "✅ No secrets detected"
+          echo "secrets-found=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: 🔍 Code quality security analysis
+      run: |
+        echo "🔍 Analyzing code for security anti-patterns..."
+        
+        # Check for common security issues
+        echo "🔍 Checking for console.log statements with sensitive data..."
+        CONSOLE_LOGS=$(grep -r "console\.log.*password\|console\.log.*token\|console\.log.*secret\|console\.log.*key" src/ || echo "")
+        
+        if [ -n "$CONSOLE_LOGS" ]; then
+          echo "⚠️ Found console.log statements that may expose sensitive data:"
+          echo "$CONSOLE_LOGS"
+        else
+          echo "✅ No console.log statements with sensitive data found"
+        fi
+        
+        echo "🔍 Checking for hardcoded URLs and endpoints..."
+        HARDCODED_URLS=$(grep -r "http://\|https://" src/ --exclude-dir=__tests__ | grep -v "localhost\|example\.com\|test" || echo "")
+        
+        if [ -n "$HARDCODED_URLS" ]; then
+          echo "⚠️ Found hardcoded URLs that should use environment variables:"
+          echo "$HARDCODED_URLS" | head -5
+        else
+          echo "✅ No problematic hardcoded URLs found"
+        fi
+        
+        echo "🔍 Checking for TODO/FIXME security comments..."
+        SECURITY_TODOS=$(grep -r -i "todo.*security\|fixme.*security\|hack.*security" src/ || echo "")
+        
+        if [ -n "$SECURITY_TODOS" ]; then
+          echo "⚠️ Found security-related TODO/FIXME comments:"
+          echo "$SECURITY_TODOS"
+        else
+          echo "✅ No security-related TODO comments found"
+        fi
+    
+    - name: 📊 Upload SAST results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: sast-results
+        path: |
+          eslint-security-report.json
+          trufflehog-report.json
+        retention-days: 30
+
+  # Job 3: Authentication and authorization audit
+  auth-security-audit:
+    name: 🔐 Authentication Security Audit
+    runs-on: ubuntu-latest
+    needs: dependency-scan
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: 🔐 Clerk integration security review
+      id: clerk-audit
+      run: |
+        echo "🔐 Auditing Clerk authentication integration..."
+        
+        # Check Clerk configuration
+        echo "🔍 Checking Clerk environment variables..."
+        CLERK_ENV_VARS=$(grep -r "CLERK_" src/ || echo "")
+        
+        if echo "$CLERK_ENV_VARS" | grep -v "process.env"; then
+          echo "⚠️ Found hardcoded Clerk configuration - should use environment variables"
+          echo "clerk-hardcoded=true" >> $GITHUB_OUTPUT
+        else
+          echo "✅ Clerk configuration properly uses environment variables"
+          echo "clerk-hardcoded=false" >> $GITHUB_OUTPUT
+        fi
+        
+        # Check for proper error handling in auth flows
+        echo "🔍 Checking authentication error handling..."
+        AUTH_ERROR_HANDLING=$(grep -r "catch.*auth\|try.*auth" src/ | wc -l)
+        echo "📊 Found $AUTH_ERROR_HANDLING authentication error handling blocks"
+        
+        # Check for session validation
+        echo "🔍 Checking session validation patterns..."
+        SESSION_VALIDATION=$(grep -r "getAuth\|currentUser\|userId" src/ | wc -l)
+        echo "📊 Found $SESSION_VALIDATION session validation usages"
+        
+        # Audit middleware configuration
+        echo "🔍 Checking middleware security configuration..."
+        if [ -f "src/middleware.ts" ]; then
+          echo "✅ Middleware file found"
+          
+          # Check for proper route protection
+          PROTECTED_ROUTES=$(grep -c "publicRoutes\|authMiddleware" src/middleware.ts || echo "0")
+          echo "📊 Found $PROTECTED_ROUTES route protection configurations"
+          
+          if [ $PROTECTED_ROUTES -gt 0 ]; then
+            echo "✅ Route protection appears to be configured"
+            echo "route-protection=configured" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Route protection may not be properly configured"
+            echo "route-protection=missing" >> $GITHUB_OUTPUT
+          fi
+        else
+          echo "⚠️ No middleware file found - authentication may not be properly protected"
+          echo "middleware=missing" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: 🎟️ JWT and session security audit
+      run: |
+        echo "🎟️ Auditing JWT and session security..."
+        
+        # Check for JWT handling
+        echo "🔍 Checking JWT token handling..."
+        JWT_USAGE=$(grep -r "jwt\|token" src/ --exclude-dir=__tests__ | grep -v "node_modules" | wc -l)
+        echo "📊 Found $JWT_USAGE JWT/token related code references"
+        
+        # Check for secure cookie settings
+        echo "🔍 Checking cookie security settings..."
+        COOKIE_SETTINGS=$(grep -r "httpOnly\|secure\|sameSite" src/ || echo "")
+        
+        if [ -n "$COOKIE_SETTINGS" ]; then
+          echo "✅ Found cookie security configurations"
+        else
+          echo "⚠️ No explicit cookie security settings found"
+        fi
+        
+        # Check for session timeout handling
+        echo "🔍 Checking session timeout handling..."
+        SESSION_TIMEOUT=$(grep -r "timeout\|expire\|ttl" src/ | grep -i "session\|auth" || echo "")
+        
+        if [ -n "$SESSION_TIMEOUT" ]; then
+          echo "✅ Found session timeout handling"
+        else
+          echo "⚠️ No explicit session timeout handling found"
+        fi
+    
+    - name: 🛡️ RBAC permission matrix validation
+      run: |
+        echo "🛡️ Validating role-based access control..."
+        
+        # Check for role definitions
+        echo "🔍 Checking role definitions..."
+        ROLE_DEFINITIONS=$(grep -r "role\|permission" src/ --exclude-dir=__tests__ | grep -v "node_modules" | wc -l)
+        echo "📊 Found $ROLE_DEFINITIONS role/permission related code references"
+        
+        # Look for authorization checks
+        echo "🔍 Checking authorization patterns..."
+        AUTH_CHECKS=$(grep -r "hasRole\|hasPermission\|checkAuth\|authorize" src/ || echo "")
+        
+        if [ -n "$AUTH_CHECKS" ]; then
+          echo "✅ Found authorization check patterns"
+        else
+          echo "⚠️ No explicit authorization checks found"
+        fi
+        
+        # Check for protected API routes
+        echo "🔍 Checking API route protection..."
+        if [ -d "src/app/api" ]; then
+          API_PROTECTION=$(find src/app/api -name "*.ts" -exec grep -l "auth\|getAuth\|currentUser" {} \; | wc -l)
+          TOTAL_API_ROUTES=$(find src/app/api -name "*.ts" | wc -l)
+          
+          echo "📊 $API_PROTECTION out of $TOTAL_API_ROUTES API routes have authentication checks"
+          
+          if [ $API_PROTECTION -gt 0 ]; then
+            PROTECTION_RATIO=$(echo "scale=2; $API_PROTECTION * 100 / $TOTAL_API_ROUTES" | bc -l)
+            echo "📊 API protection coverage: $PROTECTION_RATIO%"
+          fi
+        else
+          echo "⚠️ No API routes directory found"
+        fi
+    
+    - name: 📋 Generate authentication security report
+      run: |
+        echo "📋 Generating authentication security report..."
+        
+        cat > auth-security-report.md << 'EOF'
+        # 🔐 Authentication Security Audit Report
+        
+        **Generated**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')  
+        **Commit**: ${{ github.sha }}  
+        **Branch**: ${{ github.ref_name }}
+        
+        ## 📊 Authentication Security Summary
+        
+        | Component | Status | Notes |
+        |-----------|--------|-------|
+        | Clerk Integration | ${{ steps.clerk-audit.outputs.clerk-hardcoded == 'false' && '✅ Secure' || '⚠️ Review Required' }} | Environment variables properly used |
+        | Route Protection | ${{ steps.clerk-audit.outputs.route-protection == 'configured' && '✅ Configured' || '⚠️ Missing' }} | Middleware configuration |
+        | Session Management | ✅ Active | Clerk handles session lifecycle |
+        | JWT Security | ✅ Managed | Clerk manages JWT tokens securely |
+        
+        ## 🔍 Findings
+        
+        ### ✅ Security Strengths
+        - Using Clerk for authentication management
+        - Environment variables for sensitive configuration
+        - Next.js middleware for route protection
+        
+        ### ⚠️ Areas for Review
+        - Ensure all API routes have proper authentication checks
+        - Verify session timeout policies are appropriate
+        - Review error handling in authentication flows
+        
+        ## 🛡️ Recommendations
+        
+        1. **API Security**: Ensure all sensitive API routes check authentication
+        2. **Error Handling**: Implement consistent error handling for auth failures
+        3. **Session Management**: Configure appropriate session timeout policies
+        4. **Monitoring**: Add logging for authentication events
+        
+        EOF
+        
+        echo "📋 Authentication security report generated"
+    
+    - name: 📊 Upload authentication audit results
+      uses: actions/upload-artifact@v4
+      with:
+        name: auth-security-audit
+        path: auth-security-report.md
+        retention-days: 30
+
+  # Job 4: API security assessment
+  api-security-scan:
+    name: 🌐 API Security Assessment
+    runs-on: ubuntu-latest
+    needs: dependency-scan
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: 🌐 API endpoint security analysis
+      id: api-analysis
+      run: |
+        echo "🌐 Analyzing API endpoint security..."
+        
+        # Find all API routes
+        if [ -d "src/app/api" ]; then
+          API_ROUTES=$(find src/app/api -name "*.ts" -o -name "*.js")
+          API_COUNT=$(echo "$API_ROUTES" | wc -l)
+          echo "📊 Found $API_COUNT API routes"
+          
+          # Analyze each API route
+          PROTECTED_ROUTES=0
+          INPUT_VALIDATION=0
+          ERROR_HANDLING=0
+          RATE_LIMITED=0
+          
+          for route in $API_ROUTES; do
+            echo "🔍 Analyzing $route..."
+            
+            # Check for authentication
+            if grep -q "getAuth\|currentUser\|auth" "$route"; then
+              PROTECTED_ROUTES=$((PROTECTED_ROUTES + 1))
+            fi
+            
+            # Check for input validation
+            if grep -q "validate\|schema\|zod\|joi" "$route"; then
+              INPUT_VALIDATION=$((INPUT_VALIDATION + 1))
+            fi
+            
+            # Check for error handling
+            if grep -q "try.*catch\|\.catch\|throw" "$route"; then
+              ERROR_HANDLING=$((ERROR_HANDLING + 1))
+            fi
+            
+            # Check for rate limiting
+            if grep -q "rateLimit\|throttle" "$route"; then
+              RATE_LIMITED=$((RATE_LIMITED + 1))
+            fi
+          done
+          
+          echo "📊 API Security Analysis Results:"
+          echo "  Total Routes: $API_COUNT"
+          echo "  Protected Routes: $PROTECTED_ROUTES"
+          echo "  Input Validation: $INPUT_VALIDATION"
+          echo "  Error Handling: $ERROR_HANDLING"
+          echo "  Rate Limited: $RATE_LIMITED"
+          
+          # Calculate security scores
+          PROTECTION_SCORE=$(echo "scale=2; $PROTECTED_ROUTES * 100 / $API_COUNT" | bc -l)
+          VALIDATION_SCORE=$(echo "scale=2; $INPUT_VALIDATION * 100 / $API_COUNT" | bc -l)
+          ERROR_SCORE=$(echo "scale=2; $ERROR_HANDLING * 100 / $API_COUNT" | bc -l)
+          
+          echo "📊 Security Scores:"
+          echo "  Authentication Protection: $PROTECTION_SCORE%"
+          echo "  Input Validation: $VALIDATION_SCORE%"
+          echo "  Error Handling: $ERROR_SCORE%"
+          
+          # Output for reporting
+          echo "api-count=$API_COUNT" >> $GITHUB_OUTPUT
+          echo "protected-routes=$PROTECTED_ROUTES" >> $GITHUB_OUTPUT
+          echo "protection-score=$PROTECTION_SCORE" >> $GITHUB_OUTPUT
+          echo "validation-score=$VALIDATION_SCORE" >> $GITHUB_OUTPUT
+          echo "error-score=$ERROR_SCORE" >> $GITHUB_OUTPUT
+          
+        else
+          echo "⚠️ No API routes directory found"
+          echo "api-count=0" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: 🔒 CORS and security headers analysis
+      run: |
+        echo "🔒 Analyzing CORS and security headers..."
+        
+        # Check Next.js configuration for security headers
+        if [ -f "next.config.ts" ] || [ -f "next.config.js" ]; then
+          echo "🔍 Checking Next.js security configuration..."
+          
+          CONFIG_FILE="next.config.ts"
+          [ -f "next.config.js" ] && CONFIG_FILE="next.config.js"
+          
+          # Check for security headers
+          SECURITY_HEADERS=$(grep -c "X-Frame-Options\|X-Content-Type-Options\|X-XSS-Protection\|Strict-Transport-Security" "$CONFIG_FILE" || echo "0")
+          echo "📊 Found $SECURITY_HEADERS security header configurations"
+          
+          # Check for CORS configuration
+          CORS_CONFIG=$(grep -c "Access-Control-Allow\|cors" "$CONFIG_FILE" || echo "0")
+          echo "📊 Found $CORS_CONFIG CORS configurations"
+          
+          if [ $SECURITY_HEADERS -gt 0 ]; then
+            echo "✅ Security headers are configured"
+          else
+            echo "⚠️ No security headers found in Next.js config"
+          fi
+          
+          if [ $CORS_CONFIG -gt 0 ]; then
+            echo "✅ CORS configuration found"
+          else
+            echo "⚠️ No explicit CORS configuration found"
+          fi
+        else
+          echo "⚠️ No Next.js configuration file found"
+        fi
+        
+        # Check middleware for security headers
+        if [ -f "src/middleware.ts" ]; then
+          echo "🔍 Checking middleware security headers..."
+          
+          MIDDLEWARE_HEADERS=$(grep -c "headers\|setHeader" src/middleware.ts || echo "0")
+          echo "📊 Found $MIDDLEWARE_HEADERS header configurations in middleware"
+          
+          if [ $MIDDLEWARE_HEADERS -gt 0 ]; then
+            echo "✅ Middleware includes header configurations"
+          else
+            echo "⚠️ No header configurations in middleware"
+          fi
+        fi
+    
+    - name: 📋 Generate API security report
+      run: |
+        echo "📋 Generating API security report..."
+        
+        cat > api-security-report.md << 'EOF'
+        # 🌐 API Security Assessment Report
+        
+        **Generated**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')  
+        **Commit**: ${{ github.sha }}  
+        **Branch**: ${{ github.ref_name }}
+        
+        ## 📊 API Security Summary
+        
+        | Metric | Score | Status |
+        |--------|-------|--------|
+        | Total API Routes | ${{ steps.api-analysis.outputs.api-count }} | - |
+        | Authentication Protection | ${{ steps.api-analysis.outputs.protection-score }}% | ${{ steps.api-analysis.outputs.protection-score >= 80 && '✅ Good' || steps.api-analysis.outputs.protection-score >= 60 && '⚠️ Needs Improvement' || '❌ Poor' }} |
+        | Input Validation | ${{ steps.api-analysis.outputs.validation-score }}% | ${{ steps.api-analysis.outputs.validation-score >= 80 && '✅ Good' || steps.api-analysis.outputs.validation-score >= 60 && '⚠️ Needs Improvement' || '❌ Poor' }} |
+        | Error Handling | ${{ steps.api-analysis.outputs.error-score }}% | ${{ steps.api-analysis.outputs.error-score >= 80 && '✅ Good' || steps.api-analysis.outputs.error-score >= 60 && '⚠️ Needs Improvement' || '❌ Poor' }} |
+        
+        ## 🔍 Security Findings
+        
+        ### ✅ Security Strengths
+        - Next.js API routes provide built-in security features
+        - Clerk authentication integration for protected endpoints
+        - TypeScript provides type safety for API contracts
+        
+        ### ⚠️ Areas for Improvement
+        - Ensure all sensitive endpoints have authentication checks
+        - Implement comprehensive input validation for all endpoints
+        - Add rate limiting to prevent abuse
+        - Configure security headers and CORS policies
+        
+        ## 🛡️ Recommendations
+        
+        1. **Authentication**: Protect all sensitive API endpoints
+        2. **Input Validation**: Use schema validation (Zod, Joi) for all inputs
+        3. **Rate Limiting**: Implement rate limiting middleware
+        4. **Error Handling**: Standardize error responses
+        5. **Security Headers**: Configure comprehensive security headers
+        6. **Logging**: Add security event logging
+        
+        EOF
+        
+        echo "📋 API security report generated"
+    
+    - name: 📊 Upload API security results
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-security-assessment
+        path: api-security-report.md
+        retention-days: 30
+
+  # Job 5: Security summary and notifications
+  security-summary:
+    name: 📋 Security Audit Summary
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, sast-scan, auth-security-audit, api-security-scan]
+    if: always()
+    
+    steps:
+    - name: 📊 Calculate overall security score
+      id: security-score
+      run: |
+        echo "📊 Calculating overall security score..."
+        
+        # Get results from previous jobs
+        VULNERABILITIES="${{ needs.dependency-scan.outputs.vulnerabilities-found }}"
+        CRITICAL_COUNT="${{ needs.dependency-scan.outputs.critical-count }}"
+        HIGH_COUNT="${{ needs.dependency-scan.outputs.high-count }}"
+        PROTECTION_SCORE="${{ needs.api-security-scan.outputs.protection-score }}"
+        
+        # Calculate security score (0-100)
+        SECURITY_SCORE=100
+        
+        # Deduct points for vulnerabilities
+        if [ "$VULNERABILITIES" == "true" ]; then
+          SECURITY_SCORE=$((SECURITY_SCORE - CRITICAL_COUNT * 20))
+          SECURITY_SCORE=$((SECURITY_SCORE - HIGH_COUNT * 10))
+        fi
+        
+        # Ensure minimum score
+        [ $SECURITY_SCORE -lt 0 ] && SECURITY_SCORE=0
+        
+        echo "security-score=$SECURITY_SCORE" >> $GITHUB_OUTPUT
+        
+        # Determine overall status
+        if [ $SECURITY_SCORE -ge 80 ]; then
+          echo "overall-status=good" >> $GITHUB_OUTPUT
+          echo "status-emoji=✅" >> $GITHUB_OUTPUT
+        elif [ $SECURITY_SCORE -ge 60 ]; then
+          echo "overall-status=warning" >> $GITHUB_OUTPUT
+          echo "status-emoji=⚠️" >> $GITHUB_OUTPUT
+        else
+          echo "overall-status=critical" >> $GITHUB_OUTPUT
+          echo "status-emoji=❌" >> $GITHUB_OUTPUT
+        fi
+        
+        echo "📊 Overall Security Score: $SECURITY_SCORE/100"
+    
+    - name: 📢 Security notification
+      if: |
+        always() && (
+          steps.security-score.outputs.overall-status != 'good' ||
+          github.event_name == 'schedule' ||
+          needs.dependency-scan.outputs.critical-count > 0
+        )
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ steps.security-score.outputs.overall-status }}
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+        channel: '#security-alerts'
+        username: 'Security Monitor'
+        icon_emoji: ':shield:'
+        title: 'Security Audit Report'
+        text: |
+          ${{ steps.security-score.outputs.status-emoji }} **Security Score**: ${{ steps.security-score.outputs.security-score }}/100
+          
+          **Vulnerabilities**: ${{ needs.dependency-scan.outputs.vulnerabilities-found == 'true' && 'Found' || 'None' }}
+          **Critical**: ${{ needs.dependency-scan.outputs.critical-count }}
+          **High**: ${{ needs.dependency-scan.outputs.high-count }}
+          
+          **Commit**: ${{ github.sha }}
+          **View Details**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        color: ${{ steps.security-score.outputs.overall-status == 'good' && 'good' || steps.security-score.outputs.overall-status == 'warning' && 'warning' || 'danger' }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

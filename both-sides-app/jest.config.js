@@ -13,16 +13,20 @@ const customJestConfig = {
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',
-    '!src/app/layout.tsx',
+    '!src/app/**/*.tsx', // Next.js pages and layouts
     '!src/app/globals.css',
     '!src/lib/env.ts', // Environment config
+    '!src/middleware.ts', // Next.js middleware
+    '!src/components/test-ui.tsx', // Test component
+    '!src/**/index.ts', // Re-export files
+    '!src/**/*.stories.tsx', // Storybook files
   ],
   coverageThreshold: {
     global: {
-      branches: 18,
-      functions: 29,
-      lines: 28,
-      statements: 28,
+      branches: 75,
+      functions: 70,
+      lines: 80,
+      statements: 80,
     },
   },
   testMatch: [

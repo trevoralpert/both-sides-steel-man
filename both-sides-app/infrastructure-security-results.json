@@ -1,0 +1,80 @@
+{
+  "timestamp": "2025-09-08T19:46:18.715Z",
+  "overallScore": 58,
+  "categories": {
+    "ssl": {
+      "score": 50,
+      "findings": [
+        "✅ HSTS header configured in Next.js",
+        "✅ HTTPS configuration detected",
+        "⚠️ No HTTPS enforcement in middleware",
+        "⚠️ Secure cookie settings not found"
+      ],
+      "recommendations": [
+        "Add HTTPS enforcement to middleware",
+        "Configure secure cookie settings (httpOnly, secure, sameSite)"
+      ]
+    },
+    "headers": {
+      "score": 100,
+      "findings": [
+        "✅ X-Frame-Options header configured",
+        "✅ X-Content-Type-Options header configured",
+        "✅ X-XSS-Protection header configured",
+        "✅ Strict-Transport-Security header configured",
+        "✅ Content-Security-Policy header configured",
+        "✅ Referrer-Policy header configured",
+        "⚠️ CSP contains unsafe directives"
+      ],
+      "recommendations": [
+        "Remove unsafe-eval and unsafe-inline from CSP where possible"
+      ]
+    },
+    "environment": {
+      "score": 30,
+      "findings": [
+        "⚠️ No environment files found",
+        "✅ Environment files excluded from git",
+        "⚠️ Some required environment variables missing"
+      ],
+      "recommendations": [
+        "Create .env.local for local development",
+        "Configure all required environment variables"
+      ]
+    },
+    "dependencies": {
+      "score": 40,
+      "findings": [
+        "✅ 6/6 security packages installed",
+        "⚠️ Could not run security audit"
+      ],
+      "recommendations": [
+        "Manually run yarn npm audit to check for vulnerabilities"
+      ]
+    },
+    "configuration": {
+      "score": 70,
+      "findings": [
+        "✅ TypeScript strict mode enabled",
+        "⚠️ ESLint security plugins not configured",
+        "✅ Jest configuration found",
+        "✅ Security middleware configured"
+      ],
+      "recommendations": [
+        "Add eslint-plugin-security and eslint-plugin-no-secrets"
+      ]
+    },
+    "secrets": {
+      "score": 60,
+      "findings": [
+        "⚠️ Potential hardcoded secret in src/__tests__/integration/auth-integration.test.ts",
+        "⚠️ Potential hardcoded secret in src/__tests__/integration/setup.ts",
+        "✅ 43 environment variables used",
+        "✅ Environment files excluded from version control"
+      ],
+      "recommendations": [
+        "Remove hardcoded secrets and use environment variables"
+      ]
+    }
+  }
+}

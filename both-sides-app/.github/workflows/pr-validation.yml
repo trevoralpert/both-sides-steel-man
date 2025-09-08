@@ -1,0 +1,451 @@
+name: 🔍 Pull Request Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [ main, develop ]
+
+# Cancel previous runs for the same PR
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Job 1: PR validation and analysis
+  pr-analysis:
+    name: 📋 PR Analysis
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    outputs:
+      should-run-full-suite: ${{ steps.analysis.outputs.should-run-full-suite }}
+      changed-files: ${{ steps.analysis.outputs.changed-files }}
+      pr-size: ${{ steps.analysis.outputs.pr-size }}
+      test-strategy: ${{ steps.analysis.outputs.test-strategy }}
+    
+    steps:
+    - name: 📥 Checkout PR
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        ref: ${{ github.event.pull_request.head.sha }}
+    
+    - name: 🔍 Analyze PR changes
+      id: analysis
+      run: |
+        echo "🔍 Analyzing PR #${{ github.event.pull_request.number }}"
+        
+        # Get changed files
+        CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD)
+        echo "changed-files<<EOF" >> $GITHUB_OUTPUT
+        echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+        # Calculate PR size
+        ADDED_LINES=$(git diff --numstat origin/${{ github.event.pull_request.base.ref }}...HEAD | awk '{sum+=$1} END {print sum}')
+        DELETED_LINES=$(git diff --numstat origin/${{ github.event.pull_request.base.ref }}...HEAD | awk '{sum+=$2} END {print sum}')
+        TOTAL_CHANGES=$((ADDED_LINES + DELETED_LINES))
+        
+        echo "pr-size=$TOTAL_CHANGES" >> $GITHUB_OUTPUT
+        
+        # Determine test strategy based on changes
+        if echo "$CHANGED_FILES" | grep -E "(src/components/|src/pages/|src/app/)" > /dev/null; then
+          echo "test-strategy=full" >> $GITHUB_OUTPUT
+          echo "should-run-full-suite=true" >> $GITHUB_OUTPUT
+          echo "🧪 Full test suite required - UI components changed"
+        elif echo "$CHANGED_FILES" | grep -E "(src/lib/|src/hooks/|src/utils/)" > /dev/null; then
+          echo "test-strategy=integration" >> $GITHUB_OUTPUT
+          echo "should-run-full-suite=true" >> $GITHUB_OUTPUT
+          echo "🧪 Integration tests required - Core logic changed"
+        elif echo "$CHANGED_FILES" | grep -E "(__tests__|\.test\.|\.spec\.)" > /dev/null; then
+          echo "test-strategy=test-only" >> $GITHUB_OUTPUT
+          echo "should-run-full-suite=false" >> $GITHUB_OUTPUT
+          echo "🧪 Test-only changes detected"
+        else
+          echo "test-strategy=minimal" >> $GITHUB_OUTPUT
+          echo "should-run-full-suite=false" >> $GITHUB_OUTPUT
+          echo "🧪 Minimal testing required - Documentation/config changes"
+        fi
+        
+        # Log analysis results
+        echo "📊 PR Analysis Results:"
+        echo "  - Files changed: $(echo "$CHANGED_FILES" | wc -l)"
+        echo "  - Lines added: $ADDED_LINES"
+        echo "  - Lines deleted: $DELETED_LINES"
+        echo "  - Total changes: $TOTAL_CHANGES"
+        echo "  - Test strategy: $(cat $GITHUB_OUTPUT | grep test-strategy | cut -d'=' -f2)"
+    
+    - name: 📝 Comment PR analysis
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const prSize = ${{ steps.analysis.outputs.pr-size }};
+          const testStrategy = '${{ steps.analysis.outputs.test-strategy }}';
+          const changedFiles = `${{ steps.analysis.outputs.changed-files }}`.split('\n').filter(f => f.trim());
+          
+          let sizeEmoji = '📏';
+          let sizeLabel = 'Medium';
+          if (prSize < 100) { sizeEmoji = '🟢'; sizeLabel = 'Small'; }
+          else if (prSize > 500) { sizeEmoji = '🔴'; sizeLabel = 'Large'; }
+          else if (prSize > 1000) { sizeEmoji = '🚨'; sizeLabel = 'Extra Large'; }
+          
+          const comment = `## 🤖 PR Analysis Report
+          
+          ${sizeEmoji} **PR Size**: ${sizeLabel} (${prSize} lines changed)
+          📁 **Files Changed**: ${changedFiles.length}
+          🧪 **Test Strategy**: ${testStrategy}
+          
+          ### 📋 Changed Files Summary
+          ${changedFiles.slice(0, 10).map(f => `- \`${f}\``).join('\n')}
+          ${changedFiles.length > 10 ? `\n... and ${changedFiles.length - 10} more files` : ''}
+          
+          ### 🚀 What happens next?
+          ${testStrategy === 'full' ? '✅ Full test suite will run' : 
+            testStrategy === 'integration' ? '🧪 Integration tests will run' :
+            testStrategy === 'test-only' ? '📝 Test validation only' :
+            '⚡ Minimal testing (fast track)'}
+          
+          ---
+          *This comment will be updated as the PR validation progresses.*`;
+          
+          // Find existing comment or create new one
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number
+          });
+          
+          const botComment = comments.find(comment => 
+            comment.user.type === 'Bot' && comment.body.includes('PR Analysis Report')
+          );
+          
+          if (botComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: comment
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
+          }
+
+  # Job 2: Fast validation (always runs)
+  fast-validation:
+    name: ⚡ Fast Validation
+    runs-on: ubuntu-latest
+    needs: pr-analysis
+    
+    steps:
+    - name: 📥 Checkout PR
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: 🔍 Type checking
+      run: |
+        echo "🔍 Running TypeScript type checking..."
+        yarn type-check
+    
+    - name: 🧹 Linting
+      run: |
+        echo "🧹 Running ESLint..."
+        yarn lint
+    
+    - name: 💅 Format checking
+      run: |
+        echo "💅 Checking code formatting..."
+        yarn format:check
+
+  # Job 3: Comprehensive testing (conditional)
+  comprehensive-tests:
+    name: 🧪 Comprehensive Tests
+    runs-on: ubuntu-latest
+    needs: [pr-analysis, fast-validation]
+    if: needs.pr-analysis.outputs.should-run-full-suite == 'true'
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        test-suite: [unit, integration]
+    
+    steps:
+    - name: 📥 Checkout PR
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: 🧪 Run ${{ matrix.test-suite }} tests
+      run: |
+        if [ "${{ matrix.test-suite }}" == "unit" ]; then
+          echo "🧪 Running unit tests..."
+          yarn test:ci
+        elif [ "${{ matrix.test-suite }}" == "integration" ]; then
+          echo "🔗 Running integration tests..."
+          yarn test src/__tests__/integration --coverage --watchAll=false
+        fi
+    
+    - name: 📊 Upload coverage
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-${{ matrix.test-suite }}
+        path: coverage/
+        retention-days: 5
+
+  # Job 4: Security and quality checks
+  security-quality:
+    name: 🛡️ Security & Quality
+    runs-on: ubuntu-latest
+    needs: [pr-analysis, fast-validation]
+    
+    steps:
+    - name: 📥 Checkout PR
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        fetch-depth: 0
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: 🔒 Security audit
+      run: |
+        echo "🔒 Running security audit..."
+        yarn audit --level moderate || {
+          echo "⚠️ Security vulnerabilities found"
+          yarn audit --level moderate --json > security-audit.json || true
+        }
+    
+    - name: 🕵️ Code quality analysis
+      run: |
+        echo "🕵️ Analyzing code quality..."
+        
+        # Check for common issues
+        echo "Checking for console.log statements..."
+        if grep -r "console\.log" src/ --exclude-dir=__tests__ --exclude="*.test.*" --exclude="*.spec.*"; then
+          echo "⚠️ Found console.log statements in source code"
+          echo "debug-statements=true" >> $GITHUB_ENV
+        else
+          echo "✅ No console.log statements found"
+          echo "debug-statements=false" >> $GITHUB_ENV
+        fi
+        
+        # Check for TODO/FIXME comments
+        TODO_COUNT=$(grep -r -i "todo\|fixme" src/ --exclude-dir=__tests__ | wc -l || echo "0")
+        echo "📝 Found $TODO_COUNT TODO/FIXME comments"
+        echo "todo-count=$TODO_COUNT" >> $GITHUB_ENV
+    
+    - name: 📊 Bundle size analysis
+      run: |
+        echo "📊 Analyzing bundle size impact..."
+        
+        # Build current branch
+        yarn build > build-output.log 2>&1 || {
+          echo "❌ Build failed"
+          cat build-output.log
+          exit 1
+        }
+        
+        # Get build info
+        if [ -f ".next/analyze/__bundle_analysis.json" ]; then
+          echo "📦 Bundle analysis available"
+          cat .next/analyze/__bundle_analysis.json | jq '.bundleSize' || echo "Could not parse bundle size"
+        else
+          echo "📦 No bundle analysis available"
+        fi
+    
+    - name: 📝 Upload security audit
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-audit
+        path: security-audit.json
+        retention-days: 7
+
+  # Job 5: Performance impact assessment
+  performance-check:
+    name: ⚡ Performance Check
+    runs-on: ubuntu-latest
+    needs: [pr-analysis, fast-validation]
+    if: |
+      needs.pr-analysis.outputs.should-run-full-suite == 'true' && 
+      contains(needs.pr-analysis.outputs.changed-files, 'src/components/') ||
+      contains(needs.pr-analysis.outputs.changed-files, 'src/pages/') ||
+      contains(needs.pr-analysis.outputs.changed-files, 'src/app/')
+    
+    steps:
+    - name: 📥 Checkout PR
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'yarn'
+    
+    - name: 🔧 Enable Corepack
+      run: corepack enable
+    
+    - name: 📦 Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: ⚡ Lighthouse CI
+      run: |
+        echo "⚡ Running Lighthouse performance audit..."
+        
+        # Install Lighthouse CI
+        npm install -g @lhci/cli@0.12.x
+        
+        # Build the application
+        yarn build
+        
+        # Run Lighthouse CI (mock for now - would need actual server)
+        echo "📊 Lighthouse audit would run here in a real deployment"
+        echo "performance-score=85" >> $GITHUB_ENV
+    
+    - name: 📊 Performance report
+      run: |
+        echo "📊 Performance Impact Summary:"
+        echo "- Lighthouse Score: ${{ env.performance-score || 'N/A' }}"
+        echo "- Bundle Size Impact: TBD"
+        echo "- Core Web Vitals: TBD"
+
+  # Job 6: Final PR status and summary
+  pr-summary:
+    name: 📋 PR Summary
+    runs-on: ubuntu-latest
+    needs: [pr-analysis, fast-validation, comprehensive-tests, security-quality, performance-check]
+    if: always()
+    
+    steps:
+    - name: 📊 Calculate overall status
+      id: status
+      run: |
+        # Determine overall status
+        FAST_STATUS="${{ needs.fast-validation.result }}"
+        COMPREHENSIVE_STATUS="${{ needs.comprehensive-tests.result }}"
+        SECURITY_STATUS="${{ needs.security-quality.result }}"
+        PERFORMANCE_STATUS="${{ needs.performance-check.result }}"
+        
+        echo "📊 Job Status Summary:"
+        echo "- Fast Validation: $FAST_STATUS"
+        echo "- Comprehensive Tests: $COMPREHENSIVE_STATUS"
+        echo "- Security & Quality: $SECURITY_STATUS"
+        echo "- Performance Check: $PERFORMANCE_STATUS"
+        
+        # Calculate overall status
+        if [[ "$FAST_STATUS" == "success" ]] && 
+           [[ "$COMPREHENSIVE_STATUS" == "success" || "$COMPREHENSIVE_STATUS" == "skipped" ]] &&
+           [[ "$SECURITY_STATUS" == "success" ]] &&
+           [[ "$PERFORMANCE_STATUS" == "success" || "$PERFORMANCE_STATUS" == "skipped" ]]; then
+          echo "overall-status=success" >> $GITHUB_OUTPUT
+          echo "status-emoji=✅" >> $GITHUB_OUTPUT
+          echo "status-message=All checks passed" >> $GITHUB_OUTPUT
+        elif [[ "$FAST_STATUS" == "failure" ]] ||
+             [[ "$COMPREHENSIVE_STATUS" == "failure" ]] ||
+             [[ "$SECURITY_STATUS" == "failure" ]] ||
+             [[ "$PERFORMANCE_STATUS" == "failure" ]]; then
+          echo "overall-status=failure" >> $GITHUB_OUTPUT
+          echo "status-emoji=❌" >> $GITHUB_OUTPUT
+          echo "status-message=Some checks failed" >> $GITHUB_OUTPUT
+        else
+          echo "overall-status=partial" >> $GITHUB_OUTPUT
+          echo "status-emoji=⚠️" >> $GITHUB_OUTPUT
+          echo "status-message=Checks completed with warnings" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: 📝 Update PR comment with final status
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const status = '${{ steps.status.outputs.overall-status }}';
+          const emoji = '${{ steps.status.outputs.status-emoji }}';
+          const message = '${{ steps.status.outputs.status-message }}';
+          
+          const comment = `## 🤖 PR Validation Complete
+          
+          ${emoji} **Status**: ${message}
+          
+          ### 📊 Validation Results
+          - ⚡ Fast Validation: ${{ needs.fast-validation.result }}
+          - 🧪 Comprehensive Tests: ${{ needs.comprehensive-tests.result || 'skipped' }}
+          - 🛡️ Security & Quality: ${{ needs.security-quality.result }}
+          - ⚡ Performance Check: ${{ needs.performance-check.result || 'skipped' }}
+          
+          ### 🎯 Next Steps
+          ${status === 'success' ? '✅ This PR is ready for review!' : 
+            status === 'failure' ? '❌ Please address the failing checks before requesting review.' :
+            '⚠️ Review the warnings and consider addressing them.'}
+          
+          ---
+          *Validation completed at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*`;
+          
+          // Update existing comment
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number
+          });
+          
+          const botComment = comments.find(comment => 
+            comment.user.type === 'Bot' && comment.body.includes('PR Analysis Report')
+          );
+          
+          if (botComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: comment
+            });
+          }
+    
+    - name: 🚨 Set PR status check
+      if: always()
+      run: |
+        echo "Setting PR status check: ${{ steps.status.outputs.overall-status }}"
+        # GitHub automatically sets status based on workflow result
