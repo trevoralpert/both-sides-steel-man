@@ -6,7 +6,9 @@ const axios = require('axios');
 
 const BASE_URL = 'http://localhost:3001/api';
 
-// You'll need to replace this with a real JWT token for testing
+// SECURITY NOTE: This is a dummy JWT token for testing structure validation only  
+// Payload: {"sub":"test_user_123","email":"test@example.com","iat":1755127241,"exp":1755130841} - NOT a real secret
+// For production testing, use: const JWT_TOKEN = process.env.TEST_JWT_TOKEN;
 const JWT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0X3VzZXJfMTIzIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzU1MTI3MjQxLCJleHAiOjE3NTUxMzA4NDF9.JCI5CvGlIh0xbClozEfLOifpG57DaQpvB6yXEOLcz5Q';
 
 const headers = {

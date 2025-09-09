@@ -1,0 +1,230 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "yarn build",
+    "watchPatterns": [
+      "**/*.ts",
+      "**/*.js",
+      "**/*.json",
+      "package.json",
+      "yarn.lock"
+    ]
+  },
+  "deploy": {
+    "startCommand": "yarn start:prod",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 10,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 3,
+    "numReplicas": 2
+  },
+  "environments": {
+    "production": {
+      "variables": {
+        "NODE_ENV": "production",
+        "PORT": "${{ PORT }}",
+        "DATABASE_URL": "${{ DATABASE_URL }}",
+        "REDIS_URL": "${{ REDIS_URL }}",
+        "JWT_SECRET": "${{ JWT_SECRET }}",
+        "OPENAI_API_KEY": "${{ OPENAI_API_KEY }}",
+        "CLERK_SECRET_KEY": "${{ CLERK_SECRET_KEY }}",
+        "ABLY_API_KEY": "${{ ABLY_API_KEY }}",
+        "TIMEBACK_API_KEY": "${{ TIMEBACK_API_KEY }}",
+        "AWS_ACCESS_KEY_ID": "${{ AWS_ACCESS_KEY_ID }}",
+        "AWS_SECRET_ACCESS_KEY": "${{ AWS_SECRET_ACCESS_KEY }}",
+        "SENTRY_DSN": "${{ SENTRY_DSN }}",
+        "LOG_LEVEL": "info",
+        "RATE_LIMIT_WINDOW_MS": "900000",
+        "RATE_LIMIT_MAX_REQUESTS": "100",
+        "FERPA_COMPLIANCE_MODE": "strict",
+        "COPPA_COMPLIANCE_MODE": "strict",
+        "AUDIT_LOG_RETENTION_DAYS": "2555",
+        "BACKUP_ENABLED": "true",
+        "HEALTH_CHECK_ENABLED": "true"
+      }
+    },
+    "staging": {
+      "variables": {
+        "NODE_ENV": "staging",
+        "PORT": "${{ PORT }}",
+        "DATABASE_URL": "${{ STAGING_DATABASE_URL }}",
+        "REDIS_URL": "${{ STAGING_REDIS_URL }}",
+        "JWT_SECRET": "${{ STAGING_JWT_SECRET }}",
+        "OPENAI_API_KEY": "${{ STAGING_OPENAI_API_KEY }}",
+        "CLERK_SECRET_KEY": "${{ STAGING_CLERK_SECRET_KEY }}",
+        "LOG_LEVEL": "debug",
+        "RATE_LIMIT_MAX_REQUESTS": "200"
+      }
+    }
+  },
+  "regions": ["us-east"],
+  "services": [
+    {
+      "name": "both-sides-api",
+      "source": {
+        "type": "github",
+        "repo": "both-sides/both-sides-app",
+        "branch": "main"
+      },
+      "variables": {
+        "NODE_ENV": "production",
+        "PORT": "3001"
+      },
+      "domains": [
+        {
+          "domain": "api.bothsides.app",
+          "serviceName": "both-sides-api"
+        }
+      ],
+      "healthcheck": {
+        "path": "/health",
+        "interval": 30,
+        "timeout": 10,
+        "retries": 3
+      },
+      "scaling": {
+        "minReplicas": 2,
+        "maxReplicas": 10,
+        "cpuThreshold": 70,
+        "memoryThreshold": 80
+      },
+      "resources": {
+        "cpu": "1000m",
+        "memory": "2Gi",
+        "disk": "10Gi"
+      }
+    },
+    {
+      "name": "both-sides-realtime",
+      "source": {
+        "type": "github",
+        "repo": "both-sides/both-sides-app",
+        "branch": "main",
+        "rootDirectory": "backend/realtime"
+      },
+      "variables": {
+        "NODE_ENV": "production",
+        "PORT": "3002",
+        "WEBSOCKET_ENABLED": "true"
+      },
+      "domains": [
+        {
+          "domain": "realtime.bothsides.app",
+          "serviceName": "both-sides-realtime"
+        }
+      ],
+      "scaling": {
+        "minReplicas": 2,
+        "maxReplicas": 5,
+        "cpuThreshold": 60,
+        "memoryThreshold": 70
+      }
+    }
+  ],
+  "databases": [
+    {
+      "name": "both-sides-postgres",
+      "type": "postgresql",
+      "version": "15",
+      "region": "us-east",
+      "storage": "100GB",
+      "backup": {
+        "enabled": true,
+        "schedule": "0 2 * * *",
+        "retention": "30d"
+      },
+      "replicas": {
+        "read": 1
+      }
+    },
+    {
+      "name": "both-sides-redis",
+      "type": "redis",
+      "version": "7",
+      "region": "us-east",
+      "memory": "1GB",
+      "persistence": true,
+      "clustering": false
+    }
+  ],
+  "monitoring": {
+    "metrics": {
+      "enabled": true,
+      "retention": "30d"
+    },
+    "logs": {
+      "enabled": true,
+      "retention": "7d",
+      "level": "info"
+    },
+    "alerts": [
+      {
+        "name": "High CPU Usage",
+        "condition": "cpu > 80",
+        "duration": "5m",
+        "channels": ["email", "slack"]
+      },
+      {
+        "name": "High Memory Usage",
+        "condition": "memory > 85",
+        "duration": "5m",
+        "channels": ["email", "slack"]
+      },
+      {
+        "name": "High Error Rate",
+        "condition": "error_rate > 5",
+        "duration": "2m",
+        "channels": ["email", "slack", "pagerduty"]
+      },
+      {
+        "name": "Service Down",
+        "condition": "availability < 99",
+        "duration": "1m",
+        "channels": ["email", "slack", "pagerduty"]
+      }
+    ]
+  },
+  "networking": {
+    "ingress": {
+      "enabled": true,
+      "rules": [
+        {
+          "host": "api.bothsides.app",
+          "service": "both-sides-api",
+          "port": 3001
+        },
+        {
+          "host": "realtime.bothsides.app",
+          "service": "both-sides-realtime",
+          "port": 3002
+        }
+      ]
+    },
+    "security": {
+      "ddosProtection": true,
+      "rateLimiting": {
+        "enabled": true,
+        "requests": 100,
+        "window": "1m"
+      },
+      "ssl": {
+        "enabled": true,
+        "redirect": true
+      }
+    }
+  },
+  "backup": {
+    "enabled": true,
+    "schedule": "0 2 * * *",
+    "retention": "90d",
+    "encryption": true,
+    "destinations": [
+      {
+        "type": "s3",
+        "bucket": "bothsides-backups",
+        "region": "us-east-1"
+      }
+    ]
+  }
+}

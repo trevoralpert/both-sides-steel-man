@@ -1,0 +1,128 @@
+{
+  "version": 2,
+  "name": "both-sides-production",
+  "alias": ["bothsides.app", "www.bothsides.app"],
+  "regions": ["iad1", "sfo1", "lhr1", "fra1", "nrt1"],
+  "build": {
+    "env": {
+      "NODE_ENV": "production",
+      "NEXT_TELEMETRY_DISABLED": "1"
+    }
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "NEXT_PUBLIC_APP_ENV": "production",
+    "NEXT_PUBLIC_APP_VERSION": "1.0.0"
+  },
+  "functions": {
+    "app/**": {
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://clerk.bothsides.app https://js.clerk.dev; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https://api.bothsides.app https://clerk.bothsides.app wss://realtime.bothsides.app; frame-ancestors 'none';"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://bothsides.app"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, X-Requested-With"
+        },
+        {
+          "key": "Access-Control-Max-Age",
+          "value": "86400"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/www.bothsides.app/(.*)",
+      "destination": "https://bothsides.app/$1",
+      "permanent": true
+    },
+    {
+      "source": "/admin",
+      "destination": "/teacher/dashboard",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/backend/(.*)",
+      "destination": "https://api.bothsides.app/$1"
+    },
+    {
+      "source": "/realtime/(.*)",
+      "destination": "wss://realtime.bothsides.app/$1"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/cleanup",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/analytics",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/health-check",
+      "schedule": "*/5 * * * *"
+    }
+  ],
+  "github": {
+    "enabled": true,
+    "autoAlias": true,
+    "autoJobCancelation": true,
+    "silent": false
+  },
+  "framework": "nextjs",
+  "installCommand": "yarn install --frozen-lockfile",
+  "buildCommand": "yarn build",
+  "outputDirectory": ".next",
+  "devCommand": "yarn dev",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./",
+  "cleanUrls": true,
+  "trailingSlash": false
+}

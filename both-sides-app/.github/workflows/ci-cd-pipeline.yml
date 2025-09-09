@@ -1,0 +1,650 @@
+name: 🚀 CI/CD Pipeline - Both Sides Platform
+
+on:
+  push:
+    branches: [ main, develop, staging ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      skip_tests:
+        description: 'Skip test execution'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '20'
+  YARN_VERSION: '4.9.1'
+  REGISTRY_URL: 'ghcr.io'
+  IMAGE_NAME: 'both-sides-platform'
+
+jobs:
+  # ============================================================================
+  # SETUP & VALIDATION
+  # ============================================================================
+  setup:
+    name: 🔧 Setup & Validation
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.deploy_check.outputs.should_deploy }}
+      target_environment: ${{ steps.deploy_check.outputs.environment }}
+      version: ${{ steps.version.outputs.version }}
+      cache_key: ${{ steps.cache_key.outputs.key }}
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏷️ Generate Version
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ github.sha }}-manual"
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            VERSION="${{ github.sha }}-prod"
+          elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
+            VERSION="${{ github.sha }}-staging"
+          else
+            VERSION="${{ github.sha }}-dev"
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Generated version: ${VERSION}"
+
+      - name: 🎯 Determine Deployment Target
+        id: deploy_check
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+            echo "environment=production" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          else
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+            echo "environment=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🔑 Generate Cache Key
+        id: cache_key
+        run: |
+          CACHE_KEY="node-modules-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}"
+          echo "key=${CACHE_KEY}" >> $GITHUB_OUTPUT
+
+  # ============================================================================
+  # CODE QUALITY & SECURITY
+  # ============================================================================
+  code_quality:
+    name: 🔍 Code Quality & Security
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: 🧶 Enable Corepack
+        run: corepack enable
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🔍 TypeScript Check
+        run: yarn type-check
+
+      - name: 🎨 Lint Check
+        run: yarn lint
+
+      - name: 💅 Format Check
+        run: yarn format:check
+
+      - name: 🔒 Security Audit
+        run: yarn npm audit --severity moderate
+        continue-on-error: true
+
+      - name: 🛡️ CodeQL Analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript,typescript
+
+      - name: 🛡️ Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+      - name: 🔐 Secret Scanning
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --debug --only-verified
+
+  # ============================================================================
+  # TESTING SUITE
+  # ============================================================================
+  unit_tests:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    needs: setup
+    if: ${{ !github.event.inputs.skip_tests }}
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: 🧶 Enable Corepack
+        run: corepack enable
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🧪 Run Unit Tests
+        run: yarn test --coverage --watchAll=false
+        env:
+          CI: true
+
+      - name: 📊 Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  integration_tests:
+    name: 🔗 Integration Tests
+    runs-on: ubuntu-latest
+    needs: setup
+    if: ${{ !github.event.inputs.skip_tests }}
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: bothsides_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: 🧶 Enable Corepack
+        run: corepack enable
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🔗 Run Integration Tests
+        run: yarn test:integration
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bothsides_test
+          REDIS_URL: redis://localhost:6379
+          NODE_ENV: test
+
+  e2e_tests:
+    name: 🎭 E2E Tests
+    runs-on: ubuntu-latest
+    needs: [setup, unit_tests]
+    if: ${{ !github.event.inputs.skip_tests && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging') }}
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: 🧶 Enable Corepack
+        run: corepack enable
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🎭 Install Playwright Browsers
+        run: yarn playwright install --with-deps
+
+      - name: 🏗️ Build Application
+        run: yarn build
+        env:
+          NODE_ENV: production
+
+      - name: 🎭 Run E2E Tests
+        run: yarn test:e2e
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+
+      - name: 📸 Upload E2E Screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-screenshots
+          path: test-results/
+          retention-days: 7
+
+  # ============================================================================
+  # LOAD TESTING
+  # ============================================================================
+  load_tests:
+    name: ⚡ Load Tests
+    runs-on: ubuntu-latest
+    needs: [setup, unit_tests]
+    if: ${{ !github.event.inputs.skip_tests && github.ref == 'refs/heads/main' }}
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: 🧶 Enable Corepack
+        run: corepack enable
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 📥 Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: ⚡ Run Load Tests
+        run: yarn load-test
+        env:
+          K6_CLOUD_TOKEN: ${{ secrets.K6_CLOUD_TOKEN }}
+
+  # ============================================================================
+  # BUILD & CONTAINERIZATION
+  # ============================================================================
+  build:
+    name: 🏗️ Build & Package
+    runs-on: ubuntu-latest
+    needs: [setup, code_quality]
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+      image_digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: 🧶 Enable Corepack
+        run: corepack enable
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🏗️ Build Application
+        run: yarn build
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_VERSION: ${{ needs.setup.outputs.version }}
+
+      - name: 📦 Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts-${{ needs.setup.outputs.version }}
+          path: |
+            .next/
+            dist/
+            public/
+          retention-days: 7
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔐 Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY_URL }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Extract Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_URL }}/${{ github.repository }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=${{ needs.setup.outputs.version }}
+
+      - name: 🐳 Build and Push Container Image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            VERSION=${{ needs.setup.outputs.version }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+
+  # ============================================================================
+  # DATABASE MIGRATIONS
+  # ============================================================================
+  database_migrations:
+    name: 🗄️ Database Migrations
+    runs-on: ubuntu-latest
+    needs: [setup, build]
+    if: ${{ needs.setup.outputs.should_deploy == 'true' }}
+    environment: ${{ needs.setup.outputs.target_environment }}
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: 🧶 Enable Corepack
+        run: corepack enable
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🗄️ Run Database Migrations
+        run: yarn prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: 🌱 Seed Database (if needed)
+        run: yarn prisma db seed
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        continue-on-error: true
+
+      - name: ✅ Verify Migration Success
+        run: |
+          yarn prisma migrate status
+          echo "Migration verification completed"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  # ============================================================================
+  # DEPLOYMENT
+  # ============================================================================
+  deploy_staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [setup, build, database_migrations, unit_tests, integration_tests]
+    if: ${{ needs.setup.outputs.should_deploy == 'true' && needs.setup.outputs.target_environment == 'staging' }}
+    environment: staging
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Deploy to Vercel (Staging)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod --env NODE_ENV=staging'
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+
+      - name: 🚂 Deploy to Railway (Staging)
+        uses: bervProject/railway-deploy@v1.0.0
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: ${{ secrets.RAILWAY_STAGING_SERVICE }}
+          environment: staging
+
+      - name: 🏥 Health Check
+        run: |
+          echo "Waiting for deployment to be ready..."
+          sleep 30
+          
+          # Check frontend health
+          curl -f ${{ secrets.STAGING_FRONTEND_URL }}/api/health || exit 1
+          
+          # Check backend health
+          curl -f ${{ secrets.STAGING_BACKEND_URL }}/api/health || exit 1
+          
+          echo "Health checks passed!"
+
+  deploy_production:
+    name: 🌟 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [setup, build, database_migrations, unit_tests, integration_tests, e2e_tests]
+    if: ${{ needs.setup.outputs.should_deploy == 'true' && needs.setup.outputs.target_environment == 'production' }}
+    environment: production
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Deploy to Vercel (Production)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+
+      - name: 🚂 Deploy to Railway (Production)
+        uses: bervProject/railway-deploy@v1.0.0
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: ${{ secrets.RAILWAY_PRODUCTION_SERVICE }}
+          environment: production
+
+      - name: 🏥 Health Check
+        run: |
+          echo "Waiting for deployment to be ready..."
+          sleep 60
+          
+          # Check frontend health
+          curl -f ${{ secrets.PRODUCTION_FRONTEND_URL }}/api/health || exit 1
+          
+          # Check backend health
+          curl -f ${{ secrets.PRODUCTION_BACKEND_URL }}/api/health || exit 1
+          
+          echo "Production health checks passed!"
+
+      - name: 🔥 Warm Cache
+        run: |
+          echo "Warming production cache..."
+          curl -f ${{ secrets.PRODUCTION_FRONTEND_URL }}/api/cache/warm || true
+          echo "Cache warming completed"
+
+  # ============================================================================
+  # POST-DEPLOYMENT VALIDATION
+  # ============================================================================
+  post_deployment_tests:
+    name: ✅ Post-Deployment Validation
+    runs-on: ubuntu-latest
+    needs: [setup, deploy_staging, deploy_production]
+    if: ${{ always() && (needs.deploy_staging.result == 'success' || needs.deploy_production.result == 'success') }}
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: 🧶 Enable Corepack
+        run: corepack enable
+
+      - name: 📦 Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🎭 Install Playwright Browsers
+        run: yarn playwright install --with-deps
+
+      - name: 🔍 Run Smoke Tests
+        run: yarn test:smoke
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ needs.setup.outputs.target_environment == 'production' && secrets.PRODUCTION_FRONTEND_URL || secrets.STAGING_FRONTEND_URL }}
+
+      - name: 📊 Performance Validation
+        run: |
+          echo "Running performance validation..."
+          # Lighthouse CI or similar performance testing
+          npx lighthouse-ci autorun --config=.lighthouserc.json || true
+
+  # ============================================================================
+  # NOTIFICATIONS & REPORTING
+  # ============================================================================
+  notify:
+    name: 📢 Notifications
+    runs-on: ubuntu-latest
+    needs: [setup, deploy_staging, deploy_production, post_deployment_tests]
+    if: always()
+    steps:
+      - name: 📊 Determine Status
+        id: status
+        run: |
+          if [[ "${{ needs.deploy_production.result }}" == "success" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "environment=production" >> $GITHUB_OUTPUT
+            echo "message=🎉 Production deployment successful!" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.deploy_staging.result }}" == "success" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "environment=staging" >> $GITHUB_OUTPUT
+            echo "message=✅ Staging deployment successful!" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "environment=unknown" >> $GITHUB_OUTPUT
+            echo "message=❌ Deployment failed!" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 💬 Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ steps.status.outputs.status }}
+          channel: '#deployments'
+          username: 'GitHub Actions'
+          icon_emoji: ':rocket:'
+          title: 'Both Sides Platform Deployment'
+          text: |
+            ${{ steps.status.outputs.message }}
+            
+            **Environment:** ${{ steps.status.outputs.environment }}
+            **Version:** ${{ needs.setup.outputs.version }}
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** ${{ github.sha }}
+            **Author:** ${{ github.actor }}
+            
+            [View Deployment](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
+
+      - name: 📧 Email Notification (Production Only)
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Both Sides Platform - Production Deployment ${{ steps.status.outputs.status == 'success' && 'Successful' || 'Failed' }}"
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: 'Both Sides CI/CD <noreply@bothsides.app>'
+          body: |
+            Hello Team,
+            
+            The production deployment of Both Sides Platform has ${{ steps.status.outputs.status == 'success' && 'completed successfully' || 'failed' }}.
+            
+            Deployment Details:
+            - Version: ${{ needs.setup.outputs.version }}
+            - Branch: ${{ github.ref_name }}
+            - Commit: ${{ github.sha }}
+            - Author: ${{ github.actor }}
+            - Timestamp: ${{ github.event.head_commit.timestamp }}
+            
+            ${{ steps.status.outputs.status == 'success' && 'The application is now live and ready for use.' || 'Please check the deployment logs and take necessary action.' }}
+            
+            View full deployment details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
+            Best regards,
+            Both Sides CI/CD System
+        if: ${{ steps.status.outputs.environment == 'production' }}
+
+  # ============================================================================
+  # CLEANUP
+  # ============================================================================
+  cleanup:
+    name: 🧹 Cleanup
+    runs-on: ubuntu-latest
+    needs: [notify]
+    if: always()
+    steps:
+      - name: 🗑️ Clean up old artifacts
+        run: |
+          echo "Cleaning up old build artifacts and cache entries..."
+          # This would typically involve cleaning up old container images,
+          # build artifacts, and cache entries to save storage space
+          echo "Cleanup completed"
+
+      - name: 📊 Update Deployment Metrics
+        run: |
+          echo "Updating deployment metrics and analytics..."
+          # This would typically involve updating deployment success rates,
+          # performance metrics, and other operational data
+          echo "Metrics updated"

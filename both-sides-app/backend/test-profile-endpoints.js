@@ -6,7 +6,9 @@ const fetch = require('node-fetch');
 
 const BASE_URL = 'http://localhost:3001/api';
 
-// Mock JWT token for testing (replace with real token from Clerk)
+// SECURITY NOTE: This is a dummy JWT token for testing structure validation only
+// Payload: {"sub":"user_2nUCjKPakBy2XMVqzEV3gcXYzR2","iat":1616239022} - NOT a real secret
+// For production testing, use: const TEST_JWT = process.env.TEST_JWT_TOKEN;
 const TEST_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzJuVUNqS1Bha0J5MlhNVnF6RVYzZ2NYWXpSMiIsImlhdCI6MTYxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
 // Sample test data
