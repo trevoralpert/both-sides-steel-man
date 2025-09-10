@@ -1,0 +1,602 @@
+[
+  {
+    "id": "topic-1-1",
+    "title": "Should governments prioritize economic growth over environmental protection?",
+    "category": "Environmental",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on should governments prioritize economic growth over environmental protection?",
+    "tags": [
+      "environmental",
+      "intermediate"
+    ],
+    "estimatedDuration": 60,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-07-19T09:30:26.709Z"
+  },
+  {
+    "id": "topic-1-2",
+    "title": "Is nuclear energy a viable solution to climate change?",
+    "category": "Environmental",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on is nuclear energy a viable solution to climate change?",
+    "tags": [
+      "environmental",
+      "intermediate"
+    ],
+    "estimatedDuration": 30,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-09-08T12:31:04.651Z"
+  },
+  {
+    "id": "topic-1-3",
+    "title": "Should plastic bags be banned worldwide?",
+    "category": "Environmental",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on should plastic bags be banned worldwide?",
+    "tags": [
+      "environmental",
+      "intermediate"
+    ],
+    "estimatedDuration": 30,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-08-17T17:57:20.317Z"
+  },
+  {
+    "id": "topic-1-4",
+    "title": "Is individual action sufficient to address climate change?",
+    "category": "Environmental",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on is individual action sufficient to address climate change?",
+    "tags": [
+      "environmental",
+      "intermediate"
+    ],
+    "estimatedDuration": 30,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-09-08T06:01:52.040Z"
+  },
+  {
+    "id": "topic-2-1",
+    "title": "Should artificial intelligence development be regulated by government?",
+    "category": "Technology",
+    "difficulty": "Advanced",
+    "description": "Explore different perspectives on should artificial intelligence development be regulated by government?",
+    "tags": [
+      "technology",
+      "advanced"
+    ],
+    "estimatedDuration": 60,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-06-14T10:45:59.765Z"
+  },
+  {
+    "id": "topic-2-2",
+    "title": "Is social media harmful to democracy?",
+    "category": "Technology",
+    "difficulty": "Advanced",
+    "description": "Explore different perspectives on is social media harmful to democracy?",
+    "tags": [
+      "technology",
+      "advanced"
+    ],
+    "estimatedDuration": 30,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-08-04T23:44:11.506Z"
+  },
+  {
+    "id": "topic-2-3",
+    "title": "Should schools replace textbooks with tablets?",
+    "category": "Technology",
+    "difficulty": "Advanced",
+    "description": "Explore different perspectives on should schools replace textbooks with tablets?",
+    "tags": [
+      "technology",
+      "advanced"
+    ],
+    "estimatedDuration": 30,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-06-12T22:34:34.503Z"
+  },
+  {
+    "id": "topic-2-4",
+    "title": "Is privacy dead in the digital age?",
+    "category": "Technology",
+    "difficulty": "Advanced",
+    "description": "Explore different perspectives on is privacy dead in the digital age?",
+    "tags": [
+      "technology",
+      "advanced"
+    ],
+    "estimatedDuration": 30,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-08-18T00:18:07.179Z"
+  },
+  {
+    "id": "topic-3-1",
+    "title": "Should college education be free for all students?",
+    "category": "Social Issues",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on should college education be free for all students?",
+    "tags": [
+      "social issues",
+      "intermediate"
+    ],
+    "estimatedDuration": 45,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-07-26T18:47:03.068Z"
+  },
+  {
+    "id": "topic-3-2",
+    "title": "Is standardized testing an effective measure of student ability?",
+    "category": "Social Issues",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on is standardized testing an effective measure of student ability?",
+    "tags": [
+      "social issues",
+      "intermediate"
+    ],
+    "estimatedDuration": 30,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-09-05T19:15:12.739Z"
+  },
+  {
+    "id": "topic-3-3",
+    "title": "Should the voting age be lowered to 16?",
+    "category": "Social Issues",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on should the voting age be lowered to 16?",
+    "tags": [
+      "social issues",
+      "intermediate"
+    ],
+    "estimatedDuration": 60,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-06-19T20:39:42.632Z"
+  },
+  {
+    "id": "topic-3-4",
+    "title": "Is remote work better than office work?",
+    "category": "Social Issues",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on is remote work better than office work?",
+    "tags": [
+      "social issues",
+      "intermediate"
+    ],
+    "estimatedDuration": 30,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-08-29T10:52:31.229Z"
+  },
+  {
+    "id": "topic-4-1",
+    "title": "Should there be a universal basic income?",
+    "category": "Economics",
+    "difficulty": "Advanced",
+    "description": "Explore different perspectives on should there be a universal basic income?",
+    "tags": [
+      "economics",
+      "advanced"
+    ],
+    "estimatedDuration": 45,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-09-09T14:26:59.884Z"
+  },
+  {
+    "id": "topic-4-2",
+    "title": "Is capitalism the best economic system?",
+    "category": "Economics",
+    "difficulty": "Advanced",
+    "description": "Explore different perspectives on is capitalism the best economic system?",
+    "tags": [
+      "economics",
+      "advanced"
+    ],
+    "estimatedDuration": 60,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-06-12T14:47:32.615Z"
+  },
+  {
+    "id": "topic-4-3",
+    "title": "Should minimum wage be $15 per hour nationally?",
+    "category": "Economics",
+    "difficulty": "Advanced",
+    "description": "Explore different perspectives on should minimum wage be $15 per hour nationally?",
+    "tags": [
+      "economics",
+      "advanced"
+    ],
+    "estimatedDuration": 30,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-06-21T18:52:21.509Z"
+  },
+  {
+    "id": "topic-4-4",
+    "title": "Are cryptocurrencies the future of money?",
+    "category": "Economics",
+    "difficulty": "Advanced",
+    "description": "Explore different perspectives on are cryptocurrencies the future of money?",
+    "tags": [
+      "economics",
+      "advanced"
+    ],
+    "estimatedDuration": 45,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-07-03T06:34:20.534Z"
+  },
+  {
+    "id": "topic-5-1",
+    "title": "Is it ever acceptable to lie?",
+    "category": "Ethics",
+    "difficulty": "Beginner",
+    "description": "Explore different perspectives on is it ever acceptable to lie?",
+    "tags": [
+      "ethics",
+      "beginner"
+    ],
+    "estimatedDuration": 45,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-08-19T03:34:08.126Z"
+  },
+  {
+    "id": "topic-5-2",
+    "title": "Should animals have the same rights as humans?",
+    "category": "Ethics",
+    "difficulty": "Beginner",
+    "description": "Explore different perspectives on should animals have the same rights as humans?",
+    "tags": [
+      "ethics",
+      "beginner"
+    ],
+    "estimatedDuration": 30,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-08-28T21:48:18.618Z"
+  },
+  {
+    "id": "topic-5-3",
+    "title": "Is it ethical to eat meat?",
+    "category": "Ethics",
+    "difficulty": "Beginner",
+    "description": "Explore different perspectives on is it ethical to eat meat?",
+    "tags": [
+      "ethics",
+      "beginner"
+    ],
+    "estimatedDuration": 60,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-07-01T06:11:45.433Z"
+  },
+  {
+    "id": "topic-5-4",
+    "title": "Should parents monitor their children's internet activity?",
+    "category": "Ethics",
+    "difficulty": "Beginner",
+    "description": "Explore different perspectives on should parents monitor their children's internet activity?",
+    "tags": [
+      "ethics",
+      "beginner"
+    ],
+    "estimatedDuration": 30,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-08-03T17:03:29.227Z"
+  },
+  {
+    "id": "topic-6-1",
+    "title": "Should healthcare be a human right?",
+    "category": "Health",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on should healthcare be a human right?",
+    "tags": [
+      "health",
+      "intermediate"
+    ],
+    "estimatedDuration": 60,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-06-13T04:08:18.330Z"
+  },
+  {
+    "id": "topic-6-2",
+    "title": "Is mental health as important as physical health?",
+    "category": "Health",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on is mental health as important as physical health?",
+    "tags": [
+      "health",
+      "intermediate"
+    ],
+    "estimatedDuration": 45,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-07-02T03:13:37.429Z"
+  },
+  {
+    "id": "topic-6-3",
+    "title": "Should junk food be taxed like cigarettes?",
+    "category": "Health",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on should junk food be taxed like cigarettes?",
+    "tags": [
+      "health",
+      "intermediate"
+    ],
+    "estimatedDuration": 45,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-08-04T14:10:02.198Z"
+  },
+  {
+    "id": "topic-6-4",
+    "title": "Is genetic engineering ethical?",
+    "category": "Health",
+    "difficulty": "Intermediate",
+    "description": "Explore different perspectives on is genetic engineering ethical?",
+    "tags": [
+      "health",
+      "intermediate"
+    ],
+    "estimatedDuration": 60,
+    "preparationMaterials": [
+      "Background reading materials",
+      "Statistical data and research",
+      "Expert opinion articles",
+      "Historical context"
+    ],
+    "learningObjectives": [
+      "Develop critical thinking skills",
+      "Practice evidence-based argumentation",
+      "Understand multiple perspectives",
+      "Improve communication skills"
+    ],
+    "createdDate": "2025-06-13T23:30:47.211Z"
+  }
+]

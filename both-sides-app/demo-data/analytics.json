@@ -1,0 +1,78 @@
+{
+  "overview": {
+    "totalUsers": 140,
+    "totalSessions": 60,
+    "completedSessions": 14,
+    "totalTopics": 24,
+    "averageSessionDuration": 47
+  },
+  "engagement": {
+    "dailyActiveUsers": 43,
+    "weeklyActiveUsers": 138,
+    "monthlyActiveUsers": 434,
+    "averageSessionsPerUser": "0.1"
+  },
+  "performance": {
+    "averageEngagementScore": "3.9",
+    "averageLearningOutcome": "4.0",
+    "topPerformingTopics": [
+      {
+        "topicId": "topic-1-1",
+        "title": "Should governments prioritize economic growth over environmental protection?",
+        "sessionsCount": 10,
+        "averageRating": "4.3"
+      },
+      {
+        "topicId": "topic-1-2",
+        "title": "Is nuclear energy a viable solution to climate change?",
+        "sessionsCount": 9,
+        "averageRating": "3.9"
+      },
+      {
+        "topicId": "topic-1-3",
+        "title": "Should plastic bags be banned worldwide?",
+        "sessionsCount": 1,
+        "averageRating": "4.9"
+      },
+      {
+        "topicId": "topic-1-4",
+        "title": "Is individual action sufficient to address climate change?",
+        "sessionsCount": 9,
+        "averageRating": "3.9"
+      },
+      {
+        "topicId": "topic-2-1",
+        "title": "Should artificial intelligence development be regulated by government?",
+        "sessionsCount": 10,
+        "averageRating": "4.7"
+      }
+    ]
+  },
+  "trends": {
+    "monthlyGrowth": "+15%",
+    "sessionCompletionRate": "87%",
+    "userRetentionRate": "73%",
+    "topCategories": [
+      {
+        "category": "Environmental",
+        "percentage": "25%"
+      },
+      {
+        "category": "Technology",
+        "percentage": "22%"
+      },
+      {
+        "category": "Social Issues",
+        "percentage": "20%"
+      },
+      {
+        "category": "Economics",
+        "percentage": "18%"
+      },
+      {
+        "category": "Ethics",
+        "percentage": "15%"
+      }
+    ]
+  }
+}

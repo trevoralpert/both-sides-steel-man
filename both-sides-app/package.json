@@ -28,7 +28,19 @@
     "security:audit": "yarn npm audit --severity moderate",
     "security:infrastructure": "node scripts/infrastructure-security-audit.js",
     "security:check": "yarn security:audit && yarn workflows:validate",
-    "security:full": "yarn security:audit && yarn security:infrastructure"
+    "security:full": "yarn security:audit && yarn security:infrastructure",
+    "health:check": "node scripts/health-check.js",
+    "health:validate": "node scripts/health-check.js && echo 'Health validation passed'",
+    "demo:generate": "node scripts/generate-demo-data.js",
+    "demo:clean": "rm -rf demo-data",
+    "production:validate": "npm run health:check && npm run security:check",
+    "production:ready": "npm run production:validate && npm run demo:generate",
+    "feedback:test": "node -e \"const { feedbackSystem } = require('./src/lib/feedback/feedback-system.ts'); console.log('Feedback system loaded successfully')\"",
+    "analytics:test": "node -e \"const { advancedAnalytics } = require('./src/lib/analytics/advanced-analytics.ts'); console.log('Analytics system loaded successfully')\"",
+    "feedback:export": "node -e \"const { feedbackSystem } = require('./src/lib/feedback/feedback-system.ts'); console.log(feedbackSystem.exportFeedbackData())\"",
+    "analytics:export": "node -e \"const { advancedAnalytics } = require('./src/lib/analytics/advanced-analytics.ts'); console.log(advancedAnalytics.exportAnalyticsData())\"",
+    "feedback:summary": "node -e \"const { feedbackSystem } = require('./src/lib/feedback/feedback-system.ts'); console.log(JSON.stringify(feedbackSystem.getFeedbackSummary(), null, 2))\"",
+    "analytics:dashboard": "node -e \"const { advancedAnalytics } = require('./src/lib/analytics/advanced-analytics.ts'); console.log(JSON.stringify(advancedAnalytics.getDashboardData({start: new Date(Date.now() - 30*24*60*60*1000), end: new Date()}), null, 2))\""
   },
   "dependencies": {
     "@clerk/nextjs": "^6.30.1",

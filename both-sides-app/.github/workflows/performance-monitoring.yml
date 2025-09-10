@@ -413,7 +413,9 @@ jobs:
         cat dashboard-data.json | jq '.'
     
     - name: 📡 Send to monitoring system
-      if: env.MONITORING_WEBHOOK_URL
+      if: ${{ env.MONITORING_WEBHOOK_URL != '' }}
+      env:
+        MONITORING_WEBHOOK_URL: ${{ secrets.MONITORING_WEBHOOK_URL }}
       run: |
         echo "📡 Sending data to monitoring system..."
         
@@ -422,8 +424,6 @@ jobs:
           -d @dashboard-data.json || {
           echo "⚠️ Failed to send data to monitoring system"
         }
-      env:
-        MONITORING_WEBHOOK_URL: ${{ secrets.MONITORING_WEBHOOK_URL }}
 
   # Job 6: Notifications and alerts
   notifications:
@@ -463,7 +463,6 @@ jobs:
         channel: '#performance-monitoring'
         username: 'Performance Monitor'
         icon_emoji: ':chart_with_upwards_trend:'
-        title: 'Performance Monitoring Report'
         text: |
           ${{ steps.status.outputs.message }}
           
@@ -471,6 +470,3 @@ jobs:
           **Environment**: ${{ github.event.inputs.target_environment || 'staging' }}
           **Commit**: ${{ github.sha }}
           **View Details**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        color: ${{ steps.status.outputs.color }}
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

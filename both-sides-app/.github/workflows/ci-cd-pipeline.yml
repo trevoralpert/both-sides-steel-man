@@ -450,7 +450,6 @@ jobs:
         with:
           railway_token: ${{ secrets.RAILWAY_TOKEN }}
           service: ${{ secrets.RAILWAY_STAGING_SERVICE }}
-          environment: staging
 
       - name: 🏥 Health Check
         run: |
@@ -489,7 +488,6 @@ jobs:
         with:
           railway_token: ${{ secrets.RAILWAY_TOKEN }}
           service: ${{ secrets.RAILWAY_PRODUCTION_SERVICE }}
-          environment: production
 
       - name: 🏥 Health Check
         run: |
@@ -578,10 +576,10 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ steps.status.outputs.status }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
           channel: '#deployments'
           username: 'GitHub Actions'
           icon_emoji: ':rocket:'
-          title: 'Both Sides Platform Deployment'
           text: |
             ${{ steps.status.outputs.message }}
             
@@ -592,8 +590,6 @@ jobs:
             **Author:** ${{ github.actor }}
             
             [View Deployment](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: always()
 
       - name: 📧 Email Notification (Production Only)

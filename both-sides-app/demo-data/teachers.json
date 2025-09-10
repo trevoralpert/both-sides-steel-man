@@ -1,0 +1,342 @@
+[
+  {
+    "id": "teacher-1",
+    "firstName": "Sarah",
+    "lastName": "Johnson",
+    "email": "sarah.johnson@lincolnhighschool.edu",
+    "subject": "Political Science",
+    "school": "Lincoln High School",
+    "experience": 21,
+    "gradeLevel": "9-12",
+    "bio": "Experienced Political Science educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-05-04T22:59:48.546Z",
+    "preferences": {
+      "debateStyle": "formal",
+      "sessionLength": 45,
+      "maxStudents": 18
+    }
+  },
+  {
+    "id": "teacher-2",
+    "firstName": "Michael",
+    "lastName": "Chen",
+    "email": "michael.chen@rooseveltmiddleschool.edu",
+    "subject": "History",
+    "school": "Roosevelt Middle School",
+    "experience": 13,
+    "gradeLevel": "6-8",
+    "bio": "Experienced History educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-04-07T01:16:08.708Z",
+    "preferences": {
+      "debateStyle": "socratic",
+      "sessionLength": 45,
+      "maxStudents": 22
+    }
+  },
+  {
+    "id": "teacher-3",
+    "firstName": "Emily",
+    "lastName": "Rodriguez",
+    "email": "emily.rodriguez@washingtonacademy.edu",
+    "subject": "Philosophy",
+    "school": "Washington Academy",
+    "experience": 3,
+    "gradeLevel": "6-8",
+    "bio": "Experienced Philosophy educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-05-12T02:40:02.875Z",
+    "preferences": {
+      "debateStyle": "formal",
+      "sessionLength": 60,
+      "maxStudents": 16
+    }
+  },
+  {
+    "id": "teacher-4",
+    "firstName": "David",
+    "lastName": "Thompson",
+    "email": "david.thompson@jeffersonpreparatory.edu",
+    "subject": "Economics",
+    "school": "Jefferson Preparatory",
+    "experience": 3,
+    "gradeLevel": "6-8",
+    "bio": "Experienced Economics educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-01-08T07:01:01.931Z",
+    "preferences": {
+      "debateStyle": "fishbowl",
+      "sessionLength": 60,
+      "maxStudents": 19
+    }
+  },
+  {
+    "id": "teacher-5",
+    "firstName": "Lisa",
+    "lastName": "Williams",
+    "email": "lisa.williams@madisoncharterschool.edu",
+    "subject": "Social Studies",
+    "school": "Madison Charter School",
+    "experience": 19,
+    "gradeLevel": "9-12",
+    "bio": "Experienced Social Studies educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-06-28T04:46:59.728Z",
+    "preferences": {
+      "debateStyle": "formal",
+      "sessionLength": 45,
+      "maxStudents": 17
+    }
+  },
+  {
+    "id": "teacher-6",
+    "firstName": "James",
+    "lastName": "Brown",
+    "email": "james.brown@hamiltoninstitute.edu",
+    "subject": "Ethics",
+    "school": "Hamilton Institute",
+    "experience": 13,
+    "gradeLevel": "9-12",
+    "bio": "Experienced Ethics educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2024-09-20T13:33:58.309Z",
+    "preferences": {
+      "debateStyle": "fishbowl",
+      "sessionLength": 45,
+      "maxStudents": 24
+    }
+  },
+  {
+    "id": "teacher-7",
+    "firstName": "Maria",
+    "lastName": "Garcia",
+    "email": "maria.garcia@franklinhighschool.edu",
+    "subject": "Debate & Rhetoric",
+    "school": "Franklin High School",
+    "experience": 16,
+    "gradeLevel": "6-8",
+    "bio": "Experienced Debate & Rhetoric educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-03-26T10:01:52.368Z",
+    "preferences": {
+      "debateStyle": "socratic",
+      "sessionLength": 30,
+      "maxStudents": 16
+    }
+  },
+  {
+    "id": "teacher-8",
+    "firstName": "Robert",
+    "lastName": "Davis",
+    "email": "robert.davis@adamsmiddleschool.edu",
+    "subject": "Government",
+    "school": "Adams Middle School",
+    "experience": 9,
+    "gradeLevel": "6-12",
+    "bio": "Experienced Government educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2024-12-18T18:03:05.687Z",
+    "preferences": {
+      "debateStyle": "socratic",
+      "sessionLength": 60,
+      "maxStudents": 20
+    }
+  },
+  {
+    "id": "teacher-9",
+    "firstName": "Jennifer",
+    "lastName": "Miller",
+    "email": "jennifer.miller@lincolnhighschool.edu",
+    "subject": "International Relations",
+    "school": "Lincoln High School",
+    "experience": 14,
+    "gradeLevel": "6-12",
+    "bio": "Experienced International Relations educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-05-12T02:54:55.435Z",
+    "preferences": {
+      "debateStyle": "fishbowl",
+      "sessionLength": 30,
+      "maxStudents": 15
+    }
+  },
+  {
+    "id": "teacher-10",
+    "firstName": "Christopher",
+    "lastName": "Wilson",
+    "email": "christopher.wilson@rooseveltmiddleschool.edu",
+    "subject": "Critical Thinking",
+    "school": "Roosevelt Middle School",
+    "experience": 6,
+    "gradeLevel": "9-12",
+    "bio": "Experienced Critical Thinking educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-09-05T13:00:14.811Z",
+    "preferences": {
+      "debateStyle": "fishbowl",
+      "sessionLength": 30,
+      "maxStudents": 20
+    }
+  },
+  {
+    "id": "teacher-11",
+    "firstName": "Amanda",
+    "lastName": "Moore",
+    "email": "amanda.moore@washingtonacademy.edu",
+    "subject": "Civics",
+    "school": "Washington Academy",
+    "experience": 9,
+    "gradeLevel": "9-12",
+    "bio": "Experienced Civics educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-04-29T00:18:27.414Z",
+    "preferences": {
+      "debateStyle": "formal",
+      "sessionLength": 60,
+      "maxStudents": 20
+    }
+  },
+  {
+    "id": "teacher-12",
+    "firstName": "Daniel",
+    "lastName": "Taylor",
+    "email": "daniel.taylor@jeffersonpreparatory.edu",
+    "subject": "Public Policy",
+    "school": "Jefferson Preparatory",
+    "experience": 12,
+    "gradeLevel": "9-12",
+    "bio": "Experienced Public Policy educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2024-11-30T00:04:06.500Z",
+    "preferences": {
+      "debateStyle": "formal",
+      "sessionLength": 30,
+      "maxStudents": 20
+    }
+  },
+  {
+    "id": "teacher-13",
+    "firstName": "Jessica",
+    "lastName": "Anderson",
+    "email": "jessica.anderson@madisoncharterschool.edu",
+    "subject": "Constitutional Law",
+    "school": "Madison Charter School",
+    "experience": 17,
+    "gradeLevel": "9-12",
+    "bio": "Experienced Constitutional Law educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-02-16T03:09:58.604Z",
+    "preferences": {
+      "debateStyle": "formal",
+      "sessionLength": 30,
+      "maxStudents": 20
+    }
+  },
+  {
+    "id": "teacher-14",
+    "firstName": "Matthew",
+    "lastName": "Thomas",
+    "email": "matthew.thomas@hamiltoninstitute.edu",
+    "subject": "Environmental Studies",
+    "school": "Hamilton Institute",
+    "experience": 3,
+    "gradeLevel": "9-12",
+    "bio": "Experienced Environmental Studies educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2024-10-14T04:27:31.937Z",
+    "preferences": {
+      "debateStyle": "fishbowl",
+      "sessionLength": 30,
+      "maxStudents": 21
+    }
+  },
+  {
+    "id": "teacher-15",
+    "firstName": "Ashley",
+    "lastName": "Jackson",
+    "email": "ashley.jackson@franklinhighschool.edu",
+    "subject": "Media Literacy",
+    "school": "Franklin High School",
+    "experience": 13,
+    "gradeLevel": "6-8",
+    "bio": "Experienced Media Literacy educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2024-10-06T07:31:33.104Z",
+    "preferences": {
+      "debateStyle": "fishbowl",
+      "sessionLength": 60,
+      "maxStudents": 16
+    }
+  },
+  {
+    "id": "teacher-16",
+    "firstName": "Ryan",
+    "lastName": "White",
+    "email": "ryan.white@adamsmiddleschool.edu",
+    "subject": "Logic & Reasoning",
+    "school": "Adams Middle School",
+    "experience": 8,
+    "gradeLevel": "9-12",
+    "bio": "Experienced Logic & Reasoning educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-03-07T13:19:55.200Z",
+    "preferences": {
+      "debateStyle": "fishbowl",
+      "sessionLength": 60,
+      "maxStudents": 18
+    }
+  },
+  {
+    "id": "teacher-17",
+    "firstName": "Nicole",
+    "lastName": "Harris",
+    "email": "nicole.harris@lincolnhighschool.edu",
+    "subject": "World Cultures",
+    "school": "Lincoln High School",
+    "experience": 17,
+    "gradeLevel": "6-8",
+    "bio": "Experienced World Cultures educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-09-02T06:55:09.098Z",
+    "preferences": {
+      "debateStyle": "socratic",
+      "sessionLength": 60,
+      "maxStudents": 15
+    }
+  },
+  {
+    "id": "teacher-18",
+    "firstName": "Kevin",
+    "lastName": "Martin",
+    "email": "kevin.martin@rooseveltmiddleschool.edu",
+    "subject": "Business Ethics",
+    "school": "Roosevelt Middle School",
+    "experience": 15,
+    "gradeLevel": "9-12",
+    "bio": "Experienced Business Ethics educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2024-09-13T23:07:17.935Z",
+    "preferences": {
+      "debateStyle": "socratic",
+      "sessionLength": 60,
+      "maxStudents": 21
+    }
+  },
+  {
+    "id": "teacher-19",
+    "firstName": "Rachel",
+    "lastName": "Thompson",
+    "email": "rachel.thompson@washingtonacademy.edu",
+    "subject": "Psychology",
+    "school": "Washington Academy",
+    "experience": 18,
+    "gradeLevel": "6-8",
+    "bio": "Experienced Psychology educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-06-10T11:50:08.549Z",
+    "preferences": {
+      "debateStyle": "fishbowl",
+      "sessionLength": 60,
+      "maxStudents": 23
+    }
+  },
+  {
+    "id": "teacher-20",
+    "firstName": "Brandon",
+    "lastName": "Lee",
+    "email": "brandon.lee@jeffersonpreparatory.edu",
+    "subject": "Sociology",
+    "school": "Jefferson Preparatory",
+    "experience": 10,
+    "gradeLevel": "9-12",
+    "bio": "Experienced Sociology educator passionate about developing critical thinking skills through structured debate.",
+    "joinDate": "2025-06-29T21:43:50.830Z",
+    "preferences": {
+      "debateStyle": "formal",
+      "sessionLength": 60,
+      "maxStudents": 19
+    }
+  }
+]

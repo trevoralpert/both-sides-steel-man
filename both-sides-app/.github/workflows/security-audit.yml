@@ -747,21 +747,17 @@ jobs:
         )
       uses: 8398a7/action-slack@v3
       with:
-        status: ${{ steps.security-score.outputs.overall-status }}
-        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-        channel: '#security-alerts'
-        username: 'Security Monitor'
-        icon_emoji: ':shield:'
-        title: 'Security Audit Report'
-        text: |
-          ${{ steps.security-score.outputs.status-emoji }} **Security Score**: ${{ steps.security-score.outputs.security-score }}/100
-          
-          **Vulnerabilities**: ${{ needs.dependency-scan.outputs.vulnerabilities-found == 'true' && 'Found' || 'None' }}
-          **Critical**: ${{ needs.dependency-scan.outputs.critical-count }}
-          **High**: ${{ needs.dependency-scan.outputs.high-count }}
-          
-          **Commit**: ${{ github.sha }}
-          **View Details**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        color: ${{ steps.security-score.outputs.overall-status == 'good' && 'good' || steps.security-score.outputs.overall-status == 'warning' && 'warning' || 'danger' }}
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          status: ${{ steps.security-score.outputs.overall-status }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          channel: '#security-alerts'
+          username: 'Security Monitor'
+          icon_emoji: ':shield:'
+          text: |
+            ${{ steps.security-score.outputs.status-emoji }} **Security Score**: ${{ steps.security-score.outputs.security-score }}/100
+            
+            **Vulnerabilities**: ${{ needs.dependency-scan.outputs.vulnerabilities-found == 'true' && 'Found' || 'None' }}
+            **Critical**: ${{ needs.dependency-scan.outputs.critical-count }}
+            **High**: ${{ needs.dependency-scan.outputs.high-count }}
+            
+            **Commit**: ${{ github.sha }}
+            **View Details**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

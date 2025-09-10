@@ -1,0 +1,18 @@
+{
+  "generated": "2025-09-09T21:57:56.083Z",
+  "summary": {
+    "teachers": 20,
+    "students": 120,
+    "topics": 24,
+    "sessions": 60,
+    "completedSessions": 14
+  },
+  "files": [
+    "complete-demo-data.json",
+    "teachers.json",
+    "students.json",
+    "topics.json",
+    "sessions.json",
+    "analytics.json"
+  ]
+}

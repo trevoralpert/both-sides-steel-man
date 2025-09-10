@@ -10,7 +10,7 @@ on:
       skip_tests:
         description: 'Skip test execution (for emergency deployments)'
         required: false
-        default: 'false'
+        default: false
         type: boolean
 
 # Cancel in-progress runs for the same workflow and branch
@@ -497,7 +497,6 @@ jobs:
         channel: '#engineering'
         username: 'GitHub Actions'
         icon_emoji: ':robot_face:'
-        title: '${{ github.repository }} - ${{ github.workflow }}'
         text: |
           ${{ steps.status.outputs.message }}
           
@@ -505,9 +504,6 @@ jobs:
           **Commit**: ${{ github.sha }}
           **Author**: ${{ github.actor }}
           **View Results**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        color: ${{ steps.status.outputs.color }}
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   # Job 8: Cleanup and finalization
   cleanup:

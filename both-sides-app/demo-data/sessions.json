@@ -1,0 +1,3366 @@
+[
+  {
+    "id": "session-1",
+    "title": "Should schools replace textbooks with tablets? - Lincoln High School",
+    "topicId": "topic-2-3",
+    "teacherId": "teacher-17",
+    "participants": [
+      {
+        "studentId": "student-120",
+        "position": "pro",
+        "preparationTime": 38,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-56",
+        "position": "con",
+        "preparationTime": 16,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-62",
+        "position": "pro",
+        "preparationTime": 26,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-25",
+        "position": "con",
+        "preparationTime": 33,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-67",
+        "position": "con",
+        "preparationTime": 28,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-26",
+        "position": "pro",
+        "preparationTime": 31,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-92",
+        "position": "pro",
+        "preparationTime": 39,
+        "participationScore": "4.0"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-08-19T16:57:30.894Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-19T16:57:30.894Z"
+  },
+  {
+    "id": "session-2",
+    "title": "Should animals have the same rights as humans? - Adams Middle School",
+    "topicId": "topic-5-2",
+    "teacherId": "teacher-8",
+    "participants": [
+      {
+        "studentId": "student-95",
+        "position": "pro",
+        "preparationTime": 27,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-57",
+        "position": "pro",
+        "preparationTime": 33,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-71",
+        "position": "pro",
+        "preparationTime": 16,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-74",
+        "position": "pro",
+        "preparationTime": 39,
+        "participationScore": "4.9"
+      },
+      {
+        "studentId": "student-58",
+        "position": "con",
+        "preparationTime": 44,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-112",
+        "position": "pro",
+        "preparationTime": 15,
+        "participationScore": "4.8"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-24T20:25:32.986Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-24T20:25:32.986Z"
+  },
+  {
+    "id": "session-3",
+    "title": "Is capitalism the best economic system? - Roosevelt Middle School",
+    "topicId": "topic-4-2",
+    "teacherId": "teacher-18",
+    "participants": [
+      {
+        "studentId": "student-28",
+        "position": "pro",
+        "preparationTime": 36,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-71",
+        "position": "con",
+        "preparationTime": 31,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-95",
+        "position": "con",
+        "preparationTime": 35,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-114",
+        "position": "con",
+        "preparationTime": 19,
+        "participationScore": "3.8"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-07-12T10:03:10.125Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-12T10:03:10.125Z"
+  },
+  {
+    "id": "session-4",
+    "title": "Should minimum wage be $15 per hour nationally? - Jefferson Preparatory",
+    "topicId": "topic-4-3",
+    "teacherId": "teacher-4",
+    "participants": [
+      {
+        "studentId": "student-8",
+        "position": "con",
+        "preparationTime": 22,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-21",
+        "position": "con",
+        "preparationTime": 36,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-105",
+        "position": "con",
+        "preparationTime": 27,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-7",
+        "position": "con",
+        "preparationTime": 40,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-74",
+        "position": "con",
+        "preparationTime": 44,
+        "participationScore": "3.5"
+      },
+      {
+        "studentId": "student-16",
+        "position": "pro",
+        "preparationTime": 40,
+        "participationScore": "4.8"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-25T21:00:16.784Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-25T21:00:16.784Z"
+  },
+  {
+    "id": "session-5",
+    "title": "Is it ever acceptable to lie? - Washington Academy",
+    "topicId": "topic-5-1",
+    "teacherId": "teacher-3",
+    "participants": [
+      {
+        "studentId": "student-108",
+        "position": "con",
+        "preparationTime": 25,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-49",
+        "position": "con",
+        "preparationTime": 24,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-36",
+        "position": "con",
+        "preparationTime": 29,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-66",
+        "position": "pro",
+        "preparationTime": 36,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-91",
+        "position": "pro",
+        "preparationTime": 44,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-103",
+        "position": "pro",
+        "preparationTime": 30,
+        "participationScore": "3.7"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-24T09:22:44.345Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-24T09:22:44.345Z"
+  },
+  {
+    "id": "session-6",
+    "title": "Should the voting age be lowered to 16? - Roosevelt Middle School",
+    "topicId": "topic-3-3",
+    "teacherId": "teacher-2",
+    "participants": [
+      {
+        "studentId": "student-78",
+        "position": "pro",
+        "preparationTime": 27,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-75",
+        "position": "pro",
+        "preparationTime": 31,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-48",
+        "position": "con",
+        "preparationTime": 34,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-105",
+        "position": "pro",
+        "preparationTime": 17,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-90",
+        "position": "con",
+        "preparationTime": 23,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-50",
+        "position": "pro",
+        "preparationTime": 18,
+        "participationScore": "4.0"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-07T18:02:24.741Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-07T18:02:24.741Z"
+  },
+  {
+    "id": "session-7",
+    "title": "Should parents monitor their children's internet activity? - Adams Middle School",
+    "topicId": "topic-5-4",
+    "teacherId": "teacher-8",
+    "participants": [
+      {
+        "studentId": "student-113",
+        "position": "pro",
+        "preparationTime": 17,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-3",
+        "position": "pro",
+        "preparationTime": 38,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-116",
+        "position": "pro",
+        "preparationTime": 23,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-43",
+        "position": "pro",
+        "preparationTime": 32,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-78",
+        "position": "con",
+        "preparationTime": 21,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-77",
+        "position": "con",
+        "preparationTime": 33,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-21",
+        "position": "con",
+        "preparationTime": 43,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-56",
+        "position": "pro",
+        "preparationTime": 27,
+        "participationScore": "3.8"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-08-17T04:33:08.640Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-17T04:33:08.640Z"
+  },
+  {
+    "id": "session-8",
+    "title": "Should plastic bags be banned worldwide? - Jefferson Preparatory",
+    "topicId": "topic-1-3",
+    "teacherId": "teacher-4",
+    "participants": [
+      {
+        "studentId": "student-50",
+        "position": "con",
+        "preparationTime": 19,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-49",
+        "position": "pro",
+        "preparationTime": 20,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-15",
+        "position": "con",
+        "preparationTime": 25,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-100",
+        "position": "con",
+        "preparationTime": 41,
+        "participationScore": "4.9"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-09-03T18:35:29.029Z",
+    "actualStartTime": "2025-09-03T18:35:29.029Z",
+    "duration": 53,
+    "outcome": "heated",
+    "metrics": {
+      "engagementLevel": "4.0",
+      "learningOutcome": "4.4",
+      "respectfulnessScore": "4.1",
+      "evidenceQuality": "3.7"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-50",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-49",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-09-03T18:35:29.029Z"
+  },
+  {
+    "id": "session-9",
+    "title": "Is it ever acceptable to lie? - Jefferson Preparatory",
+    "topicId": "topic-5-1",
+    "teacherId": "teacher-4",
+    "participants": [
+      {
+        "studentId": "student-108",
+        "position": "con",
+        "preparationTime": 44,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-114",
+        "position": "pro",
+        "preparationTime": 23,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-41",
+        "position": "con",
+        "preparationTime": 31,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-106",
+        "position": "pro",
+        "preparationTime": 36,
+        "participationScore": "3.1"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-09-06T11:17:41.571Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-06T11:17:41.571Z"
+  },
+  {
+    "id": "session-10",
+    "title": "Is nuclear energy a viable solution to climate change? - Washington Academy",
+    "topicId": "topic-1-2",
+    "teacherId": "teacher-3",
+    "participants": [
+      {
+        "studentId": "student-50",
+        "position": "con",
+        "preparationTime": 34,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-8",
+        "position": "con",
+        "preparationTime": 32,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-21",
+        "position": "pro",
+        "preparationTime": 16,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-78",
+        "position": "pro",
+        "preparationTime": 44,
+        "participationScore": "3.2"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-09-02T19:20:12.549Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-02T19:20:12.549Z"
+  },
+  {
+    "id": "session-11",
+    "title": "Should there be a universal basic income? - Washington Academy",
+    "topicId": "topic-4-1",
+    "teacherId": "teacher-19",
+    "participants": [
+      {
+        "studentId": "student-38",
+        "position": "con",
+        "preparationTime": 41,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-93",
+        "position": "con",
+        "preparationTime": 44,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-104",
+        "position": "con",
+        "preparationTime": 36,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-100",
+        "position": "pro",
+        "preparationTime": 36,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-90",
+        "position": "con",
+        "preparationTime": 42,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-33",
+        "position": "pro",
+        "preparationTime": 21,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-22",
+        "position": "pro",
+        "preparationTime": 40,
+        "participationScore": "3.5"
+      },
+      {
+        "studentId": "student-109",
+        "position": "con",
+        "preparationTime": 15,
+        "participationScore": "4.4"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-09-05T23:48:49.074Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-05T23:48:49.074Z"
+  },
+  {
+    "id": "session-12",
+    "title": "Should college education be free for all students? - Lincoln High School",
+    "topicId": "topic-3-1",
+    "teacherId": "teacher-1",
+    "participants": [
+      {
+        "studentId": "student-116",
+        "position": "con",
+        "preparationTime": 27,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-3",
+        "position": "con",
+        "preparationTime": 42,
+        "participationScore": "3.5"
+      },
+      {
+        "studentId": "student-35",
+        "position": "con",
+        "preparationTime": 17,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-19",
+        "position": "con",
+        "preparationTime": 18,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-73",
+        "position": "pro",
+        "preparationTime": 21,
+        "participationScore": "3.5"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-08-17T20:05:06.848Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-17T20:05:06.848Z"
+  },
+  {
+    "id": "session-13",
+    "title": "Should minimum wage be $15 per hour nationally? - Madison Charter School",
+    "topicId": "topic-4-3",
+    "teacherId": "teacher-13",
+    "participants": [
+      {
+        "studentId": "student-74",
+        "position": "con",
+        "preparationTime": 33,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-43",
+        "position": "pro",
+        "preparationTime": 38,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-28",
+        "position": "pro",
+        "preparationTime": 17,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-52",
+        "position": "pro",
+        "preparationTime": 31,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-51",
+        "position": "pro",
+        "preparationTime": 26,
+        "participationScore": "3.2"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-07-11T22:55:50.394Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-11T22:55:50.394Z"
+  },
+  {
+    "id": "session-14",
+    "title": "Should animals have the same rights as humans? - Roosevelt Middle School",
+    "topicId": "topic-5-2",
+    "teacherId": "teacher-10",
+    "participants": [
+      {
+        "studentId": "student-46",
+        "position": "con",
+        "preparationTime": 37,
+        "participationScore": "3.1"
+      },
+      {
+        "studentId": "student-15",
+        "position": "con",
+        "preparationTime": 36,
+        "participationScore": "3.5"
+      },
+      {
+        "studentId": "student-25",
+        "position": "pro",
+        "preparationTime": 20,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-78",
+        "position": "con",
+        "preparationTime": 28,
+        "participationScore": "3.5"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-09-08T03:43:53.263Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-08T03:43:53.263Z"
+  },
+  {
+    "id": "session-15",
+    "title": "Should there be a universal basic income? - Roosevelt Middle School",
+    "topicId": "topic-4-1",
+    "teacherId": "teacher-2",
+    "participants": [
+      {
+        "studentId": "student-10",
+        "position": "con",
+        "preparationTime": 43,
+        "participationScore": "3.5"
+      },
+      {
+        "studentId": "student-63",
+        "position": "pro",
+        "preparationTime": 35,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-105",
+        "position": "con",
+        "preparationTime": 42,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-36",
+        "position": "con",
+        "preparationTime": 17,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-72",
+        "position": "pro",
+        "preparationTime": 44,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-106",
+        "position": "con",
+        "preparationTime": 19,
+        "participationScore": "3.1"
+      },
+      {
+        "studentId": "student-97",
+        "position": "pro",
+        "preparationTime": 22,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-96",
+        "position": "pro",
+        "preparationTime": 39,
+        "participationScore": "3.6"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-09-01T03:56:01.465Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-01T03:56:01.465Z"
+  },
+  {
+    "id": "session-16",
+    "title": "Is individual action sufficient to address climate change? - Roosevelt Middle School",
+    "topicId": "topic-1-4",
+    "teacherId": "teacher-2",
+    "participants": [
+      {
+        "studentId": "student-5",
+        "position": "pro",
+        "preparationTime": 41,
+        "participationScore": "3.1"
+      },
+      {
+        "studentId": "student-27",
+        "position": "pro",
+        "preparationTime": 34,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-1",
+        "position": "pro",
+        "preparationTime": 36,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-9",
+        "position": "pro",
+        "preparationTime": 28,
+        "participationScore": "4.1"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-08-11T14:53:52.222Z",
+    "actualStartTime": "2025-08-11T14:53:52.222Z",
+    "duration": 59,
+    "outcome": "productive",
+    "metrics": {
+      "engagementLevel": "3.5",
+      "learningOutcome": "4.9",
+      "respectfulnessScore": "4.8",
+      "evidenceQuality": "4.6"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-5",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-27",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-08-11T14:53:52.222Z"
+  },
+  {
+    "id": "session-17",
+    "title": "Should artificial intelligence development be regulated by government? - Jefferson Preparatory",
+    "topicId": "topic-2-1",
+    "teacherId": "teacher-4",
+    "participants": [
+      {
+        "studentId": "student-8",
+        "position": "con",
+        "preparationTime": 32,
+        "participationScore": "3.1"
+      },
+      {
+        "studentId": "student-4",
+        "position": "con",
+        "preparationTime": 28,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-113",
+        "position": "pro",
+        "preparationTime": 21,
+        "participationScore": "5.0"
+      },
+      {
+        "studentId": "student-101",
+        "position": "con",
+        "preparationTime": 40,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-91",
+        "position": "pro",
+        "preparationTime": 23,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-63",
+        "position": "con",
+        "preparationTime": 33,
+        "participationScore": "4.4"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-07-29T18:15:47.879Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-29T18:15:47.879Z"
+  },
+  {
+    "id": "session-18",
+    "title": "Should the voting age be lowered to 16? - Lincoln High School",
+    "topicId": "topic-3-3",
+    "teacherId": "teacher-9",
+    "participants": [
+      {
+        "studentId": "student-55",
+        "position": "pro",
+        "preparationTime": 27,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-110",
+        "position": "pro",
+        "preparationTime": 22,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-83",
+        "position": "pro",
+        "preparationTime": 42,
+        "participationScore": "3.7"
+      },
+      {
+        "studentId": "student-33",
+        "position": "con",
+        "preparationTime": 34,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-68",
+        "position": "pro",
+        "preparationTime": 24,
+        "participationScore": "4.3"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-07-16T04:43:48.393Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-16T04:43:48.393Z"
+  },
+  {
+    "id": "session-19",
+    "title": "Is capitalism the best economic system? - Washington Academy",
+    "topicId": "topic-4-2",
+    "teacherId": "teacher-11",
+    "participants": [
+      {
+        "studentId": "student-13",
+        "position": "pro",
+        "preparationTime": 37,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-95",
+        "position": "pro",
+        "preparationTime": 33,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-66",
+        "position": "pro",
+        "preparationTime": 24,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-62",
+        "position": "con",
+        "preparationTime": 36,
+        "participationScore": "3.6"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-27T15:11:09.266Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-27T15:11:09.266Z"
+  },
+  {
+    "id": "session-20",
+    "title": "Is social media harmful to democracy? - Washington Academy",
+    "topicId": "topic-2-2",
+    "teacherId": "teacher-3",
+    "participants": [
+      {
+        "studentId": "student-115",
+        "position": "pro",
+        "preparationTime": 27,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-62",
+        "position": "pro",
+        "preparationTime": 16,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-102",
+        "position": "con",
+        "preparationTime": 36,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-11",
+        "position": "pro",
+        "preparationTime": 34,
+        "participationScore": "4.3"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-09T16:00:55.539Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-09T16:00:55.539Z"
+  },
+  {
+    "id": "session-21",
+    "title": "Should college education be free for all students? - Franklin High School",
+    "topicId": "topic-3-1",
+    "teacherId": "teacher-15",
+    "participants": [
+      {
+        "studentId": "student-74",
+        "position": "pro",
+        "preparationTime": 18,
+        "participationScore": "3.7"
+      },
+      {
+        "studentId": "student-29",
+        "position": "con",
+        "preparationTime": 24,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-60",
+        "position": "pro",
+        "preparationTime": 17,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-17",
+        "position": "pro",
+        "preparationTime": 26,
+        "participationScore": "4.3"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-07-27T12:58:16.336Z",
+    "actualStartTime": "2025-07-27T12:58:16.336Z",
+    "duration": 51,
+    "outcome": "educational",
+    "metrics": {
+      "engagementLevel": "3.5",
+      "learningOutcome": "4.2",
+      "respectfulnessScore": "3.9",
+      "evidenceQuality": "3.0"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-74",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-29",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-07-27T12:58:16.336Z"
+  },
+  {
+    "id": "session-22",
+    "title": "Is genetic engineering ethical? - Lincoln High School",
+    "topicId": "topic-6-4",
+    "teacherId": "teacher-1",
+    "participants": [
+      {
+        "studentId": "student-78",
+        "position": "pro",
+        "preparationTime": 35,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-94",
+        "position": "pro",
+        "preparationTime": 30,
+        "participationScore": "4.9"
+      },
+      {
+        "studentId": "student-118",
+        "position": "con",
+        "preparationTime": 31,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-25",
+        "position": "con",
+        "preparationTime": 18,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-81",
+        "position": "pro",
+        "preparationTime": 20,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-115",
+        "position": "pro",
+        "preparationTime": 29,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-40",
+        "position": "con",
+        "preparationTime": 18,
+        "participationScore": "4.4"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-09-06T07:11:52.864Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-06T07:11:52.864Z"
+  },
+  {
+    "id": "session-23",
+    "title": "Should college education be free for all students? - Madison Charter School",
+    "topicId": "topic-3-1",
+    "teacherId": "teacher-5",
+    "participants": [
+      {
+        "studentId": "student-1",
+        "position": "pro",
+        "preparationTime": 24,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-69",
+        "position": "con",
+        "preparationTime": 37,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-71",
+        "position": "con",
+        "preparationTime": 23,
+        "participationScore": "5.0"
+      },
+      {
+        "studentId": "student-95",
+        "position": "con",
+        "preparationTime": 35,
+        "participationScore": "4.2"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-09-07T16:44:02.443Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-07T16:44:02.443Z"
+  },
+  {
+    "id": "session-24",
+    "title": "Should plastic bags be banned worldwide? - Madison Charter School",
+    "topicId": "topic-1-3",
+    "teacherId": "teacher-5",
+    "participants": [
+      {
+        "studentId": "student-24",
+        "position": "pro",
+        "preparationTime": 27,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-83",
+        "position": "con",
+        "preparationTime": 41,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-84",
+        "position": "con",
+        "preparationTime": 27,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-29",
+        "position": "con",
+        "preparationTime": 17,
+        "participationScore": "4.1"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-26T03:53:50.607Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-26T03:53:50.607Z"
+  },
+  {
+    "id": "session-25",
+    "title": "Is remote work better than office work? - Franklin High School",
+    "topicId": "topic-3-4",
+    "teacherId": "teacher-7",
+    "participants": [
+      {
+        "studentId": "student-38",
+        "position": "pro",
+        "preparationTime": 24,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-92",
+        "position": "pro",
+        "preparationTime": 40,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-52",
+        "position": "pro",
+        "preparationTime": 28,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-41",
+        "position": "con",
+        "preparationTime": 43,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-85",
+        "position": "pro",
+        "preparationTime": 15,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-59",
+        "position": "con",
+        "preparationTime": 24,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-23",
+        "position": "pro",
+        "preparationTime": 28,
+        "participationScore": "3.3"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-09-06T03:32:25.133Z",
+    "actualStartTime": "2025-09-06T03:32:25.133Z",
+    "duration": 48,
+    "outcome": "heated",
+    "metrics": {
+      "engagementLevel": "3.5",
+      "learningOutcome": "3.5",
+      "respectfulnessScore": "4.3",
+      "evidenceQuality": "3.1"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-38",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-92",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-09-06T03:32:25.133Z"
+  },
+  {
+    "id": "session-26",
+    "title": "Is social media harmful to democracy? - Roosevelt Middle School",
+    "topicId": "topic-2-2",
+    "teacherId": "teacher-2",
+    "participants": [
+      {
+        "studentId": "student-51",
+        "position": "pro",
+        "preparationTime": 30,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-41",
+        "position": "pro",
+        "preparationTime": 29,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-29",
+        "position": "con",
+        "preparationTime": 22,
+        "participationScore": "3.7"
+      },
+      {
+        "studentId": "student-55",
+        "position": "pro",
+        "preparationTime": 28,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-59",
+        "position": "pro",
+        "preparationTime": 19,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-53",
+        "position": "pro",
+        "preparationTime": 29,
+        "participationScore": "3.4"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-09-06T06:11:39.282Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-06T06:11:39.282Z"
+  },
+  {
+    "id": "session-27",
+    "title": "Is genetic engineering ethical? - Hamilton Institute",
+    "topicId": "topic-6-4",
+    "teacherId": "teacher-6",
+    "participants": [
+      {
+        "studentId": "student-109",
+        "position": "pro",
+        "preparationTime": 27,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-43",
+        "position": "pro",
+        "preparationTime": 27,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-112",
+        "position": "con",
+        "preparationTime": 26,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-22",
+        "position": "pro",
+        "preparationTime": 19,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-66",
+        "position": "pro",
+        "preparationTime": 15,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-110",
+        "position": "pro",
+        "preparationTime": 34,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-13",
+        "position": "pro",
+        "preparationTime": 22,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-76",
+        "position": "pro",
+        "preparationTime": 37,
+        "participationScore": "3.9"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-08-27T02:30:30.561Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-27T02:30:30.561Z"
+  },
+  {
+    "id": "session-28",
+    "title": "Is genetic engineering ethical? - Franklin High School",
+    "topicId": "topic-6-4",
+    "teacherId": "teacher-15",
+    "participants": [
+      {
+        "studentId": "student-47",
+        "position": "con",
+        "preparationTime": 44,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-120",
+        "position": "pro",
+        "preparationTime": 34,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-107",
+        "position": "con",
+        "preparationTime": 21,
+        "participationScore": "3.7"
+      },
+      {
+        "studentId": "student-23",
+        "position": "pro",
+        "preparationTime": 43,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-19",
+        "position": "con",
+        "preparationTime": 35,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-69",
+        "position": "pro",
+        "preparationTime": 30,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-61",
+        "position": "con",
+        "preparationTime": 35,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-59",
+        "position": "pro",
+        "preparationTime": 32,
+        "participationScore": "4.0"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-09-05T14:51:51.203Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-05T14:51:51.203Z"
+  },
+  {
+    "id": "session-29",
+    "title": "Is it ethical to eat meat? - Jefferson Preparatory",
+    "topicId": "topic-5-3",
+    "teacherId": "teacher-12",
+    "participants": [
+      {
+        "studentId": "student-39",
+        "position": "pro",
+        "preparationTime": 24,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-4",
+        "position": "pro",
+        "preparationTime": 41,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-23",
+        "position": "con",
+        "preparationTime": 36,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-10",
+        "position": "pro",
+        "preparationTime": 29,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-75",
+        "position": "con",
+        "preparationTime": 33,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-82",
+        "position": "pro",
+        "preparationTime": 15,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-51",
+        "position": "pro",
+        "preparationTime": 22,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-83",
+        "position": "pro",
+        "preparationTime": 23,
+        "participationScore": "3.7"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-07-31T05:55:08.400Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-31T05:55:08.400Z"
+  },
+  {
+    "id": "session-30",
+    "title": "Should there be a universal basic income? - Franklin High School",
+    "topicId": "topic-4-1",
+    "teacherId": "teacher-7",
+    "participants": [
+      {
+        "studentId": "student-15",
+        "position": "con",
+        "preparationTime": 20,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-4",
+        "position": "con",
+        "preparationTime": 39,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-99",
+        "position": "con",
+        "preparationTime": 23,
+        "participationScore": "3.5"
+      },
+      {
+        "studentId": "student-48",
+        "position": "pro",
+        "preparationTime": 19,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-119",
+        "position": "con",
+        "preparationTime": 24,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-5",
+        "position": "pro",
+        "preparationTime": 40,
+        "participationScore": "3.0"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-07-26T16:58:45.449Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-26T16:58:45.449Z"
+  },
+  {
+    "id": "session-31",
+    "title": "Should junk food be taxed like cigarettes? - Franklin High School",
+    "topicId": "topic-6-3",
+    "teacherId": "teacher-7",
+    "participants": [
+      {
+        "studentId": "student-49",
+        "position": "pro",
+        "preparationTime": 39,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-92",
+        "position": "pro",
+        "preparationTime": 23,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-9",
+        "position": "con",
+        "preparationTime": 30,
+        "participationScore": "5.0"
+      },
+      {
+        "studentId": "student-22",
+        "position": "con",
+        "preparationTime": 32,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-2",
+        "position": "pro",
+        "preparationTime": 43,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-31",
+        "position": "pro",
+        "preparationTime": 27,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-74",
+        "position": "con",
+        "preparationTime": 26,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-94",
+        "position": "con",
+        "preparationTime": 41,
+        "participationScore": "3.5"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-07-14T19:29:26.608Z",
+    "actualStartTime": "2025-07-14T19:29:26.608Z",
+    "duration": 54,
+    "outcome": "heated",
+    "metrics": {
+      "engagementLevel": "4.2",
+      "learningOutcome": "3.8",
+      "respectfulnessScore": "4.4",
+      "evidenceQuality": "3.7"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-49",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-92",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-07-14T19:29:26.608Z"
+  },
+  {
+    "id": "session-32",
+    "title": "Is capitalism the best economic system? - Washington Academy",
+    "topicId": "topic-4-2",
+    "teacherId": "teacher-11",
+    "participants": [
+      {
+        "studentId": "student-69",
+        "position": "con",
+        "preparationTime": 28,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-13",
+        "position": "con",
+        "preparationTime": 41,
+        "participationScore": "3.5"
+      },
+      {
+        "studentId": "student-87",
+        "position": "pro",
+        "preparationTime": 24,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-35",
+        "position": "con",
+        "preparationTime": 22,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-114",
+        "position": "pro",
+        "preparationTime": 42,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-48",
+        "position": "pro",
+        "preparationTime": 18,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-7",
+        "position": "pro",
+        "preparationTime": 44,
+        "participationScore": "3.1"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-07-30T11:59:31.159Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-30T11:59:31.159Z"
+  },
+  {
+    "id": "session-33",
+    "title": "Should schools replace textbooks with tablets? - Madison Charter School",
+    "topicId": "topic-2-3",
+    "teacherId": "teacher-5",
+    "participants": [
+      {
+        "studentId": "student-79",
+        "position": "con",
+        "preparationTime": 42,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-63",
+        "position": "con",
+        "preparationTime": 32,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-70",
+        "position": "con",
+        "preparationTime": 25,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-72",
+        "position": "con",
+        "preparationTime": 16,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-75",
+        "position": "pro",
+        "preparationTime": 42,
+        "participationScore": "4.9"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-23T02:23:18.445Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-23T02:23:18.445Z"
+  },
+  {
+    "id": "session-34",
+    "title": "Should healthcare be a human right? - Roosevelt Middle School",
+    "topicId": "topic-6-1",
+    "teacherId": "teacher-2",
+    "participants": [
+      {
+        "studentId": "student-39",
+        "position": "pro",
+        "preparationTime": 39,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-77",
+        "position": "pro",
+        "preparationTime": 26,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-106",
+        "position": "pro",
+        "preparationTime": 22,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-16",
+        "position": "con",
+        "preparationTime": 40,
+        "participationScore": "5.0"
+      },
+      {
+        "studentId": "student-113",
+        "position": "pro",
+        "preparationTime": 37,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-47",
+        "position": "pro",
+        "preparationTime": 37,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-49",
+        "position": "pro",
+        "preparationTime": 18,
+        "participationScore": "5.0"
+      },
+      {
+        "studentId": "student-109",
+        "position": "con",
+        "preparationTime": 20,
+        "participationScore": "3.9"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-09-04T03:11:29.406Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-04T03:11:29.406Z"
+  },
+  {
+    "id": "session-35",
+    "title": "Should schools replace textbooks with tablets? - Adams Middle School",
+    "topicId": "topic-2-3",
+    "teacherId": "teacher-16",
+    "participants": [
+      {
+        "studentId": "student-24",
+        "position": "con",
+        "preparationTime": 42,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-105",
+        "position": "con",
+        "preparationTime": 33,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-89",
+        "position": "pro",
+        "preparationTime": 30,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-108",
+        "position": "pro",
+        "preparationTime": 21,
+        "participationScore": "3.5"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-02T16:15:25.177Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-02T16:15:25.177Z"
+  },
+  {
+    "id": "session-36",
+    "title": "Is it ethical to eat meat? - Jefferson Preparatory",
+    "topicId": "topic-5-3",
+    "teacherId": "teacher-20",
+    "participants": [
+      {
+        "studentId": "student-114",
+        "position": "pro",
+        "preparationTime": 34,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-100",
+        "position": "pro",
+        "preparationTime": 29,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-3",
+        "position": "pro",
+        "preparationTime": 18,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-96",
+        "position": "pro",
+        "preparationTime": 28,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-107",
+        "position": "pro",
+        "preparationTime": 29,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-10",
+        "position": "con",
+        "preparationTime": 41,
+        "participationScore": "3.5"
+      },
+      {
+        "studentId": "student-111",
+        "position": "con",
+        "preparationTime": 22,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-110",
+        "position": "pro",
+        "preparationTime": 44,
+        "participationScore": "4.3"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-07-13T14:15:36.630Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-13T14:15:36.630Z"
+  },
+  {
+    "id": "session-37",
+    "title": "Is remote work better than office work? - Washington Academy",
+    "topicId": "topic-3-4",
+    "teacherId": "teacher-11",
+    "participants": [
+      {
+        "studentId": "student-100",
+        "position": "con",
+        "preparationTime": 42,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-62",
+        "position": "con",
+        "preparationTime": 23,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-87",
+        "position": "con",
+        "preparationTime": 38,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-47",
+        "position": "con",
+        "preparationTime": 23,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-79",
+        "position": "pro",
+        "preparationTime": 35,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-24",
+        "position": "con",
+        "preparationTime": 20,
+        "participationScore": "4.6"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-07-24T03:51:06.689Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-24T03:51:06.689Z"
+  },
+  {
+    "id": "session-38",
+    "title": "Should plastic bags be banned worldwide? - Hamilton Institute",
+    "topicId": "topic-1-3",
+    "teacherId": "teacher-14",
+    "participants": [
+      {
+        "studentId": "student-48",
+        "position": "con",
+        "preparationTime": 29,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-77",
+        "position": "pro",
+        "preparationTime": 33,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-103",
+        "position": "pro",
+        "preparationTime": 18,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-21",
+        "position": "con",
+        "preparationTime": 34,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-37",
+        "position": "pro",
+        "preparationTime": 21,
+        "participationScore": "4.6"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-17T13:03:58.752Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-17T13:03:58.752Z"
+  },
+  {
+    "id": "session-39",
+    "title": "Is mental health as important as physical health? - Jefferson Preparatory",
+    "topicId": "topic-6-2",
+    "teacherId": "teacher-4",
+    "participants": [
+      {
+        "studentId": "student-103",
+        "position": "pro",
+        "preparationTime": 38,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-77",
+        "position": "con",
+        "preparationTime": 35,
+        "participationScore": "3.1"
+      },
+      {
+        "studentId": "student-116",
+        "position": "con",
+        "preparationTime": 22,
+        "participationScore": "3.7"
+      },
+      {
+        "studentId": "student-83",
+        "position": "pro",
+        "preparationTime": 28,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-110",
+        "position": "con",
+        "preparationTime": 25,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-63",
+        "position": "pro",
+        "preparationTime": 40,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-41",
+        "position": "pro",
+        "preparationTime": 15,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-68",
+        "position": "con",
+        "preparationTime": 34,
+        "participationScore": "4.3"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-08-30T04:48:51.408Z",
+    "actualStartTime": "2025-08-30T04:48:51.408Z",
+    "duration": 38,
+    "outcome": "heated",
+    "metrics": {
+      "engagementLevel": "4.6",
+      "learningOutcome": "4.3",
+      "respectfulnessScore": "4.3",
+      "evidenceQuality": "4.3"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-103",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-77",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-08-30T04:48:51.408Z"
+  },
+  {
+    "id": "session-40",
+    "title": "Should parents monitor their children's internet activity? - Roosevelt Middle School",
+    "topicId": "topic-5-4",
+    "teacherId": "teacher-18",
+    "participants": [
+      {
+        "studentId": "student-85",
+        "position": "con",
+        "preparationTime": 26,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-103",
+        "position": "con",
+        "preparationTime": 21,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-67",
+        "position": "pro",
+        "preparationTime": 18,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-90",
+        "position": "pro",
+        "preparationTime": 25,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-64",
+        "position": "pro",
+        "preparationTime": 33,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-12",
+        "position": "pro",
+        "preparationTime": 21,
+        "participationScore": "3.9"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-14T15:48:34.406Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-14T15:48:34.406Z"
+  },
+  {
+    "id": "session-41",
+    "title": "Should healthcare be a human right? - Franklin High School",
+    "topicId": "topic-6-1",
+    "teacherId": "teacher-15",
+    "participants": [
+      {
+        "studentId": "student-103",
+        "position": "pro",
+        "preparationTime": 28,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-87",
+        "position": "con",
+        "preparationTime": 43,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-17",
+        "position": "con",
+        "preparationTime": 22,
+        "participationScore": "3.1"
+      },
+      {
+        "studentId": "student-42",
+        "position": "con",
+        "preparationTime": 44,
+        "participationScore": "3.6"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-07-28T17:58:25.541Z",
+    "actualStartTime": "2025-07-28T17:58:25.541Z",
+    "duration": 49,
+    "outcome": "heated",
+    "metrics": {
+      "engagementLevel": "4.0",
+      "learningOutcome": "4.4",
+      "respectfulnessScore": "5.0",
+      "evidenceQuality": "3.2"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-103",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-87",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-07-28T17:58:25.541Z"
+  },
+  {
+    "id": "session-42",
+    "title": "Should parents monitor their children's internet activity? - Madison Charter School",
+    "topicId": "topic-5-4",
+    "teacherId": "teacher-13",
+    "participants": [
+      {
+        "studentId": "student-56",
+        "position": "con",
+        "preparationTime": 23,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-96",
+        "position": "pro",
+        "preparationTime": 40,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-8",
+        "position": "pro",
+        "preparationTime": 43,
+        "participationScore": "3.7"
+      },
+      {
+        "studentId": "student-67",
+        "position": "con",
+        "preparationTime": 35,
+        "participationScore": "3.7"
+      },
+      {
+        "studentId": "student-41",
+        "position": "con",
+        "preparationTime": 31,
+        "participationScore": "4.3"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-08-09T15:05:26.454Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-09T15:05:26.454Z"
+  },
+  {
+    "id": "session-43",
+    "title": "Should college education be free for all students? - Franklin High School",
+    "topicId": "topic-3-1",
+    "teacherId": "teacher-7",
+    "participants": [
+      {
+        "studentId": "student-3",
+        "position": "pro",
+        "preparationTime": 16,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-67",
+        "position": "pro",
+        "preparationTime": 23,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-19",
+        "position": "con",
+        "preparationTime": 21,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-88",
+        "position": "con",
+        "preparationTime": 42,
+        "participationScore": "3.1"
+      },
+      {
+        "studentId": "student-82",
+        "position": "con",
+        "preparationTime": 33,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-9",
+        "position": "pro",
+        "preparationTime": 31,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-74",
+        "position": "con",
+        "preparationTime": 34,
+        "participationScore": "4.4"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-08-07T16:32:23.795Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-07T16:32:23.795Z"
+  },
+  {
+    "id": "session-44",
+    "title": "Should governments prioritize economic growth over environmental protection? - Washington Academy",
+    "topicId": "topic-1-1",
+    "teacherId": "teacher-19",
+    "participants": [
+      {
+        "studentId": "student-97",
+        "position": "pro",
+        "preparationTime": 34,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-103",
+        "position": "pro",
+        "preparationTime": 42,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-30",
+        "position": "pro",
+        "preparationTime": 41,
+        "participationScore": "4.1"
+      },
+      {
+        "studentId": "student-3",
+        "position": "pro",
+        "preparationTime": 25,
+        "participationScore": "3.4"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-07-30T09:44:14.424Z",
+    "actualStartTime": "2025-07-30T09:44:14.424Z",
+    "duration": 38,
+    "outcome": "educational",
+    "metrics": {
+      "engagementLevel": "3.8",
+      "learningOutcome": "3.1",
+      "respectfulnessScore": "4.7",
+      "evidenceQuality": "4.8"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-97",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-103",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-07-30T09:44:14.424Z"
+  },
+  {
+    "id": "session-45",
+    "title": "Should minimum wage be $15 per hour nationally? - Roosevelt Middle School",
+    "topicId": "topic-4-3",
+    "teacherId": "teacher-18",
+    "participants": [
+      {
+        "studentId": "student-35",
+        "position": "pro",
+        "preparationTime": 16,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-67",
+        "position": "con",
+        "preparationTime": 29,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-103",
+        "position": "pro",
+        "preparationTime": 36,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-17",
+        "position": "con",
+        "preparationTime": 38,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-106",
+        "position": "pro",
+        "preparationTime": 34,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-50",
+        "position": "con",
+        "preparationTime": 17,
+        "participationScore": "4.6"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-07-20T02:51:38.133Z",
+    "actualStartTime": "2025-07-20T02:51:38.133Z",
+    "duration": 42,
+    "outcome": "heated",
+    "metrics": {
+      "engagementLevel": "3.1",
+      "learningOutcome": "4.7",
+      "respectfulnessScore": "3.9",
+      "evidenceQuality": "3.7"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-35",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-67",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-07-20T02:51:38.133Z"
+  },
+  {
+    "id": "session-46",
+    "title": "Is remote work better than office work? - Hamilton Institute",
+    "topicId": "topic-3-4",
+    "teacherId": "teacher-6",
+    "participants": [
+      {
+        "studentId": "student-116",
+        "position": "pro",
+        "preparationTime": 37,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-110",
+        "position": "con",
+        "preparationTime": 28,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-62",
+        "position": "pro",
+        "preparationTime": 20,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-37",
+        "position": "con",
+        "preparationTime": 33,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-66",
+        "position": "con",
+        "preparationTime": 42,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-105",
+        "position": "pro",
+        "preparationTime": 40,
+        "participationScore": "4.9"
+      },
+      {
+        "studentId": "student-46",
+        "position": "pro",
+        "preparationTime": 17,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-117",
+        "position": "pro",
+        "preparationTime": 30,
+        "participationScore": "4.4"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-08-03T11:50:23.794Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-03T11:50:23.794Z"
+  },
+  {
+    "id": "session-47",
+    "title": "Is standardized testing an effective measure of student ability? - Madison Charter School",
+    "topicId": "topic-3-2",
+    "teacherId": "teacher-13",
+    "participants": [
+      {
+        "studentId": "student-96",
+        "position": "pro",
+        "preparationTime": 40,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-21",
+        "position": "pro",
+        "preparationTime": 20,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-27",
+        "position": "con",
+        "preparationTime": 35,
+        "participationScore": "3.5"
+      },
+      {
+        "studentId": "student-115",
+        "position": "con",
+        "preparationTime": 29,
+        "participationScore": "5.0"
+      },
+      {
+        "studentId": "student-53",
+        "position": "pro",
+        "preparationTime": 24,
+        "participationScore": "3.5"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-08-18T18:42:17.024Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-18T18:42:17.024Z"
+  },
+  {
+    "id": "session-48",
+    "title": "Is capitalism the best economic system? - Jefferson Preparatory",
+    "topicId": "topic-4-2",
+    "teacherId": "teacher-20",
+    "participants": [
+      {
+        "studentId": "student-5",
+        "position": "pro",
+        "preparationTime": 29,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-16",
+        "position": "pro",
+        "preparationTime": 38,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-36",
+        "position": "pro",
+        "preparationTime": 28,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-21",
+        "position": "pro",
+        "preparationTime": 38,
+        "participationScore": "3.7"
+      },
+      {
+        "studentId": "student-76",
+        "position": "con",
+        "preparationTime": 19,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-115",
+        "position": "pro",
+        "preparationTime": 36,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-71",
+        "position": "pro",
+        "preparationTime": 16,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-103",
+        "position": "pro",
+        "preparationTime": 32,
+        "participationScore": "4.4"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-09-03T12:04:38.495Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-03T12:04:38.495Z"
+  },
+  {
+    "id": "session-49",
+    "title": "Should plastic bags be banned worldwide? - Lincoln High School",
+    "topicId": "topic-1-3",
+    "teacherId": "teacher-17",
+    "participants": [
+      {
+        "studentId": "student-97",
+        "position": "con",
+        "preparationTime": 33,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-96",
+        "position": "pro",
+        "preparationTime": 37,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-114",
+        "position": "pro",
+        "preparationTime": 37,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-106",
+        "position": "con",
+        "preparationTime": 31,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-45",
+        "position": "con",
+        "preparationTime": 38,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-93",
+        "position": "con",
+        "preparationTime": 22,
+        "participationScore": "3.7"
+      },
+      {
+        "studentId": "student-107",
+        "position": "con",
+        "preparationTime": 33,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-100",
+        "position": "pro",
+        "preparationTime": 23,
+        "participationScore": "4.3"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-08-27T06:58:50.495Z",
+    "actualStartTime": "2025-08-27T06:58:50.495Z",
+    "duration": 49,
+    "outcome": "productive",
+    "metrics": {
+      "engagementLevel": "3.2",
+      "learningOutcome": "3.3",
+      "respectfulnessScore": "4.2",
+      "evidenceQuality": "3.4"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-97",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-96",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-08-27T06:58:50.495Z"
+  },
+  {
+    "id": "session-50",
+    "title": "Is remote work better than office work? - Jefferson Preparatory",
+    "topicId": "topic-3-4",
+    "teacherId": "teacher-4",
+    "participants": [
+      {
+        "studentId": "student-18",
+        "position": "pro",
+        "preparationTime": 43,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-97",
+        "position": "con",
+        "preparationTime": 22,
+        "participationScore": "5.0"
+      },
+      {
+        "studentId": "student-28",
+        "position": "pro",
+        "preparationTime": 20,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-42",
+        "position": "con",
+        "preparationTime": 22,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-25",
+        "position": "con",
+        "preparationTime": 38,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-102",
+        "position": "con",
+        "preparationTime": 44,
+        "participationScore": "3.0"
+      },
+      {
+        "studentId": "student-50",
+        "position": "con",
+        "preparationTime": 19,
+        "participationScore": "3.1"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-08-31T09:26:29.805Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-31T09:26:29.805Z"
+  },
+  {
+    "id": "session-51",
+    "title": "Should there be a universal basic income? - Adams Middle School",
+    "topicId": "topic-4-1",
+    "teacherId": "teacher-16",
+    "participants": [
+      {
+        "studentId": "student-113",
+        "position": "pro",
+        "preparationTime": 21,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-120",
+        "position": "pro",
+        "preparationTime": 42,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-36",
+        "position": "con",
+        "preparationTime": 37,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-102",
+        "position": "pro",
+        "preparationTime": 35,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-28",
+        "position": "con",
+        "preparationTime": 18,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-61",
+        "position": "con",
+        "preparationTime": 40,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-40",
+        "position": "pro",
+        "preparationTime": 42,
+        "participationScore": "3.9"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-07-28T02:19:25.046Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-28T02:19:25.046Z"
+  },
+  {
+    "id": "session-52",
+    "title": "Is it ever acceptable to lie? - Washington Academy",
+    "topicId": "topic-5-1",
+    "teacherId": "teacher-19",
+    "participants": [
+      {
+        "studentId": "student-100",
+        "position": "pro",
+        "preparationTime": 15,
+        "participationScore": "3.7"
+      },
+      {
+        "studentId": "student-64",
+        "position": "con",
+        "preparationTime": 24,
+        "participationScore": "5.0"
+      },
+      {
+        "studentId": "student-39",
+        "position": "pro",
+        "preparationTime": 18,
+        "participationScore": "5.0"
+      },
+      {
+        "studentId": "student-37",
+        "position": "con",
+        "preparationTime": 26,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-16",
+        "position": "con",
+        "preparationTime": 30,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-13",
+        "position": "pro",
+        "preparationTime": 29,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-12",
+        "position": "con",
+        "preparationTime": 31,
+        "participationScore": "4.3"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-09-04T13:28:29.252Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-04T13:28:29.252Z"
+  },
+  {
+    "id": "session-53",
+    "title": "Is genetic engineering ethical? - Adams Middle School",
+    "topicId": "topic-6-4",
+    "teacherId": "teacher-8",
+    "participants": [
+      {
+        "studentId": "student-76",
+        "position": "con",
+        "preparationTime": 33,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-50",
+        "position": "pro",
+        "preparationTime": 42,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-77",
+        "position": "pro",
+        "preparationTime": 28,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-87",
+        "position": "pro",
+        "preparationTime": 28,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-107",
+        "position": "con",
+        "preparationTime": 21,
+        "participationScore": "4.3"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-08-22T20:32:35.062Z",
+    "actualStartTime": "2025-08-22T20:32:35.062Z",
+    "duration": 43,
+    "outcome": "productive",
+    "metrics": {
+      "engagementLevel": "4.1",
+      "learningOutcome": "4.0",
+      "respectfulnessScore": "4.9",
+      "evidenceQuality": "3.8"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-76",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-50",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-08-22T20:32:35.062Z"
+  },
+  {
+    "id": "session-54",
+    "title": "Should healthcare be a human right? - Hamilton Institute",
+    "topicId": "topic-6-1",
+    "teacherId": "teacher-6",
+    "participants": [
+      {
+        "studentId": "student-50",
+        "position": "pro",
+        "preparationTime": 33,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-109",
+        "position": "con",
+        "preparationTime": 43,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-119",
+        "position": "con",
+        "preparationTime": 27,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-65",
+        "position": "pro",
+        "preparationTime": 35,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-31",
+        "position": "con",
+        "preparationTime": 22,
+        "participationScore": "4.1"
+      }
+    ],
+    "status": "in-progress",
+    "scheduledDate": "2025-07-24T07:17:07.128Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-24T07:17:07.128Z"
+  },
+  {
+    "id": "session-55",
+    "title": "Is genetic engineering ethical? - Franklin High School",
+    "topicId": "topic-6-4",
+    "teacherId": "teacher-15",
+    "participants": [
+      {
+        "studentId": "student-83",
+        "position": "pro",
+        "preparationTime": 37,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-57",
+        "position": "pro",
+        "preparationTime": 28,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-84",
+        "position": "pro",
+        "preparationTime": 26,
+        "participationScore": "4.7"
+      },
+      {
+        "studentId": "student-18",
+        "position": "pro",
+        "preparationTime": 39,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-112",
+        "position": "pro",
+        "preparationTime": 25,
+        "participationScore": "3.2"
+      },
+      {
+        "studentId": "student-117",
+        "position": "con",
+        "preparationTime": 38,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-87",
+        "position": "pro",
+        "preparationTime": 43,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-21",
+        "position": "pro",
+        "preparationTime": 42,
+        "participationScore": "4.0"
+      }
+    ],
+    "status": "scheduled",
+    "scheduledDate": "2025-08-27T06:32:46.599Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-08-27T06:32:46.599Z"
+  },
+  {
+    "id": "session-56",
+    "title": "Should minimum wage be $15 per hour nationally? - Hamilton Institute",
+    "topicId": "topic-4-3",
+    "teacherId": "teacher-6",
+    "participants": [
+      {
+        "studentId": "student-112",
+        "position": "pro",
+        "preparationTime": 22,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-52",
+        "position": "con",
+        "preparationTime": 23,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-44",
+        "position": "pro",
+        "preparationTime": 18,
+        "participationScore": "4.0"
+      },
+      {
+        "studentId": "student-31",
+        "position": "pro",
+        "preparationTime": 29,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-51",
+        "position": "con",
+        "preparationTime": 21,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-70",
+        "position": "con",
+        "preparationTime": 40,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-1",
+        "position": "pro",
+        "preparationTime": 36,
+        "participationScore": "3.6"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-07-29T05:35:17.897Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-07-29T05:35:17.897Z"
+  },
+  {
+    "id": "session-57",
+    "title": "Are cryptocurrencies the future of money? - Washington Academy",
+    "topicId": "topic-4-4",
+    "teacherId": "teacher-11",
+    "participants": [
+      {
+        "studentId": "student-1",
+        "position": "pro",
+        "preparationTime": 17,
+        "participationScore": "4.9"
+      },
+      {
+        "studentId": "student-56",
+        "position": "con",
+        "preparationTime": 31,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-76",
+        "position": "con",
+        "preparationTime": 16,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-12",
+        "position": "pro",
+        "preparationTime": 38,
+        "participationScore": "4.5"
+      },
+      {
+        "studentId": "student-106",
+        "position": "con",
+        "preparationTime": 43,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-35",
+        "position": "pro",
+        "preparationTime": 42,
+        "participationScore": "4.2"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-08-02T13:12:31.555Z",
+    "actualStartTime": "2025-08-02T13:12:31.555Z",
+    "duration": 35,
+    "outcome": "productive",
+    "metrics": {
+      "engagementLevel": "3.9",
+      "learningOutcome": "3.4",
+      "respectfulnessScore": "4.4",
+      "evidenceQuality": "3.1"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-1",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-56",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-08-02T13:12:31.555Z"
+  },
+  {
+    "id": "session-58",
+    "title": "Should governments prioritize economic growth over environmental protection? - Roosevelt Middle School",
+    "topicId": "topic-1-1",
+    "teacherId": "teacher-18",
+    "participants": [
+      {
+        "studentId": "student-22",
+        "position": "pro",
+        "preparationTime": 29,
+        "participationScore": "3.1"
+      },
+      {
+        "studentId": "student-5",
+        "position": "pro",
+        "preparationTime": 22,
+        "participationScore": "3.4"
+      },
+      {
+        "studentId": "student-105",
+        "position": "con",
+        "preparationTime": 19,
+        "participationScore": "3.1"
+      },
+      {
+        "studentId": "student-24",
+        "position": "con",
+        "preparationTime": 21,
+        "participationScore": "4.3"
+      },
+      {
+        "studentId": "student-110",
+        "position": "pro",
+        "preparationTime": 20,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-36",
+        "position": "con",
+        "preparationTime": 31,
+        "participationScore": "4.8"
+      },
+      {
+        "studentId": "student-31",
+        "position": "pro",
+        "preparationTime": 25,
+        "participationScore": "5.0"
+      },
+      {
+        "studentId": "student-40",
+        "position": "con",
+        "preparationTime": 18,
+        "participationScore": "4.7"
+      }
+    ],
+    "status": "cancelled",
+    "scheduledDate": "2025-09-09T01:35:30.122Z",
+    "actualStartTime": null,
+    "duration": null,
+    "outcome": null,
+    "metrics": null,
+    "feedback": null,
+    "createdDate": "2025-09-09T01:35:30.122Z"
+  },
+  {
+    "id": "session-59",
+    "title": "Is it ethical to eat meat? - Roosevelt Middle School",
+    "topicId": "topic-5-3",
+    "teacherId": "teacher-2",
+    "participants": [
+      {
+        "studentId": "student-110",
+        "position": "con",
+        "preparationTime": 42,
+        "participationScore": "4.6"
+      },
+      {
+        "studentId": "student-26",
+        "position": "con",
+        "preparationTime": 18,
+        "participationScore": "4.4"
+      },
+      {
+        "studentId": "student-111",
+        "position": "pro",
+        "preparationTime": 41,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-36",
+        "position": "con",
+        "preparationTime": 44,
+        "participationScore": "3.8"
+      },
+      {
+        "studentId": "student-114",
+        "position": "con",
+        "preparationTime": 29,
+        "participationScore": "3.7"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-07-19T16:01:16.976Z",
+    "actualStartTime": "2025-07-19T16:01:16.976Z",
+    "duration": 48,
+    "outcome": "challenging",
+    "metrics": {
+      "engagementLevel": "4.4",
+      "learningOutcome": "4.4",
+      "respectfulnessScore": "4.4",
+      "evidenceQuality": "3.0"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-110",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-26",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-07-19T16:01:16.976Z"
+  },
+  {
+    "id": "session-60",
+    "title": "Should animals have the same rights as humans? - Jefferson Preparatory",
+    "topicId": "topic-5-2",
+    "teacherId": "teacher-4",
+    "participants": [
+      {
+        "studentId": "student-117",
+        "position": "con",
+        "preparationTime": 24,
+        "participationScore": "3.3"
+      },
+      {
+        "studentId": "student-84",
+        "position": "pro",
+        "preparationTime": 37,
+        "participationScore": "3.6"
+      },
+      {
+        "studentId": "student-88",
+        "position": "pro",
+        "preparationTime": 16,
+        "participationScore": "3.5"
+      },
+      {
+        "studentId": "student-66",
+        "position": "con",
+        "preparationTime": 21,
+        "participationScore": "4.2"
+      },
+      {
+        "studentId": "student-29",
+        "position": "con",
+        "preparationTime": 21,
+        "participationScore": "3.9"
+      },
+      {
+        "studentId": "student-36",
+        "position": "con",
+        "preparationTime": 35,
+        "participationScore": "3.3"
+      }
+    ],
+    "status": "completed",
+    "scheduledDate": "2025-07-24T22:18:55.862Z",
+    "actualStartTime": "2025-07-24T22:18:55.862Z",
+    "duration": 48,
+    "outcome": "insightful",
+    "metrics": {
+      "engagementLevel": "4.1",
+      "learningOutcome": "3.3",
+      "respectfulnessScore": "3.7",
+      "evidenceQuality": "4.5"
+    },
+    "feedback": {
+      "teacherNotes": "Students showed good engagement and critical thinking skills.",
+      "studentReflections": [
+        {
+          "studentId": "student-117",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        },
+        {
+          "studentId": "student-84",
+          "reflection": "This debate helped me understand different perspectives on the topic."
+        }
+      ]
+    },
+    "createdDate": "2025-07-24T22:18:55.862Z"
+  }
+]
